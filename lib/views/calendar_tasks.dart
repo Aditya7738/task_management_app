@@ -88,6 +88,10 @@ class _CalendarTasksState extends State<CalendarTasks>
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 40.0,
+          title: Text(
+            'Task manager',
+            style: TextStyle(fontSize: 16.0),
+          ),
           backgroundColor: Colors.white,
           // title: Text(
           //   'Calendar Tasks',

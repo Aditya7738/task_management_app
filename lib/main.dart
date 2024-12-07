@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_management_app/views/admin_dash_board.dart';
 import 'package:task_management_app/views/create_task.dart';
 import 'package:task_management_app/views/dashboard_screen.dart';
 import 'package:task_management_app/widgets/repeat_task_form.dart';
@@ -18,6 +19,6 @@ class MainApp extends StatelessWidget {
           primaryColor: Color.fromARGB(255, 17, 35, 230),
         ),
         debugShowCheckedModeBanner: false,
-        home: DashboardScreen());
+        home: AdminDashboardScreen());
   }
 }

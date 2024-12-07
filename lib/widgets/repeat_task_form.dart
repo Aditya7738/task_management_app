@@ -319,7 +319,7 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
           },
           child: Icon(
             Icons.close_rounded,
-            color: Theme.of(context).primaryColor,
+            //color: Theme.of(context).primaryColor,
             size: 20.0,
           ),
         ),

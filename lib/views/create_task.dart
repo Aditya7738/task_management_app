@@ -67,7 +67,7 @@ class CreateTask extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "Create New Task",
-          style: TextStyle(fontSize: 18.0),
+          style: TextStyle(fontSize: 17.0),
         ),
       ),
       body: SingleChildScrollView(
@@ -90,6 +90,8 @@ class CreateTask extends StatelessWidget {
                     validator: ValidationHelper.nullOrEmptyString,
                     controller: taskNameController,
                     decoration: InputDecoration(
+                      hintText: "Enter task name",
+                      hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
                       border: const OutlineInputBorder(
                           borderSide:
                               BorderSide(color: Colors.blue, width: 2.0),

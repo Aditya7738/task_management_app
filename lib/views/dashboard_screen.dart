@@ -18,261 +18,12 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  // List<Tab> tabs = [
-  //   Tab(
-  //     child: Container(
-  //       height: 44,
-  //       alignment: Alignment.center,
-  //       padding: EdgeInsets.all(8),
-  //       // decoration: BoxDecoration(
-  //       //   borderRadius: BorderRadius.circular(23),
-  //       //   border: Border.all(
-  //       //     color: Colors.grey,
-  //       //   ),
-  //       // ),
-  //       child: Row(
-  //         mainAxisAlignment: MainAxisAlignment.center,
-  //         children: [
-  //           const Text(
-  //             'Completed',
-  //             style: TextStyle(
-  //               //   color: Theme.of(context).primaryColor,
-  //               fontSize: 13,
-
-  //               //   letterSpacing: -0.28,
-  //             ),
-  //           ),
-  //           SizedBox(width: 5),
-  //           Container(
-  //             padding: EdgeInsets.all(5),
-  //             decoration: BoxDecoration(
-  //               //   color: Colors.green,
-  //               shape: BoxShape.circle,
-  //               border: Border.all(
-  //                 color: Colors.grey,
-  //               ),
-  //             ),
-  //             child: Text(
-  //               '5',
-  //               style: TextStyle(
-  //                 // color: Colors.black,
-  //                 fontSize: 10,
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   ),
-  //   Tab(
-  //     child: Container(
-  //       height: 44,
-  //       alignment: Alignment.center,
-  //       padding: EdgeInsets.all(8),
-  //       decoration: BoxDecoration(
-  //         borderRadius: BorderRadius.circular(23),
-  //         border: Border.all(
-  //           color: Colors.grey,
-  //         ),
-  //       ),
-  //       child: Row(
-  //         mainAxisAlignment: MainAxisAlignment.center,
-  //         children: [
-  //           const Text(
-  //             'Assigned',
-  //             style: TextStyle(
-  //               //   color: Theme.of(context).primaryColor,
-  //               fontSize: 13,
-
-  //               //   letterSpacing: -0.28,
-  //             ),
-  //           ),
-  //           SizedBox(width: 5),
-  //           Container(
-  //             padding: EdgeInsets.all(5),
-  //             decoration: BoxDecoration(
-  //               //   color: Colors.green,
-  //               shape: BoxShape.circle,
-  //               border: Border.all(
-  //                 color: Colors.grey,
-  //               ),
-  //             ),
-  //             child: Text(
-  //               '5',
-  //               style: TextStyle(
-  //                 // color: Colors.black,
-  //                 fontSize: 10,
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   ),
-  //   Tab(
-  //     child: Container(
-  //       height: 44,
-  //       alignment: Alignment.center,
-  //       padding: EdgeInsets.all(8),
-  //       decoration: BoxDecoration(
-  //         borderRadius: BorderRadius.circular(23),
-  //         border: Border.all(
-  //           color: Colors.grey,
-  //         ),
-  //       ),
-  //       child: Row(
-  //         mainAxisAlignment: MainAxisAlignment.center,
-  //         children: [
-  //           const Text(
-  //             'In progress',
-  //             style: TextStyle(
-  //               //   color: Theme.of(context).primaryColor,
-  //               fontSize: 13,
-
-  //               //   letterSpacing: -0.28,
-  //             ),
-  //           ),
-  //           SizedBox(width: 5),
-  //           Container(
-  //             padding: EdgeInsets.all(5),
-  //             decoration: BoxDecoration(
-  //               //   color: Colors.green,
-  //               shape: BoxShape.circle,
-  //               border: Border.all(
-  //                 color: Colors.grey,
-  //               ),
-  //             ),
-  //             child: Text(
-  //               '5',
-  //               style: TextStyle(
-  //                 // color: Colors.black,
-  //                 fontSize: 10,
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   ),
-  //   Tab(
-  //     child: Container(
-  //       height: 44,
-  //       alignment: Alignment.center,
-  //       padding: EdgeInsets.all(8),
-  //       decoration: BoxDecoration(
-  //         borderRadius: BorderRadius.circular(23),
-  //         border: Border.all(
-  //           color: Colors.grey,
-  //         ),
-  //       ),
-  // child: Row(
-  //   mainAxisAlignment: MainAxisAlignment.center,
-  //   children: [
-  //     const Text(
-  //       'Hold',
-  //       style: TextStyle(
-  //         //   color: Theme.of(context).primaryColor,
-  //         fontSize: 13,
-
-  //         //   letterSpacing: -0.28,
-  //       ),
-  //     ),
-  //     SizedBox(width: 5),
-  //     Container(
-  //       padding: EdgeInsets.all(5),
-  //       decoration: BoxDecoration(
-  //         //   color: Colors.green,
-  //         shape: BoxShape.circle,
-  //         border: Border.all(
-  //           color: Colors.grey,
-  //         ),
-  //       ),
-  //       child: Text(
-  //         '5',
-  //         style: TextStyle(
-  //           // color: Colors.black,
-  //           fontSize: 10,
-  //         ),
-  //       ),
-  //     ),
-  //   ],
-  //  ),
-  //     ),
-  //   ),
-  // ];
-
-  // List<Tab> tabs() => [
-  //       Tab(
-  //         child: Row(
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //             Text(
-  //               'Hold',
-  //               style: TextStyle(
-  //                 //   color: Theme.of(context).primaryColor,
-  //                 fontSize: 13,
-
-  //                 //   letterSpacing: -0.28,
-  //               ),
-  //             ),
-  //             SizedBox(width: 5),
-  //             Container(
-  //               padding: EdgeInsets.all(5),
-  //               decoration: BoxDecoration(
-  //                 //   color: Colors.green,
-  //                 shape: BoxShape.circle,
-  //                 border: Border.all(
-  //                   color: Colors.grey,
-  //                 ),
-  //               ),
-  //               child: Text(
-  //                 '5',
-  //                 style: TextStyle(
-  //                   // color: Colors.black,
-  //                   fontSize: 10,
-  //                 ),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //       Tab(
-  //         child: Row(
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //             Text(
-  //               'Hold',
-  //               style: TextStyle(
-  //                 //   color: Theme.of(context).primaryColor,
-  //                 fontSize: 13,
-
-  //                 //   letterSpacing: -0.28,
-  //               ),
-  //             ),
-  //             SizedBox(width: 5),
-  //             Container(
-  //               padding: EdgeInsets.all(5),
-  //               decoration: BoxDecoration(
-  //                 //   color: Colors.green,
-  //                 shape: BoxShape.circle,
-  //                 border: Border.all(
-  //                   color: Colors.grey,
-  //                 ),
-  //               ),
-  //               child: Text(
-  //                 '5',
-  //                 style: TextStyle(
-  //                   // color: Colors.black,
-  //                   fontSize: 10,
-  //                 ),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       )
-  //     ];
-
-  List<Widget> tabs = <Widget>[TasksScreen(), BoardScreen(), ProfileScreen()];
+  List<Widget> tabs = <Widget>[
+    TasksScreen(),
+    CalendarTasks(),
+    BoardScreen(),
+    // ProfileScreen()
+  ];
 
   DashboardController dashboardController = Get.put(DashboardController());
 
@@ -291,20 +42,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
               label: 'All task',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard),
+              icon: Icon(Iconsax.calendar_add_outline),
+              activeIcon: Icon(Iconsax.calendar_add_bold),
               label: 'Calendar',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Iconsax.profile_circle_outline),
-              label: 'Profile',
+              icon: Icon(Icons.dashboard_outlined),
+              activeIcon: Icon(Icons.dashboard_sharp),
+              label: 'Task Board',
             ),
           ],
           selectedItemColor: Get.theme.primaryColor,
           selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
           currentIndex: dashboardController.currentIndex.value,
           unselectedItemColor: Colors.grey,
-          // showSelectedLabels: true,
-          // showUnselectedLabels: true,
         ),
         body: tabs[dashboardController.currentIndex.value],
       ),

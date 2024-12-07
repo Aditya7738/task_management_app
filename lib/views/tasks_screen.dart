@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:task_management_app/controller/task_screen_controller.dart';
+import 'package:task_management_app/views/board_screen.dart';
 import 'package:task_management_app/views/calendar_tasks.dart';
 import 'package:task_management_app/widgets/task_list.dart';
 
@@ -22,13 +24,18 @@ class _TasksScreenState extends State<TasksScreen>
     _tabController = TabController(length: 4, vsync: this);
   }
 
-  List<Tab> tabs() => [
+  List<String> tabNames = ["Assigned", "In progress", "Completed", "Hold"];
+
+  List<Tab> tabs() {
+    List<Tab> tabs = [];
+    for (var tabName in tabNames) {
+      tabs.add(
         Tab(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Assigned',
+                tabName,
                 style: TextStyle(
                   //   color: Theme.of(context).primaryColor,
                   fontSize: 13,
@@ -57,132 +64,152 @@ class _TasksScreenState extends State<TasksScreen>
             ],
           ),
         ),
-        Tab(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'In progress',
-                style: TextStyle(
-                  //   color: Theme.of(context).primaryColor,
-                  fontSize: 13,
+      );
 
-                  //   letterSpacing: -0.28,
-                ),
-              ),
-              SizedBox(width: 5),
-              Container(
-                padding: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  //   color: Colors.green,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.grey,
-                  ),
-                ),
-                child: Text(
-                  '5',
-                  style: TextStyle(
-                    // color: Colors.black,
-                    fontSize: 10,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Tab(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Completed',
-                style: TextStyle(
-                  //   color: Theme.of(context).primaryColor,
-                  fontSize: 13,
+      // Tab(
+      //   child: Row(
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     children: [
+      //       Text(
+      //         'In progress',
+      //         style: TextStyle(
+      //           //   color: Theme.of(context).primaryColor,
+      //           fontSize: 13,
 
-                  //   letterSpacing: -0.28,
-                ),
-              ),
-              SizedBox(width: 5),
-              Container(
-                padding: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  //   color: Colors.green,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.grey,
-                  ),
-                ),
-                child: Text(
-                  '5',
-                  style: TextStyle(
-                    // color: Colors.black,
-                    fontSize: 10,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Tab(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Hold',
-                style: TextStyle(
-                  //   color: Theme.of(context).primaryColor,
-                  fontSize: 13,
+      //           //   letterSpacing: -0.28,
+      //         ),
+      //       ),
+      //       SizedBox(width: 5),
+      //       Container(
+      //         padding: EdgeInsets.all(5),
+      //         decoration: BoxDecoration(
+      //           //   color: Colors.green,
+      //           shape: BoxShape.circle,
+      //           border: Border.all(
+      //             color: Colors.grey,
+      //           ),
+      //         ),
+      //         child: Text(
+      //           '5',
+      //           style: TextStyle(
+      //             // color: Colors.black,
+      //             fontSize: 10,
+      //           ),
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      // ),
+      // Tab(
+      //   child: Row(
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     children: [
+      //       Text(
+      //         'Completed',
+      //         style: TextStyle(
+      //           //   color: Theme.of(context).primaryColor,
+      //           fontSize: 13,
 
-                  //   letterSpacing: -0.28,
-                ),
-              ),
-              SizedBox(width: 5),
-              Container(
-                padding: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  //   color: Colors.green,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.grey,
-                  ),
-                ),
-                child: Text(
-                  '5',
-                  style: TextStyle(
-                    // color: Colors.black,
-                    fontSize: 10,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        )
-      ];
+      //           //   letterSpacing: -0.28,
+      //         ),
+      //       ),
+      //       SizedBox(width: 5),
+      //       Container(
+      //         padding: EdgeInsets.all(5),
+      //         decoration: BoxDecoration(
+      //           //   color: Colors.green,
+      //           shape: BoxShape.circle,
+      //           border: Border.all(
+      //             color: Colors.grey,
+      //           ),
+      //         ),
+      //         child: Text(
+      //           '5',
+      //           style: TextStyle(
+      //             // color: Colors.black,
+      //             fontSize: 10,
+      //           ),
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      // ),
+      // Tab(
+      //   child: Row(
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     children: [
+      //       Text(
+      //         'Hold',
+      //         style: TextStyle(
+      //           //   color: Theme.of(context).primaryColor,
+      //           fontSize: 13,
+
+      //           //   letterSpacing: -0.28,
+      //         ),
+      //       ),
+      //       SizedBox(width: 5),
+      //       Container(
+      //         padding: EdgeInsets.all(5),
+      //         decoration: BoxDecoration(
+      //           //   color: Colors.green,
+      //           shape: BoxShape.circle,
+      //           border: Border.all(
+      //             color: Colors.grey,
+      //           ),
+      //         ),
+      //         child: Text(
+      //           '5',
+      //           style: TextStyle(
+      //             // color: Colors.black,
+      //             fontSize: 10,
+      //           ),
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      // )
+    }
+    return tabs;
+  }
+
+  TaskScreenController taskScreenController = Get.put(TaskScreenController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           title: Text(
-            'Dashboard Screen',
+            'Task manager',
             style: TextStyle(fontSize: 16.0),
           ),
-          actions: [
-            InkWell(
-                onTap: () {
-                  Get.to(CalendarTasks());
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Icon(Iconsax.calendar_add_outline),
-                )),
-          ],
+          // actions: [
+          //   InkWell(
+          //       onTap: () {
+          //         Get.to(BoardScreen());
+          //       },
+          //       child: Padding(
+          //         padding: const EdgeInsets.only(right: 10.0),
+          //         child: Icon(Iconsax.task_outline),
+          //       )),
+          //   InkWell(
+          //       onTap: () {
+          //         Get.to(CalendarTasks());
+          //       },
+          //       child: Padding(
+          //         padding: const EdgeInsets.only(right: 8.0),
+          //         child: Icon(Iconsax.calendar_add_outline),
+          //       )),
+          // ],
+
           bottom: TabBar(
+            tabAlignment: TabAlignment.start,
             isScrollable: true,
             controller: _tabController,
             tabs: tabs(),
+            onTap: (index) {
+              // print(index);
+              // taskScreenController.selectedTask.value = tabNames[index];
+            },
           )
           //  ButtonsTabBar(
           //   //  borderColor: Colors.grey,
