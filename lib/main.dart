@@ -19,6 +19,6 @@ class MainApp extends StatelessWidget {
           primaryColor: Color.fromARGB(255, 17, 35, 230),
         ),
         debugShowCheckedModeBanner: false,
-        home: AdminDashboardScreen());
+        home: DashboardScreen());
   }
 }

@@ -59,7 +59,7 @@ class RepeatTaskController extends GetxController {
     print("CONTROLLER ${_daysMap.length}");
   }
 
-  get selectedDays => _daysMap.entries
+  List<String> get selectedDays => _daysMap.entries
       .where((element) => element.value)
       .map((e) => e.key)
       .toList();
@@ -97,4 +97,15 @@ class RepeatTaskController extends GetxController {
       .toList();
 
   RxInt selectedYear = 2024.obs;
+
+  RxList selectedDaysForRepeatingTask = [].obs;
+  // "Repeat task on ".obs;
+
+  RxString dateToStopRepeatingTask = "".obs;
+
+  RxString remainderDateOfRepeatingTask = "".obs;
+
+  //RxString onWhichBasis = "".obs;
+
+  RxString selectedTab = "daily".obs;
 }

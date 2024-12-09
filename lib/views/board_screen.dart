@@ -114,21 +114,24 @@ class _BoardScreenState extends State<BoardScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                    width: (Get.width * 0.9) - 1.0,
-                    height: Get.height - 152,
-                    color: const Color.fromARGB(255, 239, 239, 239),
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                    child: Scrollbar(
-                      // trackVisibility: true,
-                      thumbVisibility: true,
-                      thickness: 5.0,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: listOfTaskInCards(),
-                        ),
-                      ),
-                    )),
+                  width: (Get.width * 0.9) - 1.0,
+                  height: Get.height - 152,
+                  color: const Color.fromARGB(255, 239, 239, 239),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                  child:
+                      //  Scrollbar(
+                      //   // trackVisibility: true,
+                      //   thumbVisibility: true,
+                      //   thickness: 5.0,
+                      //   child:
+                      SingleChildScrollView(
+                    child: Column(
+                      children: listOfTaskInCards(),
+                    ),
+                  ),
+                  //)
+                ),
                 Container(
                   width: 1.0,
                   height: Get.height - 152,
@@ -266,7 +269,7 @@ class _BoardScreenState extends State<BoardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: LeadingBackArrow(),
+        //  leading: LeadingBackArrow(),
         toolbarHeight: 40.0,
         title: const Text(
           'Board',

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:task_management_app/constants/fontsizes.dart';
 import 'package:task_management_app/controller/create_task_controller.dart';
+import 'package:task_management_app/controller/repeat_task_controller.dart';
 import 'package:task_management_app/controller/validation_helper.dart';
 import 'package:task_management_app/widgets/repeat_task_form.dart';
 import 'package:task_management_app/widgets/select_option.dart';
@@ -60,6 +61,8 @@ class CreateTask extends StatelessWidget {
   }
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  RepeatTaskController repeatTaskController = Get.put(RepeatTaskController());
 
   @override
   Widget build(BuildContext context) {
@@ -163,36 +166,7 @@ class CreateTask extends StatelessWidget {
                       SizedBox(
                         width: 15.0,
                       ),
-                      // Text(
-                      //   "Choose Section",
-                      //   style:
-                      //       TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
-                      // ),
-                      // SizedBox(
-                      //   width: 5.0,
-                      // ),
-                      // Icon(Icons.arrow_drop_down_rounded)
-                      Obx(() =>
-                          // SelectOption(
-                          //   title: "Choose Section",
-                          //   items: createTaskController.assignee
-                          //       .map<DropdownMenuItem<String>>(
-                          //     (assignee) {
-                          //       return DropdownMenuItem(
-                          //           value: assignee,
-                          //           child: Padding(
-                          //             padding: EdgeInsets.only(left: 10.0),
-                          //             child: Text(assignee),
-                          //           ));
-                          //     },
-                          //   ).toList(),
-                          //   onChanged: (value) {
-                          //     createTaskController.assignedTo.value =
-                          //         value.toString();
-                          //   },
-                          //   value: createTaskController.assignedTo.value,
-                          // ),
-                          DropdownButtonHideUnderline(
+                      Obx(() => DropdownButtonHideUnderline(
                             child: DropdownButton(
                               value: createTaskController.selectedSection.value,
                               icon: Container(
@@ -212,6 +186,8 @@ class CreateTask extends StatelessWidget {
                               onChanged: (value) {
                                 createTaskController.selectedSection.value =
                                     value.toString();
+                                createTaskController.isSectionSelected.value =
+                                    true;
                               },
                             ),
                           )),
@@ -315,15 +291,15 @@ class CreateTask extends StatelessWidget {
                             icon: Container(
                                 margin: const EdgeInsets.only(right: 10.0),
                                 child: Icon(Icons.arrow_drop_down_rounded)),
-                            items: createTaskController.assignee
+                            items: createTaskController.employeesToAssign
                                 .map<DropdownMenuItem<String>>(
-                              (assignee) {
+                              (employee) {
                                 return DropdownMenuItem(
-                                    value: assignee,
+                                    value: employee,
                                     child: Padding(
                                       padding: EdgeInsets.only(left: 10.0),
                                       child: Text(
-                                        assignee,
+                                        employee,
                                         // style: TextStyle(
                                         //     fontWeight: FontWeight.normal),
                                       ),
@@ -333,6 +309,8 @@ class CreateTask extends StatelessWidget {
                             onChanged: (value) {
                               createTaskController.assignedTo.value =
                                   value.toString();
+                              createTaskController.isEmployeeAssigned.value =
+                                  true;
                             },
                           ),
                         ),
@@ -444,6 +422,8 @@ class CreateTask extends StatelessWidget {
 
                           startDateEditingController.text =
                               await _selectedDate(context);
+
+                          createTaskController.isStartDateSelected.value = true;
                         },
                         decoration: InputDecoration(
                           // errorStyle:
@@ -587,6 +567,8 @@ class CreateTask extends StatelessWidget {
                             onChanged: (value) {
                               createTaskController.selectedPriority.value =
                                   value.toString();
+                              createTaskController.isPioritySelected.value =
+                                  true;
                             },
                           ),
                         ),
@@ -674,6 +656,41 @@ class CreateTask extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
+                    height: 5.0,
+                  ),
+                  Obx(() {
+                    String text = "You want to repeat thsi task on ";
+                    repeatTaskController.selectedDays.forEach(
+                      (element) {
+                        text += "$element, ";
+                      },
+                    );
+
+                    text +=
+                        " on ${repeatTaskController.selectedTab.value} basis";
+                    return Text(text);
+                  }),
+                  SizedBox(
+                    height: 5.0,
+                  ),
+                  GetBuilder<RepeatTaskController>(
+                    builder: (controller) {
+                      if (controller.selectedOption ==
+                          "Do not stop repeating this task") {
+                        return Text("You choose to not stop repeating task");
+                      } else {
+                        return Text(
+                            "This repeating task will stop on ${controller.repeatTaskDateEditingController.value.text}");
+                      }
+                    },
+                  ),
+
+                  SizedBox(
+                    height: 5.0,
+                  ),
+                  Obx(() => Text(
+                      "Remainder is set on ${repeatTaskController.setRemainderOptionController.value.text} start date")),
+                  SizedBox(
                     height: 25.0,
                   ),
                   Text(
@@ -717,6 +734,7 @@ class CreateTask extends StatelessWidget {
                       child: TextFormField(
                         style: TextStyle(
                             fontSize: FontSizes.textFormFieldFontSize),
+                        validator: ValidationHelper.nullOrEmptyString,
                         //controller: remainderController,
                         keyboardType: TextInputType.name,
                         // onTap: () async {
@@ -749,25 +767,33 @@ class CreateTask extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 15.0),
-                        child: Text(
-                          "Clear",
-                          style:
-                              TextStyle(decoration: TextDecoration.underline),
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Text(
+                            "Clear",
+                            style:
+                                TextStyle(decoration: TextDecoration.underline),
+                          ),
                         ),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 15.0, vertical: 8.0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5.0),
-                              border: Border.all(color: Colors.blue),
-                            ),
-                            child: Text(
-                              "Cancel",
-                              style: TextStyle(color: Colors.blue),
+                          GestureDetector(
+                            onTap: () {
+                              Get.back();
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 15.0, vertical: 8.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                border: Border.all(color: Colors.blue),
+                              ),
+                              child: Text(
+                                "Cancel",
+                                style: TextStyle(color: Colors.blue),
+                              ),
                             ),
                           ),
                           SizedBox(
@@ -775,16 +801,19 @@ class CreateTask extends StatelessWidget {
                           ),
                           GestureDetector(
                             onTap: () {
-                              createTaskController.appointments.add(Appointment(
-                                  isAllDay: false,
-                                  startTime: DateTime.parse(
-                                      startDateEditingController.text),
-                                  endTime: DateTime.parse(
-                                      dueDateEditingController.text),
-                                  color: getColor(),
-                                  subject: taskNameController.text));
+                              if (_formKey.currentState!.validate()) {
+                                createTaskController.appointments.add(
+                                    Appointment(
+                                        isAllDay: false,
+                                        startTime: DateTime.parse(
+                                            startDateEditingController.text),
+                                        endTime: DateTime.parse(
+                                            dueDateEditingController.text),
+                                        color: getColor(),
+                                        subject: taskNameController.text));
 
-                              Get.back();
+                                Get.back();
+                              }
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(
