@@ -267,54 +267,61 @@ class _BoardScreenState extends State<BoardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        //  leading: LeadingBackArrow(),
-        toolbarHeight: 40.0,
-        title: const Text(
-          'Board',
-          style: TextStyle(fontSize: 17.0),
-        ),
-        actions: [
-          Obx(
-            () => DropdownButtonHideUnderline(
-              child: DropdownButton(
-                value: boardScreenController.selectedBoard.value,
-                icon: Container(
-                    margin: const EdgeInsets.only(right: 10.0),
-                    child: Icon(Icons.arrow_drop_down_rounded)),
-                items:
-                    boardScreenController.boards.map<DropdownMenuItem<String>>(
-                  (section) {
-                    return DropdownMenuItem(
-                        value: section,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10.0),
-                          child: Text(section),
-                        ));
+    return WillPopScope(
+      onWillPop: () {
+        return Future.value(false);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          //  leading: LeadingBackArrow(),
+          toolbarHeight: 40.0,
+          title: const Text(
+            'Task manager',
+            style: TextStyle(fontSize: 17.0),
+          ),
+          actions: [
+            Obx(
+              () => DropdownButtonHideUnderline(
+                child: DropdownButton(
+                  value: boardScreenController.selectedBoard.value,
+                  icon: Container(
+                      margin: const EdgeInsets.only(right: 10.0),
+                      child: Icon(Icons.arrow_drop_down_rounded)),
+                  items: boardScreenController.boards
+                      .map<DropdownMenuItem<String>>(
+                    (section) {
+                      return DropdownMenuItem(
+                          value: section,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 10.0),
+                            child: Text(section),
+                          ));
+                    },
+                  ).toList(),
+                  onChanged: (value) {
+                    boardScreenController.selectedBoard.value =
+                        value.toString();
+                    setState(() {});
                   },
-                ).toList(),
-                onChanged: (value) {
-                  boardScreenController.selectedBoard.value = value.toString();
-                  setState(() {});
-                },
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ...listCards(),
-            SizedBox(
-              width: 5.0,
-            ),
-            Icon(Iconsax.add_circle_bold),
           ],
+        ),
+        body: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ...listCards(),
+              SizedBox(
+                width: 5.0,
+              ),
+              Icon(Iconsax.add_circle_bold),
+            ],
+          ),
         ),
       ),
     );

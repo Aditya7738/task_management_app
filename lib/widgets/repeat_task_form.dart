@@ -527,7 +527,7 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                   Container(
 
                       // color: Colors.red,
-                      height: 50.0,
+                      height: 45.0,
                       child: TextFormField(
                         style: TextStyle(
                             fontSize: FontSizes.textFormFieldFontSize),
@@ -538,7 +538,7 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                           hintText: "Select Option",
                           hintStyle: TextStyle(
                             fontWeight: FontWeight.normal,
-                            fontSize: 15.0,
+                            fontSize: 14.0,
                             color: const Color(0x7F555770),
                           ),
                           suffix: DropdownButton(

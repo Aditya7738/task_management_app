@@ -85,62 +85,68 @@ class _CalendarTasksState extends State<CalendarTasks>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 40.0,
-          title: Text(
-            'Task manager',
-            style: TextStyle(fontSize: 16.0),
-          ),
-          backgroundColor: Colors.white,
-          // title: Text(
-          //   'Calendar Tasks',
-          //   style: TextStyle(fontSize: 16.0),
-          // ),
-          actions: [
-            InkWell(
-                onTap: () {
-                  Get.to(CreateTask());
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Icon(Icons.add),
-                ))
-          ],
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(40.0),
-            child: Container(
-              color: Colors.white,
-              height: kToolbarHeight - 18.0,
-              // decoration: BoxDecoration(
-              //     border: Border.all(
-              //         color: const Color.fromARGB(255, 218, 218, 218)),
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.circular(3.0)),
-              child: TabBar(
-                tabs: tabs,
-                controller: _tabController,
-                labelColor: Colors.white,
-                indicatorColor: const Color.fromARGB(255, 17, 35, 230),
-                //unselectedLabelColor: Colors.black,
-                unselectedLabelStyle: TextStyle(
-                    color: Colors.black, fontWeight: FontWeight.normal),
-                indicator: BoxDecoration(
-                  // borderRadius: BorderRadius.circular(2.0),
-                  color: const Color.fromARGB(255, 17, 35, 230),
+    return WillPopScope(
+      onWillPop: () {
+        return Future.value(false);
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            toolbarHeight: 40.0,
+            title: Text(
+              'Task manager',
+              style: TextStyle(fontSize: 16.0),
+            ),
+            backgroundColor: Colors.white,
+            // title: Text(
+            //   'Calendar Tasks',
+            //   style: TextStyle(fontSize: 16.0),
+            // ),
+            actions: [
+              InkWell(
+                  onTap: () {
+                    Get.to(CreateTask());
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Icon(Icons.add),
+                  ))
+            ],
+            bottom: PreferredSize(
+              preferredSize: Size.fromHeight(40.0),
+              child: Container(
+                color: Colors.white,
+                height: kToolbarHeight - 18.0,
+                // decoration: BoxDecoration(
+                //     border: Border.all(
+                //         color: const Color.fromARGB(255, 218, 218, 218)),
+                //     color: Colors.white,
+                //     borderRadius: BorderRadius.circular(3.0)),
+                child: TabBar(
+                  tabs: tabs,
+                  controller: _tabController,
+                  labelColor: Colors.white,
+                  indicatorColor: const Color.fromARGB(255, 17, 35, 230),
+                  //unselectedLabelColor: Colors.black,
+                  unselectedLabelStyle: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.normal),
+                  indicator: BoxDecoration(
+                    // borderRadius: BorderRadius.circular(2.0),
+                    color: const Color.fromARGB(255, 17, 35, 230),
+                  ),
+                  indicatorSize: TabBarIndicatorSize.tab,
                 ),
-                indicatorSize: TabBarIndicatorSize.tab,
               ),
             ),
           ),
-        ),
-        body: SizedBox(
-          width: Get.width,
-          height: Get.height - (kToolbarHeight + 58.0),
-          child: TabBarView(
-            controller: _tabController,
-            children: tabBody(),
-          ),
-        ));
+          body: SizedBox(
+            width: Get.width,
+            height: Get.height - (kToolbarHeight + 58.0),
+            child: TabBarView(
+              controller: _tabController,
+              children: tabBody(),
+            ),
+          )),
+    );
   }
 }

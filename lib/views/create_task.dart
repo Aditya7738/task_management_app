@@ -5,6 +5,8 @@ import 'package:task_management_app/constants/fontsizes.dart';
 import 'package:task_management_app/controller/create_task_controller.dart';
 import 'package:task_management_app/controller/repeat_task_controller.dart';
 import 'package:task_management_app/controller/validation_helper.dart';
+import 'package:task_management_app/widgets/button_widget.dart';
+import 'package:task_management_app/widgets/leading_back_arrow.dart';
 import 'package:task_management_app/widgets/repeat_task_form.dart';
 import 'package:task_management_app/widgets/select_option.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -68,6 +70,7 @@ class CreateTask extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: LeadingBackArrow(),
         title: Text(
           "Create New Task",
           style: TextStyle(fontSize: 17.0),
@@ -93,8 +96,11 @@ class CreateTask extends StatelessWidget {
                     validator: ValidationHelper.nullOrEmptyString,
                     controller: taskNameController,
                     decoration: InputDecoration(
-                      hintText: "Enter task name",
-                      hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
+                      labelStyle:
+                          TextStyle(fontSize: FontSizes.textFormFieldFontSize),
+                      labelText: "Enter task name",
+                      // hintText: "Enter task name",
+                      // hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
                       border: const OutlineInputBorder(
                           borderSide:
                               BorderSide(color: Colors.blue, width: 2.0),
@@ -355,13 +361,38 @@ class CreateTask extends StatelessWidget {
                   SizedBox(
                     height: 20.0,
                   ),
+                  // Container(
+                  //   width: 150.0,
+                  //   padding: EdgeInsets.all(8.0),
+                  //   decoration: BoxDecoration(
+                  //       //border: Border.all(style: ),
+                  //       color: const Color.fromARGB(255, 234, 234, 234),
+                  //       borderRadius: BorderRadius.circular(10.0)),
+                  //   child:
+                  // Row(
+                  //     mainAxisAlignment: MainAxisAlignment.start,
+                  //     children: [
+                  //       Image.asset(
+                  //         "assets/images/icons8_attachment_100.png",
+                  //         width: 20.0,
+                  //         height: 20.0,
+                  //       ),
+                  //       SizedBox(
+                  //         width: 5.0,
+                  //       ),
+                  //       Text("Add Attachment")
+                  //     ],
+                  //   ),
+                  // ),
+
                   Container(
                     width: 150.0,
-                    padding: EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
-                        //border: Border.all(style: ),
+                        // border: border,
                         color: const Color.fromARGB(255, 234, 234, 234),
-                        borderRadius: BorderRadius.circular(10.0)),
+                        borderRadius: BorderRadius.circular(15.0)),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 10.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -377,14 +408,15 @@ class CreateTask extends StatelessWidget {
                       ],
                     ),
                   ),
+
                   SizedBox(
-                    height: 15.0,
+                    height: 20.0,
                   ),
                   // Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                   //   Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                   //     Icon(
                   //       Icons.calendar_today_outlined,
-                  //       size: 15.0,
+                  //       size: 20.0,
                   //     ),
                   //     SizedBox(
                   //       width: 10.0,
@@ -402,13 +434,13 @@ class CreateTask extends StatelessWidget {
                   //   ]),
                   // ]),
 
-                  Text(
-                    "Start date",
-                    style: TextStyle(color: Colors.grey, fontSize: 13.0),
-                  ),
-                  const SizedBox(
-                    height: 5.0,
-                  ),
+                  // Text(
+                  //   "Start date",
+                  //   style: TextStyle(color: Colors.grey, fontSize: 13.0),
+                  // ),
+                  // const SizedBox(
+                  //   height: 5.0,
+                  // ),
                   Container(
                       height: 50.0,
                       // alignment: Alignment.centerLeft,
@@ -426,6 +458,9 @@ class CreateTask extends StatelessWidget {
                           createTaskController.isStartDateSelected.value = true;
                         },
                         decoration: InputDecoration(
+                          labelStyle: TextStyle(
+                              fontSize: FontSizes.textFormFieldFontSize),
+                          labelText: "Enter start date",
                           // errorStyle:
                           //     TextStyle(fontSize: 15.sp, color: Colors.red),
                           suffixIcon: const Icon(
@@ -443,15 +478,15 @@ class CreateTask extends StatelessWidget {
                       )),
 
                   SizedBox(
-                    height: 15.0,
+                    height: 20.0,
                   ),
-                  Text(
-                    "Due date",
-                    style: TextStyle(color: Colors.grey, fontSize: 13.0),
-                  ),
-                  const SizedBox(
-                    height: 5.0,
-                  ),
+                  // Text(
+                  //   "Due date",
+                  //   style: TextStyle(color: Colors.grey, fontSize: 13.0),
+                  // ),
+                  // const SizedBox(
+                  //   height: 5.0,
+                  // ),
                   Container(
                       height: 50.0,
                       // alignment: Alignment.centerLeft,
@@ -467,32 +502,35 @@ class CreateTask extends StatelessWidget {
                               await _selectedDate(context);
                         },
                         decoration: InputDecoration(
+                          labelStyle: TextStyle(
+                              fontSize: FontSizes.textFormFieldFontSize),
+                          labelText: "Enter due date",
                           // errorStyle:
                           //     TextStyle(fontSize: 15.sp, color: Colors.red),
                           suffixIcon: const Icon(
                             Icons.calendar_month_outlined,
                             size: 20.0,
                           ),
-                          border: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.blue,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0))),
+                          // border: const OutlineInputBorder(
+                          //     borderSide: BorderSide(
+                          //       color: Colors.blue,
+                          //     ),
+                          //     borderRadius:
+                          //         BorderRadius.all(Radius.circular(10.0))),
                         ),
                         maxLines: 1,
                       )),
 
                   SizedBox(
-                    height: 15.0,
+                    height: 20.0,
                   ),
-                  Text(
-                    "Remainder",
-                    style: TextStyle(color: Colors.grey, fontSize: 13.0),
-                  ),
-                  const SizedBox(
-                    height: 5.0,
-                  ),
+                  // Text(
+                  //   "Remainder",
+                  //   style: TextStyle(color: Colors.grey, fontSize: 13.0),
+                  // ),
+                  // const SizedBox(
+                  //   height: 5.0,
+                  // ),
                   Container(
                       height: 50.0,
                       // alignment: Alignment.centerLeft,
@@ -514,12 +552,15 @@ class CreateTask extends StatelessWidget {
                             Iconsax.clock_outline,
                             size: 20.0,
                           ),
-                          border: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.blue,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0))),
+                          labelStyle: TextStyle(
+                              fontSize: FontSizes.textFormFieldFontSize),
+                          labelText: "Set remainder",
+                          // border: const OutlineInputBorder(
+                          //     borderSide: BorderSide(
+                          //       color: Colors.blue,
+                          //     ),
+                          //     borderRadius:
+                          //         BorderRadius.all(Radius.circular(10.0))),
                         ),
                         maxLines: 1,
                       )),
@@ -659,7 +700,7 @@ class CreateTask extends StatelessWidget {
                     height: 5.0,
                   ),
                   Obx(() {
-                    String text = "You want to repeat thsi task on ";
+                    String text = "You want to repeat this task on ";
                     repeatTaskController.selectedDays.forEach(
                       (element) {
                         text += "$element, ";
@@ -693,13 +734,13 @@ class CreateTask extends StatelessWidget {
                   SizedBox(
                     height: 25.0,
                   ),
-                  Text(
-                    "Remarks",
-                    style: TextStyle(color: Colors.grey, fontSize: 13.0),
-                  ),
-                  SizedBox(
-                    height: 5.0,
-                  ),
+                  // Text(
+                  //   "Remarks",
+                  //   style: TextStyle(color: Colors.grey, fontSize: 13.0),
+                  // ),
+                  // SizedBox(
+                  //   height: 5.0,
+                  // ),
                   TextFormField(
                     maxLines: 4,
                     style: TextStyle(fontSize: FontSizes.textFormFieldFontSize),
@@ -708,6 +749,9 @@ class CreateTask extends StatelessWidget {
                     keyboardType: TextInputType.multiline,
                     // validator: ValidationHelper.isFullAddress,
                     decoration: InputDecoration(
+                      labelStyle:
+                          TextStyle(fontSize: FontSizes.textFormFieldFontSize),
+                      labelText: "Remarks",
                       // errorStyle: TextStyle(
                       //     fontSize: Fontsizes.errorTextSize, color: Colors.red),
                       border: const OutlineInputBorder(
@@ -721,13 +765,13 @@ class CreateTask extends StatelessWidget {
                   SizedBox(
                     height: 15.0,
                   ),
-                  Text(
-                    "Assigned by",
-                    style: TextStyle(color: Colors.grey, fontSize: 13.0),
-                  ),
-                  const SizedBox(
-                    height: 5.0,
-                  ),
+                  // Text(
+                  //   "Assigned by",
+                  //   style: TextStyle(color: Colors.grey, fontSize: 13.0),
+                  // ),
+                  // const SizedBox(
+                  //   height: 5.0,
+                  // ),
                   Container(
                       height: 50.0,
                       // alignment: Alignment.centerLeft,
@@ -743,6 +787,9 @@ class CreateTask extends StatelessWidget {
                         //   remainderController.text = await selectedTime(context);
                         // },
                         decoration: InputDecoration(
+                          labelStyle: TextStyle(
+                              fontSize: FontSizes.textFormFieldFontSize),
+                          labelText: "Assigned by",
                           // errorStyle:
                           //     TextStyle(fontSize: 15.sp, color: Colors.red),
                           suffixIcon: const Icon(
@@ -762,76 +809,92 @@ class CreateTask extends StatelessWidget {
                   SizedBox(
                     height: 20.0,
                   ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  // Padding(
+                  //   padding: const EdgeInsets.only(left: 15.0),
+                  //   child: GestureDetector(
+                  //     onTap: () {},
+                  //     child: Text(
+                  //       "Clear",
+                  //       style:
+                  //           TextStyle(decoration: TextDecoration.underline),
+                  //     ),
+                  //   ),
+                  // ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15.0),
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: Text(
-                            "Clear",
-                            style:
-                                TextStyle(decoration: TextDecoration.underline),
+                      GestureDetector(
+                          onTap: () {
+                            Get.back();
+                          },
+                          child: ButtonWidget(
+                              isLoading: false,
+                              width: 90.0,
+                              color: Colors.white,
+                              textColor: Get.theme.primaryColor,
+                              // borderRadius: BorderRadius.circular(5.0),
+                              border: Border.all(
+                                color: Get.theme.primaryColor,
+                              ),
+                              text: "Cancel")
+                          //  Container(
+                          //   padding: EdgeInsets.symmetric(
+                          //       horizontal: 15.0, vertical: 8.0),
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(5.0),
+                          //     border: Border.all(color: Colors.blue),
+                          //   ),
+                          //   child: Text(
+                          //     "Cancel",
+                          //     style: TextStyle(color: Colors.blue),
+                          //   ),
+                          // ),
                           ),
-                        ),
+                      SizedBox(
+                        width: 10.0,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Get.back();
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 15.0, vertical: 8.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5.0),
-                                border: Border.all(color: Colors.blue),
-                              ),
-                              child: Text(
-                                "Cancel",
-                                style: TextStyle(color: Colors.blue),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              if (_formKey.currentState!.validate()) {
-                                createTaskController.appointments.add(
-                                    Appointment(
-                                        isAllDay: false,
-                                        startTime: DateTime.parse(
-                                            startDateEditingController.text),
-                                        endTime: DateTime.parse(
-                                            dueDateEditingController.text),
-                                        color: getColor(),
-                                        subject: taskNameController.text));
+                      GestureDetector(
+                          onTap: () {
+                            if (_formKey.currentState!.validate()) {
+                              createTaskController.appointments.add(Appointment(
+                                  isAllDay: false,
+                                  startTime: DateTime.parse(
+                                      startDateEditingController.text),
+                                  endTime: DateTime.parse(
+                                      dueDateEditingController.text),
+                                  color: getColor(),
+                                  subject: taskNameController.text));
 
-                                Get.back();
-                              }
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 18.0, vertical: 8.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5.0),
-                                color: Colors.blue,
-                              ),
-                              child: Text(
-                                "Create",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
+                              Get.back();
+                            }
+                          },
+                          child: ButtonWidget(
+                              isLoading: false,
+                              width: 90.0,
+                              text: "Create",
+                              textColor: Colors.white,
+                              color: Get.theme.primaryColor)
+                          //  Container(
+                          //   padding: EdgeInsets.symmetric(
+                          //       horizontal: 18.0, vertical: 8.0),
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(5.0),
+                          //     color: Colors.blue,
+                          //   ),
+                          //   child: Text(
+                          //     "Create",
+                          //     style: TextStyle(color: Colors.white),
+                          //   ),
+                          // ),
                           )
-                        ],
-                      )
                     ],
                   )
+
+                  //   ],
+                  // )
                 ],
               ),
             )),

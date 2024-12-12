@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "369327109932",
+    "firebase_url": "https://firertdb-bb50f-default-rtdb.firebaseio.com",
+    "project_id": "firertdb-bb50f",
+    "storage_bucket": "firertdb-bb50f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369327109932:android:cfdcc88a0789da2a319e89",
+        "android_client_info": {
+          "package_name": "com.aitsind"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "369327109932-abti8l5gnv35bud6ebp9vni30m13ll2l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDW3kBOl6xhrPaKs01Q-TqpXcv30Ubno_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "369327109932-abti8l5gnv35bud6ebp9vni30m13ll2l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
