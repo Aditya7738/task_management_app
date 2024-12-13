@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:task_management_app/controller/tasks_overview_controller.dart';
+import 'package:task_management_app/views/create_task.dart';
+import 'package:task_management_app/views/login_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TasksOverview extends StatefulWidget {
   TasksOverview({super.key});
@@ -13,6 +16,7 @@ class TasksOverview extends StatefulWidget {
 
 class _TasksOverviewState extends State<TasksOverview> {
   List<_BarData> dataList = <_BarData>[];
+  FirebaseAuth auth = FirebaseAuth.instance;
   @override
   void initState() {
     // TODO: implement initState
@@ -71,20 +75,31 @@ class _TasksOverviewState extends State<TasksOverview> {
           title: Text('Tasks Overview'),
           titleTextStyle: TextStyle(fontSize: 16.0, color: Colors.black),
           actions: [
-            Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.only(right: 10),
-              width: 100,
-              height: 30,
-              decoration: BoxDecoration(
-                color: Get.theme.primaryColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                'Add task',
-                style: TextStyle(color: Colors.white),
+            GestureDetector(
+              onTap: () {
+                Get.to(() => CreateTask());
+              },
+              child: Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.only(right: 10),
+                width: 100,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: Get.theme.primaryColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  'Add task',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
+            IconButton(
+                onPressed: () async {
+                  await auth.signOut();
+                  Get.to(() => LoginPage());
+                },
+                icon: Icon(Icons.logout_rounded))
           ],
         ),
         body: SingleChildScrollView(

@@ -2,8 +2,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:task_management_app/controller/user_activities_controller.dart';
 import 'package:task_management_app/controller/user_task_details_controller.dart';
 import 'package:task_management_app/views/users_task_details.dart';
+import 'package:task_management_app/views/login_page.dart';
 
 class UsersActivities extends StatefulWidget {
   UsersActivities({super.key});
@@ -13,6 +16,18 @@ class UsersActivities extends StatefulWidget {
 }
 
 class _UsersActivitiesState extends State<UsersActivities> {
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  UserActivitiesController _userActivitiesController =
+      Get.put(UserActivitiesController());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _userActivitiesController.getCompanyName();
+  }
+
   @override
   Widget build(Object context) {
     // TODO: implement build
@@ -37,7 +52,7 @@ class _UsersActivitiesState extends State<UsersActivities> {
           actions: [
             Container(
               alignment: Alignment.center,
-              margin: EdgeInsets.only(right: 10),
+              //  margin: EdgeInsets.only(right: 10),
               width: 100,
               height: 30,
               decoration: BoxDecoration(
@@ -49,6 +64,12 @@ class _UsersActivitiesState extends State<UsersActivities> {
                 style: TextStyle(color: Colors.white),
               ),
             ),
+            IconButton(
+                onPressed: () async {
+                  await auth.signOut();
+                  Get.to(() => LoginPage());
+                },
+                icon: Icon(Icons.logout_rounded))
           ],
         ),
         body: SingleChildScrollView(
@@ -58,6 +79,15 @@ class _UsersActivitiesState extends State<UsersActivities> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(
+                  width: Get.width,
+                  child: Obx(
+                    () => Text(
+                      "${_userActivitiesController.companyName.value} company's employees activities",
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
                 Center(
                   child: SizedBox(
                     width: Get.width * 0.5,
@@ -69,13 +99,13 @@ class _UsersActivitiesState extends State<UsersActivities> {
                             color: Colors.red,
                             value: 40,
                             radius: 40,
-                            title: '40% Inactive users',
+                            title: '40% Inactive employees',
                           ),
                           PieChartSectionData(
                             radius: 60,
                             color: Colors.green,
                             value: 60,
-                            title: '60% Active users',
+                            title: '60% Active employees',
                           ),
                         ],
                       ),

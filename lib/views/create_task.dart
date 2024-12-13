@@ -23,15 +23,6 @@ class CreateTask extends StatelessWidget {
   var startDateEditingController = TextEditingController();
   var dueDateEditingController = TextEditingController();
 
-  Future<void> showRepeatedTaskDialog(BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return SizedBox();
-      },
-    );
-  }
-
   Future<String> selectedTime(BuildContext context) async {
     TimeOfDay? timeOfDay = await showTimePicker(
       initialTime: TimeOfDay.now(),
