@@ -28,8 +28,8 @@ class ValidationHelper {
           r'^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{8, 20}$');
       print("${regExp.hasMatch(pass!)}");
       print(pass);
-      if (!regExp.hasMatch(pass)) {
-        return "Password don't contain uppercase, lowercase, number, symbol and length is below 8";
+      if (regExp.hasMatch(pass)) {
+        return "Your password might not containing uppercase, lowercase, number, symbol or length is below 8";
       }
       return null;
     }

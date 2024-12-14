@@ -377,7 +377,7 @@ class CreateTask extends StatelessWidget {
                   // ),
 
                   Container(
-                    width: 150.0,
+                    width: 170.0,
                     decoration: BoxDecoration(
                         // border: border,
                         color: const Color.fromARGB(255, 234, 234, 234),
@@ -385,7 +385,7 @@ class CreateTask extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         vertical: 10.0, horizontal: 10.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
                           "assets/images/icons8_attachment_100.png",

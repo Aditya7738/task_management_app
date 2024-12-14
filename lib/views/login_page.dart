@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    loginController.init();
+    // loginController.init();
   }
 
   // FirebaseAuth auth = FirebaseAuth.instance;
@@ -47,14 +47,16 @@ class _LoginPageState extends State<LoginPage> {
             //   style: TextStyle(fontSize: 17.0),
             // ),
           ),
-          body: SingleChildScrollView(
-            child: Padding(
-                padding: EdgeInsets.only(left: 20.0, bottom: 20.0, right: 20.0),
-                child: Center(
-                    child: Form(
-                  key: _formKey,
+          body: Padding(
+              padding: EdgeInsets.only(left: 20.0, bottom: 30.0, right: 20.0),
+              child: Form(
+                key: _formKey,
+                child: Container(
+                  //    color: Colors.red,
+                  height: Get.height,
                   child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text("Login to Task manager",
                             style: TextStyle(
@@ -192,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         const SizedBox(
-                          height: 30.0,
+                          height: 40.0,
                         ),
 
                         GestureDetector(
@@ -244,7 +246,7 @@ class _LoginPageState extends State<LoginPage> {
                                     color: Colors.black),
                               ),
                               TextSpan(
-                                text: ' Register',
+                                text: '   Register',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   // fontSize: deviceWidth > 600
@@ -270,8 +272,8 @@ class _LoginPageState extends State<LoginPage> {
                                         // deviceWidth > 600 ? 24.sp : 16.sp
                                         )))),
                       ]),
-                ))),
-          )),
+                ),
+              ))),
     );
   }
 }

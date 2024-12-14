@@ -21,16 +21,16 @@ class LoginController extends GetxController {
 
   RxBool logingAccount = false.obs;
 
-  void init() {
-    User? user = auth.currentUser;
+  // void init() {
+  //   User? user = auth.currentUser;
 
-    if (user != null) {
-      print("User is logged in");
-      Get.to(() => AdminDashboardScreen());
-    } else {
-      print("User is not logged in");
-    }
-  }
+  //   if (user != null) {
+  //     print("User is logged in");
+  //     Get.to(() => AdminDashboardScreen());
+  //   } else {
+  //     print("User is not logged in");
+  //   }
+  // }
 
   Future<void> loginAdmin() async {
     logingAccount.value = true;
@@ -43,7 +43,7 @@ class LoginController extends GetxController {
         Get.snackbar("Login successfully", "",
             colorText: Colors.white,
             backgroundColor: Get.theme.primaryColor,
-            duration: Duration(seconds: 5),
+            duration: Duration(seconds: 4),
             borderRadius: 20.0,
             snackPosition: SnackPosition.TOP);
         Get.to(

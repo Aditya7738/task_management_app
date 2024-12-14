@@ -19,15 +19,6 @@ class SignupPage extends StatelessWidget {
 
   SignupController signupController = Get.put(SignupController());
 
-  List<String> companyNames = [
-    "Choose Company",
-    "Company1",
-    "Company2",
-    "Company3"
-  ];
-
-  // FirebaseAuth auth = FirebaseAuth.instance;
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -77,14 +68,12 @@ class SignupPage extends StatelessWidget {
                           },
                           onChanged: (value) {
                             print("onChanged");
-                            signupController.companyNameController.text =
-                                signupController.guessCompanyName(value);
+
+                            if (value.contains("@")) {
+                              signupController.companyNameController.text =
+                                  signupController.guessCompanyName(value);
+                            }
                           },
-                          //  () {
-                          //   print("onEditingComplete");
-                          //   _companyNameController.text = signupController
-                          //       .guessCompanyName(_emailController.text);
-                          // },
                           decoration: InputDecoration(
                             errorStyle: TextStyle(
                                 fontSize: FontSizes.errorFontSize,
@@ -313,8 +302,9 @@ class SignupPage extends StatelessWidget {
                             obscureText:
                                 signupController.isPasswordInvisible.value,
                             keyboardType: TextInputType.visiblePassword,
-                            // validator: ValidationHelper.isPasswordContain,
+                            validator: ValidationHelper.isPasswordContain,
                             decoration: InputDecoration(
+                              errorMaxLines: 2,
                               errorStyle: TextStyle(
                                   fontSize: FontSizes.errorFontSize,
 
@@ -572,7 +562,7 @@ class SignupPage extends StatelessWidget {
                                     color: Colors.black),
                               ),
                               TextSpan(
-                                text: ' Login',
+                                text: '   Login',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   // fontSize: deviceWidth > 600

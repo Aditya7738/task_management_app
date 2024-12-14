@@ -5,6 +5,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:task_management_app/controller/user_activities_controller.dart';
 import 'package:task_management_app/controller/user_task_details_controller.dart';
+import 'package:task_management_app/views/add_employees.dart';
 import 'package:task_management_app/views/users_task_details.dart';
 import 'package:task_management_app/views/login_page.dart';
 
@@ -29,7 +30,7 @@ class _UsersActivitiesState extends State<UsersActivities> {
   }
 
   @override
-  Widget build(Object context) {
+  Widget build(BuildContext context) {
     // TODO: implement build
     return WillPopScope(
       onWillPop: () async {
@@ -50,18 +51,33 @@ class _UsersActivitiesState extends State<UsersActivities> {
           title: Text('Users Activities'),
           titleTextStyle: TextStyle(fontSize: 17.0, color: Colors.black),
           actions: [
-            Container(
-              alignment: Alignment.center,
-              //  margin: EdgeInsets.only(right: 10),
-              width: 100,
-              height: 30,
-              decoration: BoxDecoration(
-                color: Get.theme.primaryColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                'Add user',
-                style: TextStyle(color: Colors.white),
+            GestureDetector(
+              onTap: () {
+                //Get.to(() => AddUsers());
+                showModalBottomSheet(
+                  constraints: BoxConstraints.expand(
+                      width: Get.width, height: Get.height * 0.55),
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (context) {
+                    return AddEmployees();
+                  },
+                );
+              },
+              child: Container(
+                alignment: Alignment.center,
+                //  margin: EdgeInsets.only(right: 10),
+                width: 120,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: Get.theme.primaryColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  maxLines: 1,
+                  'Add employee',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
             IconButton(

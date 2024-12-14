@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_management_app/constants/database_references.dart';
 import 'package:task_management_app/views/admin_dash_board.dart';
+import 'package:task_management_app/views/login_page.dart';
 
-const String ADMIN_COLLECTION_REFERENCE = "users";
+//const String ADMIN_COLLECTION_REFERENCE = "admins";
 FirebaseAuth auth = FirebaseAuth.instance;
 String _UNIQUE_ADMIN_DOC_REF = auth.currentUser!.uid;
 
@@ -77,7 +79,7 @@ class SignupController extends GetxController {
         );
 
         Get.to(
-          () => AdminDashboardScreen(),
+          () => LoginPage(),
         );
       },
     ).onError(
@@ -102,20 +104,11 @@ class SignupController extends GetxController {
   FirebaseFirestore _fireStore = FirebaseFirestore.instance;
 
   Future<void> createUserInDB() async {
-    // FirebaseFirestore.instance.collection("users").doc(auth.currentUser!.uid).set({
-    //   "email": emailController.text,
-    //   "firstName": firstNameController.text,
-    //   "lastName": lastNameController.text,
-    //   "companyName": companyNameController.text,
-    //   "role": "admin",
-    //   "uid": auth.currentUser!.uid,
-    // });
-
     await _fireStore
-        .collection(ADMIN_COLLECTION_REFERENCE)
+        .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
         .doc(_UNIQUE_ADMIN_DOC_REF)
         .set({
-      "email": emailController.text,
+      "workEmail": emailController.text,
       "firstName": firstNameController.text,
       "lastName": lastNameController.text,
       "companyName": companyNameController.text,
