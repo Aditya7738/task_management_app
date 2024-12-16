@@ -8,7 +8,7 @@ import 'package:task_management_app/views/login_page.dart';
 
 //const String ADMIN_COLLECTION_REFERENCE = "admins";
 FirebaseAuth auth = FirebaseAuth.instance;
-String _UNIQUE_ADMIN_DOC_REF = auth.currentUser!.uid;
+//String _UNIQUE_ADMIN_DOC_REF = auth.currentUser!.uid;
 
 class SignupController extends GetxController {
   RxBool isPasswordInvisible = true.obs;
@@ -51,32 +51,32 @@ class SignupController extends GetxController {
 
         creatingAccount.value = false;
 
-        auth.currentUser!.sendEmailVerification().then(
-          (value) {
-            Get.snackbar("Important",
-                "Verfication email sent to your email address. Please verify your email address.",
-                colorText: Colors.white,
-                backgroundColor: Get.theme.primaryColor,
-                duration: Duration(seconds: 7),
-                borderRadius: 20.0,
-                snackPosition: SnackPosition.TOP);
-          },
-        ).onError(
-          (error, stackTrace) {
-            print("Email Verification Error: $error");
+        // auth.currentUser!.sendEmailVerification().then(
+        //   (value) {
+        //     Get.snackbar("Important",
+        //         "Verfication email sent to your email address. Please verify your email address.",
+        //         colorText: Colors.white,
+        //         backgroundColor: Get.theme.primaryColor,
+        //         duration: Duration(seconds: 7),
+        //         borderRadius: 20.0,
+        //         snackPosition: SnackPosition.TOP);
+        //   },
+        // ).onError(
+        //   (error, stackTrace) {
+        //     print("Email Verification Error: $error");
 
-            String cleanedError =
-                error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
-            //cleanedText.trim();
+        //     String cleanedError =
+        //         error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+        //     //cleanedText.trim();
 
-            Get.snackbar("Error", cleanedError,
-                backgroundColor: Colors.red,
-                colorText: Colors.white,
-                duration: Duration(seconds: 5),
-                borderRadius: 20.0,
-                snackPosition: SnackPosition.TOP);
-          },
-        );
+        //     Get.snackbar("Error", cleanedError,
+        //         backgroundColor: Colors.red,
+        //         colorText: Colors.white,
+        //         duration: Duration(seconds: 5),
+        //         borderRadius: 20.0,
+        //         snackPosition: SnackPosition.TOP);
+        //   },
+        // );
 
         Get.to(
           () => LoginPage(),
@@ -105,15 +105,16 @@ class SignupController extends GetxController {
 
   Future<void> createUserInDB() async {
     await _fireStore
+        .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+        .doc(companyNameController.text)
         .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
-        .doc(_UNIQUE_ADMIN_DOC_REF)
-        .set({
+        .add({
       "workEmail": emailController.text,
       "firstName": firstNameController.text,
       "lastName": lastNameController.text,
-      "companyName": companyNameController.text,
-      "role": "admin",
-      "uid": auth.currentUser!.uid,
+      //  "companyName": companyNameController.text,
+      //"role": "admin",
+      //  "uid": auth.currentUser!.uid,
     }).then(
       (value) {
         Get.snackbar("Admin data store successfully", "",

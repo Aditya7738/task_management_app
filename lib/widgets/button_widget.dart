@@ -35,7 +35,7 @@ class ButtonWidget extends StatelessWidget {
               ? Container(
                   padding: EdgeInsets.symmetric(vertical: 5.0),
                   width: (Get.width / 28) + 4,
-                  height: (Get.width / 28) + 13,
+                  height: (Get.width / 28) + 12,
                   child: CircularProgressIndicator(
                     color: Colors.white,
                     strokeWidth: 2.0,

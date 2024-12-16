@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_management_app/views/admin_dash_board.dart';
+import 'package:task_management_app/views/dashboard_screen.dart';
 
 class LoginController extends GetxController {
   RxBool isPasswordInvisible = true.obs;
@@ -9,12 +11,17 @@ class LoginController extends GetxController {
   guessCompanyName(String emailDomain) {
     final parts = emailDomain.split('@');
     final domainParts = parts[1].split('.');
-    return domainParts[0].toUpperCase();
+    return domainParts[0];
   }
+
+  RxString role = "Manager".obs;
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
-  TextEditingController emailController = TextEditingController();
+  var emailController = TextEditingController().obs;
+
+  TextEditingController usernameController = TextEditingController();
+
   TextEditingController passwordController = TextEditingController();
 
   TextEditingController companyNameController = TextEditingController();
@@ -32,23 +39,43 @@ class LoginController extends GetxController {
   //   }
   // }
 
-  Future<void> loginAdmin() async {
+  SharedPreferencesAsync sharedPreferencesAsync = SharedPreferencesAsync();
+
+  Future<void> login() async {
     logingAccount.value = true;
+
+    if (role.value != "Admin") {
+      emailController.value.text = usernameController.text +
+          "@" +
+          companyNameController.text.toLowerCase() +
+          ".com";
+    }
+
     await auth
         .signInWithEmailAndPassword(
-            email: emailController.text, password: passwordController.text)
+            email: emailController.value.text,
+            password: passwordController.text)
         .then(
-      (value) {
+      (value) async {
         logingAccount.value = false;
+
+        await sharedPreferencesAsync.setString(
+            "company_name", companyNameController.text);
+        await sharedPreferencesAsync.setString("role", role.value);
+
         Get.snackbar("Login successfully", "",
-            colorText: Colors.white,
+            colorText: const Color.fromARGB(255, 57, 47, 47),
             backgroundColor: Get.theme.primaryColor,
             duration: Duration(seconds: 4),
             borderRadius: 20.0,
             snackPosition: SnackPosition.TOP);
-        Get.to(
-          () => AdminDashboardScreen(),
-        );
+
+        role.value == "Admin"
+            ? Get.to(() => AdminDashboardScreen())
+            : Get.to(() => DashboardScreen());
+        // Get.to(
+        //   () => AdminDashboardScreen(),
+        // );
       },
     ).onError(
       (error, stackTrace) {

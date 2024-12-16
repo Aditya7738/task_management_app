@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:task_management_app/controller/login_controller.dart';
 import 'package:task_management_app/controller/user_activities_controller.dart';
 import 'package:task_management_app/controller/user_task_details_controller.dart';
 import 'package:task_management_app/views/add_employees.dart';
@@ -22,10 +23,14 @@ class _UsersActivitiesState extends State<UsersActivities> {
   UserActivitiesController _userActivitiesController =
       Get.put(UserActivitiesController());
 
+  LoginController _loginController = Get.put(LoginController());
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    print(
+        "_loginController.emailController.value.text ${_loginController.emailController.value.text}");
     _userActivitiesController.getCompanyName();
   }
 
@@ -54,15 +59,17 @@ class _UsersActivitiesState extends State<UsersActivities> {
             GestureDetector(
               onTap: () {
                 //Get.to(() => AddUsers());
-                showModalBottomSheet(
-                  constraints: BoxConstraints.expand(
-                      width: Get.width, height: Get.height * 0.55),
-                  isScrollControlled: true,
-                  context: context,
-                  builder: (context) {
-                    return AddEmployees();
-                  },
-                );
+                // showModalBottomSheet(
+                //   constraints: BoxConstraints.expand(
+                //       width: Get.width, height: Get.height),
+                //   isScrollControlled: true,
+                //   context: context,
+                //   builder: (context) {
+                //     return AddEmployees();
+                //   },
+                // );
+
+                Get.to(() => AddEmployees());
               },
               child: Container(
                 alignment: Alignment.center,

@@ -12,12 +12,29 @@ import 'package:task_management_app/views/dashboard_screen.dart';
 import 'package:task_management_app/views/login_page.dart';
 import 'package:task_management_app/widgets/button_widget.dart';
 
-class SignupPage extends StatelessWidget {
+class SignupPage extends StatefulWidget {
   SignupPage({super.key});
 
+  @override
+  State<SignupPage> createState() => _SignupPageState();
+}
+
+class _SignupPageState extends State<SignupPage> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   SignupController signupController = Get.put(SignupController());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    signupController.emailController.clear();
+    signupController.companyNameController.clear();
+    signupController.firstNameController.clear();
+    signupController.lastNameController.clear();
+    signupController.passwordController.clear();
+    signupController.confirmPasswordController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -348,6 +365,7 @@ class SignupPage extends StatelessWidget {
                             ),
                           ),
                         ),
+
                         const SizedBox(
                           height: 30.0,
                         ),
@@ -479,7 +497,6 @@ class SignupPage extends StatelessWidget {
                               print(
                                   "_formKey.currentState!.validate() ${_formKey.currentState!.validate()}");
                               if (_formKey.currentState!.validate()) {
-                                // try {
                                 signupController.signupAdmin();
                               }
                             },
@@ -591,5 +608,13 @@ class SignupPage extends StatelessWidget {
                 ))),
           )),
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+
+    print("DISPOSE CALLED");
   }
 }

@@ -140,6 +140,10 @@ class MainApp extends StatelessWidget {
 
     return GetMaterialApp(
         theme: ThemeData(
+          radioTheme: RadioThemeData(
+            fillColor:
+                MaterialStateProperty.all(Color.fromARGB(255, 17, 35, 230)),
+          ),
           primaryColor: Color.fromARGB(255, 17, 35, 230),
           inputDecorationTheme: InputDecorationTheme(
             errorStyle: TextStyle(color: Colors.red),
