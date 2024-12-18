@@ -21,6 +21,7 @@ dependencies:
   firebase_auth: ^5.3.4
   cloud_firestore: ^5.5.1
   shared_preferences: ^2.3.3
+  custom_radio_group_list: ^1.1.2
 
 
 dev_dependencies:

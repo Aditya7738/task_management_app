@@ -11,7 +11,7 @@ class LoginController extends GetxController {
   guessCompanyName(String emailDomain) {
     final parts = emailDomain.split('@');
     final domainParts = parts[1].split('.');
-    return domainParts[0];
+    return domainParts[0].toUpperCase();
   }
 
   RxString role = "Manager".obs;
@@ -47,24 +47,24 @@ class LoginController extends GetxController {
     if (role.value != "Admin") {
       emailController.value.text = usernameController.text +
           "@" +
-          companyNameController.text.toLowerCase() +
+          companyNameController.text.toLowerCase().trim() +
           ".com";
     }
 
     await auth
         .signInWithEmailAndPassword(
-            email: emailController.value.text,
-            password: passwordController.text)
+            email: emailController.value.text.trim(),
+            password: passwordController.text.trim())
         .then(
       (value) async {
         logingAccount.value = false;
 
         await sharedPreferencesAsync.setString(
-            "company_name", companyNameController.text);
+            "company_name", companyNameController.text.trim());
         await sharedPreferencesAsync.setString("role", role.value);
 
         Get.snackbar("Login successfully", "",
-            colorText: const Color.fromARGB(255, 57, 47, 47),
+            colorText: Colors.white,
             backgroundColor: Get.theme.primaryColor,
             duration: Duration(seconds: 4),
             borderRadius: 20.0,
@@ -86,6 +86,57 @@ class LoginController extends GetxController {
         //cleanedText.trim();
 
         logingAccount.value = false;
+        Get.snackbar("Error", cleanedError,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: Duration(seconds: 5),
+            borderRadius: 20.0,
+            snackPosition: SnackPosition.TOP);
+      },
+    );
+  }
+
+  RxBool sendingResetMail = false.obs;
+
+  TextEditingController resetUsernameController = TextEditingController();
+
+  TextEditingController resetCompanyController = TextEditingController();
+
+  Future<void> resetPassword() async {
+    sendingResetMail.value = true;
+
+    String email = "";
+
+    if (role.value != "Admin") {
+      email = resetUsernameController.text +
+          "@" +
+          resetCompanyController.text.toLowerCase() +
+          ".com";
+    } else {
+      email = resetUsernameController.text;
+    }
+
+    await auth.sendPasswordResetEmail(email: email).then(
+      (value) {
+        sendingResetMail.value = false;
+
+        Get.back();
+
+        Get.snackbar("Password reset email sent", "",
+            colorText: Colors.white,
+            backgroundColor: Get.theme.primaryColor,
+            duration: Duration(seconds: 4),
+            borderRadius: 20.0,
+            snackPosition: SnackPosition.TOP);
+      },
+    ).onError(
+      (error, stackTrace) {
+        print("Firebase Error: $error");
+
+        String cleanedError =
+            error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+
+        sendingResetMail.value = false;
         Get.snackbar("Error", cleanedError,
             backgroundColor: Colors.red,
             colorText: Colors.white,

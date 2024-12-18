@@ -30,7 +30,7 @@ class CreateTaskController extends GetxController {
 
   RxString selectedPriority = "High".obs;
 
-  List<String> tags = ["No tags added", "tag1", "tag2", "tag3"];
+  List<String> tags = ["No tags added", "Development", "Sales", "Testing"];
 
   RxString selectedTag = "No tags added".obs;
 

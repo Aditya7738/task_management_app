@@ -204,7 +204,7 @@ class _AddEmployeesState extends State<AddEmployees> {
                                 // fontFamily: 'Inter',
                               )),
                           SizedBox(
-                            width: 20,
+                            width: 15,
                           ),
                           Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -253,7 +253,7 @@ class _AddEmployeesState extends State<AddEmployees> {
                                     // ),
                                     ),
                                 const SizedBox(
-                                  width: 20.0,
+                                  width: 15.0,
                                 ),
                                 Container(
                                     // decoration: ShapeDecoration(

@@ -18,7 +18,44 @@ class UserActivitiesController extends GetxController {
 
   SharedPreferencesAsync sharedPreferencesAsync = SharedPreferencesAsync();
 
-  Future<void> getCompanyName() async {
+  late Stream<QuerySnapshot<Map<String, dynamic>>> managersCollection;
+  late Stream<QuerySnapshot<Map<String, dynamic>>> employeesCollection;
+
+  Stream<QuerySnapshot<Map<String, dynamic>>>? getManagersCollection() {
+    return _fireStore
+        .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+        .doc(companyName.value)
+        .collection(DatabaseReferences.MANAGERS_COLLECTION_REFERENCE)
+        .snapshots();
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getFutureManagersCollection() {
+    return _fireStore
+        .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+        .doc(companyName.value)
+        .collection(DatabaseReferences.MANAGERS_COLLECTION_REFERENCE)
+        .get();
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getFutureEmployeesCollection() {
+    return _fireStore
+        .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+        .doc(companyName.value)
+        .collection(DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE)
+        .get();
+  }
+
+  getEmployeeCollection() async {
+    employeesCollection = _fireStore
+        .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+        .doc(await getCompanyName())
+        .collection(DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE)
+        .snapshots();
+  }
+
+  RxBool fetchingCompanyName = false.obs;
+
+  Future<String> getCompanyName() async {
     // QuerySnapshot<Map<String, dynamic>> querySnapshot = await _fireStore
     //     .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
     //     .get();
@@ -33,9 +70,15 @@ class UserActivitiesController extends GetxController {
     //   },
     // );
 
+    fetchingCompanyName.value = true;
+
     if (await sharedPreferencesAsync.getString("company_name") != null) {
       companyName.value =
           (await sharedPreferencesAsync.getString("company_name"))!;
     }
+
+    fetchingCompanyName.value = false;
+
+    return companyName.value;
   }
 }

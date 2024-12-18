@@ -11,6 +11,8 @@ class RepeatTaskController extends GetxController {
     update();
   }
 
+  RxBool dataSetForRepeatTask = false.obs;
+
   //RxString selectedOption = "Do not stop repeating this task".obs;
 
   RxString selectedDate = "".obs;

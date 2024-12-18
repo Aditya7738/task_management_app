@@ -356,7 +356,10 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
         ),
         actions: [
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              repeatTaskController.dataSetForRepeatTask.value = true;
+              Get.back();
+            },
             child: Container(
               // width: 150.64,
               height: 30,

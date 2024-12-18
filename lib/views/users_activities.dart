@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +8,7 @@ import 'package:task_management_app/controller/login_controller.dart';
 import 'package:task_management_app/controller/user_activities_controller.dart';
 import 'package:task_management_app/controller/user_task_details_controller.dart';
 import 'package:task_management_app/views/add_employees.dart';
+import 'package:task_management_app/views/create_task.dart';
 import 'package:task_management_app/views/users_task_details.dart';
 import 'package:task_management_app/views/login_page.dart';
 
@@ -32,6 +34,9 @@ class _UsersActivitiesState extends State<UsersActivities> {
     print(
         "_loginController.emailController.value.text ${_loginController.emailController.value.text}");
     _userActivitiesController.getCompanyName();
+
+    // _userActivitiesController.getManagersCollection();
+    // _userActivitiesController.getEmployeeCollection();
   }
 
   @override
@@ -42,15 +47,6 @@ class _UsersActivitiesState extends State<UsersActivities> {
         return false;
       },
       child: Scaffold(
-        // floatingActionButton: FloatingActionButton(
-        //   backgroundColor: Get.theme.primaryColor,
-        //   onPressed: () {},
-        //   child: Icon(
-        //     Iconsax.user_add_bold,
-        //     color: Colors.white,
-        //   ),
-        // ),
-        // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Text('Users Activities'),
@@ -97,7 +93,7 @@ class _UsersActivitiesState extends State<UsersActivities> {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +102,7 @@ class _UsersActivitiesState extends State<UsersActivities> {
                   width: Get.width,
                   child: Obx(
                     () => Text(
-                      "${_userActivitiesController.companyName.value} company's employees activities",
+                      "${_userActivitiesController.companyName.value.toUpperCase()} company's employees activities",
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -152,103 +148,739 @@ class _UsersActivitiesState extends State<UsersActivities> {
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 20,
+                ),
+                Text(
+                  'Managers',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
-                  width: Get.width,
-                  height: Get.height * 0.65,
-                  child: ListView.builder(
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      // return Card(
-                      //   child: ListTile(
-                      //     leading: CircleAvatar(
-                      //       child: Text('A'),
-                      //     ),
-                      //     title: Text('User $index'),
-                      //     subtitle: Text('Active'),
-                      //     trailing: Icon(Icons.more_vert),
-                      //   ),
-                      // );
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 10),
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
+                  height: 10,
+                ),
+                Obx(() {
+                  if (_userActivitiesController.fetchingCompanyName.value) {
+                    return SizedBox(
+                      width: Get.width,
+                      height: Get.height * 0.26,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: Get.theme.primaryColor,
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    CircleAvatar(
-                                      child: Text('A'),
-                                    ),
-                                    SizedBox(
-                                      width: 5.0,
-                                    ),
-                                    Text('User $index'),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Iconsax.edit_outline,
-                                      size: 20.0,
-                                    ),
-                                    SizedBox(
-                                      width: 5.0,
-                                    ),
-                                    Icon(Icons.delete_outline_outlined),
-                                  ],
-                                ),
-                              ],
+                      ),
+                    );
+                  } else {
+                    return StreamBuilder(
+                      // future: _userActivitiesController
+                      //     .getFutureManagersCollection(),
+                      stream: _userActivitiesController.getManagersCollection(),
+                      builder: (context, snapshot) {
+                        if (
+                            //true
+                            snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                          return SizedBox(
+                            width: Get.width,
+                            height: Get.height * 0.26,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Get.theme.primaryColor,
+                              ),
                             ),
-                            SizedBox(
-                              height: 10,
+                          );
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Text(
+                              'Error: ${snapshot.error}',
+                              style: TextStyle(color: Colors.red),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                InkWell(
-                                    onTap: () {
-                                      Get.to(() => UsersTaskDetails());
-                                    },
-                                    child: Text(
-                                      'View task activity',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Get.theme.primaryColor),
-                                    )),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Container(
-                                  alignment: Alignment.center,
-                                  width: 100,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                    color: Get.theme.primaryColor,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(
-                                    'Add task',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ],
+                          );
+                        } else if (snapshot.hasData) {
+                          if (snapshot.data!.docs.isNotEmpty) {
+                            print(
+                                "snapshot.data!.docs.length ${snapshot.data!.docs.length}");
+
+                            return
+                                // SizedBox(
+                                //   width: Get.width,
+                                //   height: Get.height * 0.65,
+                                //   child:
+                                ListView(
+                              shrinkWrap: true,
+                              children: snapshot.data!.docs.map(
+                                (DocumentSnapshot document) {
+                                  Map<String, dynamic> data =
+                                      document.data()! as Map<String, dynamic>;
+
+                                  data.forEach((key, value) {
+                                    print("key: $key, value: $value");
+                                  });
+
+                                  return Container(
+                                    margin: EdgeInsets.only(bottom: 10),
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                CircleAvatar(
+                                                  child: Text(data['firstName']
+                                                          [0]
+                                                      .toString()
+                                                      .toUpperCase()),
+                                                ),
+                                                SizedBox(
+                                                  width: 5.0,
+                                                ),
+                                                Text(
+                                                  "${data['firstName']} ${data['lastName']}",
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    Get.to(() => CreateTask(
+                                                          forAdmin: true,
+                                                        ));
+                                                  },
+                                                  child: Container(
+                                                    alignment: Alignment.center,
+                                                    //width: 0,
+                                                    //height: 30,
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10.0,
+                                                            vertical: 5.0),
+                                                    decoration: BoxDecoration(
+                                                      color: Get
+                                                          .theme.primaryColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: Text(
+                                                      'Add task',
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 10.0,
+                                                ),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    print("EDIT MANAGER");
+                                                  },
+                                                  child: Icon(
+                                                    Iconsax.edit_outline,
+                                                    size: 20.0,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 10.0,
+                                                ),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    print("DELETE MANAGER");
+                                                  },
+                                                  child: Icon(Icons
+                                                      .delete_outline_outlined),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        // SizedBox(
+                                        //   height: 10,
+                                        // ),
+                                        // Row(
+                                        //   mainAxisAlignment:
+                                        //       MainAxisAlignment.end,
+                                        //   children: [
+                                        //     InkWell(
+                                        //         onTap: () {
+                                        //           Get.to(
+                                        //               () => UsersTaskDetails());
+                                        //         },
+                                        //         child: Text(
+                                        //           'View task activity',
+                                        //           style: TextStyle(
+                                        //               fontWeight:
+                                        //                   FontWeight.bold,
+                                        //               color: Get
+                                        //                   .theme.primaryColor),
+                                        //         )),
+                                        //     SizedBox(
+                                        //       width: 10,
+                                        //     ),
+                                        //   ],
+                                        // ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ).toList(),
+                            );
+
+                            // );
+                          } else {
+                            return Center(
+                              child: Text(
+                                'No data found',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            );
+                          }
+                        } else {
+                          return Center(
+                            child: Text(
+                              'Null data found',
+                              style: TextStyle(color: Colors.red),
                             ),
-                          ],
+                          );
+                        }
+                      },
+                    );
+
+                    // return StreamBuilder(
+                    //   stream: _userActivitiesController.getManagersCollection(),
+                    //   builder: (context, snapshot) {
+                    //     if (
+                    //         //true
+                    //         snapshot.connectionState ==
+                    //             ConnectionState.waiting) {
+                    //       return SizedBox(
+                    //         width: Get.width,
+                    //         height: Get.height * 0.26,
+                    //         child: Center(
+                    //           child: CircularProgressIndicator(
+                    //             color: Get.theme.primaryColor,
+                    //           ),
+                    //         ),
+                    //       );
+                    //     } else if (snapshot.hasError) {
+                    //       return Center(
+                    //         child: Text(
+                    //           'Error: ${snapshot.error}',
+                    //           style: TextStyle(color: Colors.red),
+                    //         ),
+                    //       );
+                    //     } else if (snapshot.hasData) {
+                    //       return Container(
+                    //           color: Colors.amber,
+                    //           width: Get.width,
+                    //           height: Get.height * 0.65,
+                    //           child: snapshot.data == null
+                    //               ? Center(
+                    //                   child: Text(
+                    //                     'No data found',
+                    //                     style: TextStyle(
+                    //                         color: Get.theme.primaryColor),
+                    //                   ),
+                    //                 )
+                    //               : Container(
+                    //                   color: Colors.red,
+                    //                   width: Get.width,
+                    //                   height: Get.height * 0.65,
+                    //                   child: ListView(
+                    //                     children: snapshot.data!.docs.map(
+                    //                       (DocumentSnapshot document) {
+                    //                         Map<String, dynamic> data =
+                    //                             document.data()!
+                    //                                 as Map<String, dynamic>;
+
+                    //                         data.forEach((key, value) {
+                    //                           print("key: $key, value: $value");
+                    //                         });
+
+                    //                         return Container(
+                    //                           margin:
+                    //                               EdgeInsets.only(bottom: 10),
+                    //                           padding: EdgeInsets.all(10),
+                    //                           decoration: BoxDecoration(
+                    //                             border: Border.all(
+                    //                                 color: Colors.grey),
+                    //                             borderRadius:
+                    //                                 BorderRadius.circular(10),
+                    //                           ),
+                    //                           child: Column(
+                    //                             mainAxisAlignment:
+                    //                                 MainAxisAlignment.start,
+                    //                             crossAxisAlignment:
+                    //                                 CrossAxisAlignment.start,
+                    //                             children: [
+                    //                               Row(
+                    //                                 mainAxisAlignment:
+                    //                                     MainAxisAlignment
+                    //                                         .spaceBetween,
+                    //                                 children: [
+                    //                                   Row(
+                    //                                     mainAxisAlignment:
+                    //                                         MainAxisAlignment
+                    //                                             .start,
+                    //                                     children: [
+                    //                                       CircleAvatar(
+                    //                                         child: Text('A'),
+                    //                                       ),
+                    //                                       SizedBox(
+                    //                                         width: 5.0,
+                    //                                       ),
+                    //                                       Text(
+                    //                                         "${data['fistName']} ${data['lastName']}",
+                    //                                       ),
+                    //                                     ],
+                    //                                   ),
+                    //                                   Row(
+                    //                                     children: [
+                    //                                       Icon(
+                    //                                         Iconsax
+                    //                                             .edit_outline,
+                    //                                         size: 20.0,
+                    //                                       ),
+                    //                                       SizedBox(
+                    //                                         width: 5.0,
+                    //                                       ),
+                    //                                       Icon(Icons
+                    //                                           .delete_outline_outlined),
+                    //                                     ],
+                    //                                   ),
+                    //                                 ],
+                    //                               ),
+                    //                               SizedBox(
+                    //                                 height: 10,
+                    //                               ),
+                    //                               Row(
+                    //                                 mainAxisAlignment:
+                    //                                     MainAxisAlignment.end,
+                    //                                 children: [
+                    //                                   InkWell(
+                    //                                       onTap: () {
+                    //                                         Get.to(() =>
+                    //                                             UsersTaskDetails());
+                    //                                       },
+                    //                                       child: Text(
+                    //                                         'View task activity',
+                    //                                         style: TextStyle(
+                    //                                             fontWeight:
+                    //                                                 FontWeight
+                    //                                                     .bold,
+                    //                                             color: Get.theme
+                    //                                                 .primaryColor),
+                    //                                       )),
+                    //                                   SizedBox(
+                    //                                     width: 10,
+                    //                                   ),
+                    //                                   Container(
+                    //                                     alignment:
+                    //                                         Alignment.center,
+                    //                                     width: 100,
+                    //                                     height: 30,
+                    //                                     decoration:
+                    //                                         BoxDecoration(
+                    //                                       color: Get.theme
+                    //                                           .primaryColor,
+                    //                                       borderRadius:
+                    //                                           BorderRadius
+                    //                                               .circular(10),
+                    //                                     ),
+                    //                                     child: Text(
+                    //                                       'Add task',
+                    //                                       style: TextStyle(
+                    //                                           color:
+                    //                                               Colors.white),
+                    //                                     ),
+                    //                                   ),
+                    //                                 ],
+                    //                               ),
+                    //                             ],
+                    //                           ),
+                    //                         );
+                    //                       },
+                    //                     ).toList(),
+                    //                   ),
+                    //                 ));
+                    //     } else {
+                    //       return Center(
+                    //         child: Text(
+                    //           'No data found',
+                    //           style: TextStyle(color: Colors.red),
+                    //         ),
+                    //       );
+                    //     }
+                    //   },
+                    // );
+                  }
+                }),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Employees',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Obx(() {
+                  if (_userActivitiesController.fetchingCompanyName.value) {
+                    return SizedBox(
+                      width: Get.width,
+                      height: Get.height * 0.26,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: Get.theme.primaryColor,
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  } else {
+                    return FutureBuilder(
+                      future: _userActivitiesController
+                          .getFutureEmployeesCollection(),
+                      builder: (context, snapshot) {
+                        if (
+                            //true
+                            snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                          return SizedBox(
+                            width: Get.width,
+                            height: Get.height * 0.26,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Get.theme.primaryColor,
+                              ),
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Text(
+                              'Error: ${snapshot.error}',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          );
+                        } else if (snapshot.hasData) {
+                          if (snapshot.data!.docs.isNotEmpty) {
+                            print(
+                                "snapshot.data!.docs.length ${snapshot.data!.docs.length}");
+
+                            return
+                                // SizedBox(
+                                //   width: Get.width,
+                                //   height: Get.height * 0.65,
+                                //   child:
+                                ListView(
+                              shrinkWrap: true,
+                              children: snapshot.data!.docs.map(
+                                (DocumentSnapshot document) {
+                                  Map<String, dynamic> data =
+                                      document.data()! as Map<String, dynamic>;
+
+                                  data.forEach((key, value) {
+                                    print("key: $key, value: $value");
+                                  });
+
+                                  return Container(
+                                    margin: EdgeInsets.only(bottom: 10),
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                CircleAvatar(
+                                                  child: Text(data['firstName']
+                                                          [0]
+                                                      .toString()
+                                                      .toUpperCase()),
+                                                ),
+                                                SizedBox(
+                                                  width: 5.0,
+                                                ),
+                                                Text(
+                                                  "${data['firstName']} ${data['lastName']}",
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Iconsax.edit_outline,
+                                                  size: 20.0,
+                                                ),
+                                                SizedBox(
+                                                  width: 5.0,
+                                                ),
+                                                Icon(Icons
+                                                    .delete_outline_outlined),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            InkWell(
+                                                onTap: () {
+                                                  Get.to(
+                                                      () => UsersTaskDetails());
+                                                },
+                                                child: Text(
+                                                  'View task activity',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Get
+                                                          .theme.primaryColor),
+                                                )),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Container(
+                                              alignment: Alignment.center,
+                                              width: 100,
+                                              height: 30,
+                                              decoration: BoxDecoration(
+                                                color: Get.theme.primaryColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: Text(
+                                                'Add task',
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ).toList(),
+                            );
+                            // );
+                          } else {
+                            return Center(
+                              child: Text(
+                                'No data found',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            );
+                          }
+                        } else {
+                          return Center(
+                            child: Text(
+                              'Null data found',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          );
+                        }
+                      },
+                    );
+
+                    // return StreamBuilder(
+                    //   stream: _userActivitiesController.getManagersCollection(),
+                    //   builder: (context, snapshot) {
+                    //     if (
+                    //         //true
+                    //         snapshot.connectionState ==
+                    //             ConnectionState.waiting) {
+                    //       return SizedBox(
+                    //         width: Get.width,
+                    //         height: Get.height * 0.26,
+                    //         child: Center(
+                    //           child: CircularProgressIndicator(
+                    //             color: Get.theme.primaryColor,
+                    //           ),
+                    //         ),
+                    //       );
+                    //     } else if (snapshot.hasError) {
+                    //       return Center(
+                    //         child: Text(
+                    //           'Error: ${snapshot.error}',
+                    //           style: TextStyle(color: Colors.red),
+                    //         ),
+                    //       );
+                    //     } else if (snapshot.hasData) {
+                    //       return Container(
+                    //           color: Colors.amber,
+                    //           width: Get.width,
+                    //           height: Get.height * 0.65,
+                    //           child: snapshot.data == null
+                    //               ? Center(
+                    //                   child: Text(
+                    //                     'No data found',
+                    //                     style: TextStyle(
+                    //                         color: Get.theme.primaryColor),
+                    //                   ),
+                    //                 )
+                    //               : Container(
+                    //                   color: Colors.red,
+                    //                   width: Get.width,
+                    //                   height: Get.height * 0.65,
+                    //                   child: ListView(
+                    //                     children: snapshot.data!.docs.map(
+                    //                       (DocumentSnapshot document) {
+                    //                         Map<String, dynamic> data =
+                    //                             document.data()!
+                    //                                 as Map<String, dynamic>;
+
+                    //                         data.forEach((key, value) {
+                    //                           print("key: $key, value: $value");
+                    //                         });
+
+                    //                         return Container(
+                    //                           margin:
+                    //                               EdgeInsets.only(bottom: 10),
+                    //                           padding: EdgeInsets.all(10),
+                    //                           decoration: BoxDecoration(
+                    //                             border: Border.all(
+                    //                                 color: Colors.grey),
+                    //                             borderRadius:
+                    //                                 BorderRadius.circular(10),
+                    //                           ),
+                    //                           child: Column(
+                    //                             mainAxisAlignment:
+                    //                                 MainAxisAlignment.start,
+                    //                             crossAxisAlignment:
+                    //                                 CrossAxisAlignment.start,
+                    //                             children: [
+                    //                               Row(
+                    //                                 mainAxisAlignment:
+                    //                                     MainAxisAlignment
+                    //                                         .spaceBetween,
+                    //                                 children: [
+                    //                                   Row(
+                    //                                     mainAxisAlignment:
+                    //                                         MainAxisAlignment
+                    //                                             .start,
+                    //                                     children: [
+                    //                                       CircleAvatar(
+                    //                                         child: Text('A'),
+                    //                                       ),
+                    //                                       SizedBox(
+                    //                                         width: 5.0,
+                    //                                       ),
+                    //                                       Text(
+                    //                                         "${data['fistName']} ${data['lastName']}",
+                    //                                       ),
+                    //                                     ],
+                    //                                   ),
+                    //                                   Row(
+                    //                                     children: [
+                    //                                       Icon(
+                    //                                         Iconsax
+                    //                                             .edit_outline,
+                    //                                         size: 20.0,
+                    //                                       ),
+                    //                                       SizedBox(
+                    //                                         width: 5.0,
+                    //                                       ),
+                    //                                       Icon(Icons
+                    //                                           .delete_outline_outlined),
+                    //                                     ],
+                    //                                   ),
+                    //                                 ],
+                    //                               ),
+                    //                               SizedBox(
+                    //                                 height: 10,
+                    //                               ),
+                    //                               Row(
+                    //                                 mainAxisAlignment:
+                    //                                     MainAxisAlignment.end,
+                    //                                 children: [
+                    //                                   InkWell(
+                    //                                       onTap: () {
+                    //                                         Get.to(() =>
+                    //                                             UsersTaskDetails());
+                    //                                       },
+                    //                                       child: Text(
+                    //                                         'View task activity',
+                    //                                         style: TextStyle(
+                    //                                             fontWeight:
+                    //                                                 FontWeight
+                    //                                                     .bold,
+                    //                                             color: Get.theme
+                    //                                                 .primaryColor),
+                    //                                       )),
+                    //                                   SizedBox(
+                    //                                     width: 10,
+                    //                                   ),
+                    //                                   Container(
+                    //                                     alignment:
+                    //                                         Alignment.center,
+                    //                                     width: 100,
+                    //                                     height: 30,
+                    //                                     decoration:
+                    //                                         BoxDecoration(
+                    //                                       color: Get.theme
+                    //                                           .primaryColor,
+                    //                                       borderRadius:
+                    //                                           BorderRadius
+                    //                                               .circular(10),
+                    //                                     ),
+                    //                                     child: Text(
+                    //                                       'Add task',
+                    //                                       style: TextStyle(
+                    //                                           color:
+                    //                                               Colors.white),
+                    //                                     ),
+                    //                                   ),
+                    //                                 ],
+                    //                               ),
+                    //                             ],
+                    //                           ),
+                    //                         );
+                    //                       },
+                    //                     ).toList(),
+                    //                   ),
+                    //                 ));
+                    //     } else {
+                    //       return Center(
+                    //         child: Text(
+                    //           'No data found',
+                    //           style: TextStyle(color: Colors.red),
+                    //         ),
+                    //       );
+                    //     }
+                    //   },
+                    // );
+                  }
+                }),
+                SizedBox(
+                  height: 10,
                 ),
               ],
             ),

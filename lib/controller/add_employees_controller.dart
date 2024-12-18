@@ -128,15 +128,15 @@ class AddEmployeesController extends GetxController {
     }
 
     await _fireStore
-        .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
-        .doc(_loginController.emailController.value.text)
+        .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+        .doc(_userActivitiesController.companyName.value.toUpperCase())
         .collection(collectionName)
         .add({
       //    "workEmail": emailController.text,
       "username": usernameController.text,
       "firstName": firstNameController.text,
       "lastName": lastNameController.text,
-      "role": role.value
+      // "role": role.value
     }).then((value) {
       addingEmployee.value = false;
 

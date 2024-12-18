@@ -12,7 +12,8 @@ import 'package:task_management_app/widgets/select_option.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class CreateTask extends StatelessWidget {
-  CreateTask({super.key});
+  final bool forAdmin;
+  CreateTask({super.key, required this.forAdmin});
 
   CreateTaskController createTaskController = Get.put(CreateTaskController());
 
@@ -136,60 +137,61 @@ class CreateTask extends StatelessWidget {
                   SizedBox(
                     height: 20.0,
                   ),
-                  Text(
-                    "Board & Section",
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Sample Board",
-                        style: TextStyle(
-                            fontSize: 15.0, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        width: 5.0,
-                      ),
-                      Image.asset(
-                        "assets/images/filled_thin_chevron_round_right_icon.png",
-                        width: 20.0,
-                        height: 20.0,
-                        color: const Color.fromARGB(255, 222, 222, 222),
-                      ),
-                      SizedBox(
-                        width: 15.0,
-                      ),
-                      Obx(() => DropdownButtonHideUnderline(
-                            child: DropdownButton(
-                              value: createTaskController.selectedSection.value,
-                              icon: Container(
-                                  margin: const EdgeInsets.only(right: 10.0),
-                                  child: Icon(Icons.arrow_drop_down_rounded)),
-                              items: createTaskController.sections
-                                  .map<DropdownMenuItem<String>>(
-                                (section) {
-                                  return DropdownMenuItem(
-                                      value: section,
-                                      child: Padding(
-                                        padding: EdgeInsets.only(left: 10.0),
-                                        child: Text(section),
-                                      ));
-                                },
-                              ).toList(),
-                              onChanged: (value) {
-                                createTaskController.selectedSection.value =
-                                    value.toString();
-                                createTaskController.isSectionSelected.value =
-                                    true;
-                              },
-                            ),
-                          )),
-                    ],
-                  ),
+                  // Text(
+                  //   "Board & Section",
+                  //   style: TextStyle(fontSize: 16.0),
+                  // ),
+                  // SizedBox(
+                  //   height: 10.0,
+                  // ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.start,
+                  //   children: [
+                  //     Text(
+                  //       "Sample Board",
+                  //       style: TextStyle(
+                  //           fontSize: 15.0, fontWeight: FontWeight.bold),
+                  //     ),
+                  //     SizedBox(
+                  //       width: 5.0,
+                  //     ),
+                  //     Image.asset(
+                  //       "assets/images/filled_thin_chevron_round_right_icon.png",
+                  //       width: 20.0,
+                  //       height: 20.0,
+                  //       color: const Color.fromARGB(255, 222, 222, 222),
+                  //     ),
+                  //     SizedBox(
+                  //       width: 15.0,
+                  //     ),
+                  //     Obx(() => DropdownButtonHideUnderline(
+                  //           child: DropdownButton(
+                  //             value: createTaskController.selectedSection.value,
+                  //             icon: Container(
+                  //                 margin: const EdgeInsets.only(right: 10.0),
+                  //                 child: Icon(Icons.arrow_drop_down_rounded)),
+                  //             items: createTaskController.sections
+                  //                 .map<DropdownMenuItem<String>>(
+                  //               (section) {
+                  //                 return DropdownMenuItem(
+                  //                     value: section,
+                  //                     child: Padding(
+                  //                       padding: EdgeInsets.only(left: 10.0),
+                  //                       child: Text(section),
+                  //                     ));
+                  //               },
+                  //             ).toList(),
+                  //             onChanged: (value) {
+                  //               createTaskController.selectedSection.value =
+                  //                   value.toString();
+                  //               createTaskController.isSectionSelected.value =
+                  //                   true;
+                  //             },
+                  //           ),
+                  //         )),
+                  //   ],
+                  // ),
+
                   // SizedBox(
                   //   height: 10.0,
                   // ),
@@ -251,69 +253,74 @@ class CreateTask extends StatelessWidget {
                     ],
                   ),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.yellow,
-                        ),
-                        child: Image.asset(
-                          "assets/images/icons8_decision_100.png",
-                          color: Colors.white,
-                          height: 20.0,
-                          width: 20.0,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      Obx(
-                        () => Text(
-                          createTaskController.taskLabel.value,
-                          style: TextStyle(
-                            fontSize: 15.0,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      DropdownButtonHideUnderline(
-                        child: Obx(
-                          () => DropdownButton(
-                            value: createTaskController.assignedTo.value,
-                            icon: Container(
-                                margin: const EdgeInsets.only(right: 10.0),
-                                child: Icon(Icons.arrow_drop_down_rounded)),
-                            items: createTaskController.employeesToAssign
-                                .map<DropdownMenuItem<String>>(
-                              (employee) {
-                                return DropdownMenuItem(
-                                    value: employee,
-                                    child: Padding(
-                                      padding: EdgeInsets.only(left: 10.0),
-                                      child: Text(
-                                        employee,
-                                        // style: TextStyle(
-                                        //     fontWeight: FontWeight.normal),
-                                      ),
-                                    ));
-                              },
-                            ).toList(),
-                            onChanged: (value) {
-                              createTaskController.assignedTo.value =
-                                  value.toString();
-                              createTaskController.isEmployeeAssigned.value =
-                                  true;
-                            },
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
+                  forAdmin == false
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.yellow,
+                              ),
+                              child: Image.asset(
+                                "assets/images/icons8_decision_100.png",
+                                color: Colors.white,
+                                height: 20.0,
+                                width: 20.0,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Obx(
+                              () => Text(
+                                createTaskController.taskLabel.value,
+                                style: TextStyle(
+                                  fontSize: 15.0,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            DropdownButtonHideUnderline(
+                              child: Obx(
+                                () => DropdownButton(
+                                  value: createTaskController.assignedTo.value,
+                                  icon: Container(
+                                      margin:
+                                          const EdgeInsets.only(right: 10.0),
+                                      child:
+                                          Icon(Icons.arrow_drop_down_rounded)),
+                                  items: createTaskController.employeesToAssign
+                                      .map<DropdownMenuItem<String>>(
+                                    (employee) {
+                                      return DropdownMenuItem(
+                                          value: employee,
+                                          child: Padding(
+                                            padding:
+                                                EdgeInsets.only(left: 10.0),
+                                            child: Text(
+                                              employee,
+                                              // style: TextStyle(
+                                              //     fontWeight: FontWeight.normal),
+                                            ),
+                                          ));
+                                    },
+                                  ).toList(),
+                                  onChanged: (value) {
+                                    createTaskController.assignedTo.value =
+                                        value.toString();
+                                    createTaskController
+                                        .isEmployeeAssigned.value = true;
+                                  },
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                      : SizedBox(),
 
                   // Obx(
                   //   () => SelectOption(
@@ -376,33 +383,9 @@ class CreateTask extends StatelessWidget {
                   //   ),
                   // ),
 
-                  Container(
-                    width: 170.0,
-                    decoration: BoxDecoration(
-                        // border: border,
-                        color: const Color.fromARGB(255, 234, 234, 234),
-                        borderRadius: BorderRadius.circular(15.0)),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          "assets/images/icons8_attachment_100.png",
-                          width: 20.0,
-                          height: 20.0,
-                        ),
-                        SizedBox(
-                          width: 5.0,
-                        ),
-                        Text("Add Attachment")
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(
-                    height: 20.0,
-                  ),
+                  // SizedBox(
+                  //   height: 20.0,
+                  // ),
                   // Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                   //   Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                   //     Icon(
@@ -687,41 +670,55 @@ class CreateTask extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 5.0,
-                  ),
+
                   Obx(() {
-                    String text = "You want to repeat this task on ";
-                    repeatTaskController.selectedDays.forEach(
-                      (element) {
-                        text += "$element, ";
-                      },
-                    );
+                    if (repeatTaskController.dataSetForRepeatTask.value) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 5.0,
+                          ),
+                          Obx(() {
+                            String text = "You want to repeat this task ";
+                            repeatTaskController.selectedDays.forEach(
+                              (element) {
+                                text += "$element, ";
+                              },
+                            );
 
-                    text +=
-                        " on ${repeatTaskController.selectedTab.value} basis";
-                    return Text(text);
+                            text +=
+                                " on ${repeatTaskController.selectedTab.value} basis";
+                            return Text(text);
+                          }),
+                          SizedBox(
+                            height: 5.0,
+                          ),
+                          GetBuilder<RepeatTaskController>(
+                            builder: (controller) {
+                              if (controller.selectedOption ==
+                                  "Do not stop repeating this task") {
+                                return Text(
+                                    "You choose to not stop repeating task");
+                              } else {
+                                return Text(
+                                    "This repeating task will stop on ${controller.repeatTaskDateEditingController.value.text}");
+                              }
+                            },
+                          ),
+                          SizedBox(
+                            height: 5.0,
+                          ),
+                          Obx(() => Text(
+                              "Remainder is set on ${repeatTaskController.setRemainderOptionController.value.text} due date")),
+                        ],
+                      );
+                    } else {
+                      return SizedBox();
+                    }
                   }),
-                  SizedBox(
-                    height: 5.0,
-                  ),
-                  GetBuilder<RepeatTaskController>(
-                    builder: (controller) {
-                      if (controller.selectedOption ==
-                          "Do not stop repeating this task") {
-                        return Text("You choose to not stop repeating task");
-                      } else {
-                        return Text(
-                            "This repeating task will stop on ${controller.repeatTaskDateEditingController.value.text}");
-                      }
-                    },
-                  ),
 
-                  SizedBox(
-                    height: 5.0,
-                  ),
-                  Obx(() => Text(
-                      "Remainder is set on ${repeatTaskController.setRemainderOptionController.value.text} start date")),
                   SizedBox(
                     height: 25.0,
                   ),
@@ -815,72 +812,107 @@ class CreateTask extends StatelessWidget {
                   //   ),
                   // ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      GestureDetector(
-                          onTap: () {
-                            Get.back();
-                          },
-                          child: ButtonWidget(
-                              isLoading: false,
-                              width: 90.0,
-                              color: Colors.white,
-                              textColor: Get.theme.primaryColor,
-                              // borderRadius: BorderRadius.circular(5.0),
-                              border: Border.all(
-                                color: Get.theme.primaryColor,
+                      Container(
+                        //  width: 170.0,
+                        decoration: BoxDecoration(
+                            // border: border,
+                            color: const Color.fromARGB(255, 234, 234, 234),
+                            borderRadius: BorderRadius.circular(15.0)),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/images/icons8_attachment_100.png",
+                              width: 21.0,
+                              height: 21.0,
+                            ),
+                            SizedBox(
+                              width: 5.0,
+                            ),
+                            Text(
+                              "Add Attachment",
+                              style: TextStyle(
+                                fontSize: 16,
                               ),
-                              text: "Cancel")
-                          //  Container(
-                          //   padding: EdgeInsets.symmetric(
-                          //       horizontal: 15.0, vertical: 8.0),
-                          //   decoration: BoxDecoration(
-                          //     borderRadius: BorderRadius.circular(5.0),
-                          //     border: Border.all(color: Colors.blue),
-                          //   ),
-                          //   child: Text(
-                          //     "Cancel",
-                          //     style: TextStyle(color: Colors.blue),
-                          //   ),
-                          // ),
-                          ),
-                      SizedBox(
-                        width: 10.0,
+                            )
+                          ],
+                        ),
                       ),
-                      GestureDetector(
-                          onTap: () {
-                            if (_formKey.currentState!.validate()) {
-                              createTaskController.appointments.add(Appointment(
-                                  isAllDay: false,
-                                  startTime: DateTime.parse(
-                                      startDateEditingController.text),
-                                  endTime: DateTime.parse(
-                                      dueDateEditingController.text),
-                                  color: getColor(),
-                                  subject: taskNameController.text));
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                              onTap: () {
+                                Get.back();
+                              },
+                              child: ButtonWidget(
+                                  isLoading: false,
+                                  width: 81.0,
+                                  color: Colors.white,
+                                  textColor: Get.theme.primaryColor,
+                                  // borderRadius: BorderRadius.circular(5.0),
+                                  border: Border.all(
+                                    color: Get.theme.primaryColor,
+                                  ),
+                                  text: "Cancel")
+                              //  Container(
+                              //   padding: EdgeInsets.symmetric(
+                              //       horizontal: 15.0, vertical: 8.0),
+                              //   decoration: BoxDecoration(
+                              //     borderRadius: BorderRadius.circular(5.0),
+                              //     border: Border.all(color: Colors.blue),
+                              //   ),
+                              //   child: Text(
+                              //     "Cancel",
+                              //     style: TextStyle(color: Colors.blue),
+                              //   ),
+                              // ),
+                              ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          GestureDetector(
+                              onTap: () {
+                                if (_formKey.currentState!.validate()) {
+                                  createTaskController
+                                      .appointments
+                                      .add(Appointment(
+                                          isAllDay: false,
+                                          startTime: DateTime.parse(
+                                              startDateEditingController.text),
+                                          endTime: DateTime.parse(
+                                              dueDateEditingController.text),
+                                          color: getColor(),
+                                          subject: taskNameController.text));
 
-                              Get.back();
-                            }
-                          },
-                          child: ButtonWidget(
-                              isLoading: false,
-                              width: 90.0,
-                              text: "Create",
-                              textColor: Colors.white,
-                              color: Get.theme.primaryColor)
-                          //  Container(
-                          //   padding: EdgeInsets.symmetric(
-                          //       horizontal: 18.0, vertical: 8.0),
-                          //   decoration: BoxDecoration(
-                          //     borderRadius: BorderRadius.circular(5.0),
-                          //     color: Colors.blue,
-                          //   ),
-                          //   child: Text(
-                          //     "Create",
-                          //     style: TextStyle(color: Colors.white),
-                          //   ),
-                          // ),
-                          )
+                                  Get.back();
+                                }
+                              },
+                              child: ButtonWidget(
+                                  isLoading: false,
+                                  width: 77.0,
+                                  text: "Create",
+                                  textColor: Colors.white,
+                                  color: Get.theme.primaryColor)
+                              //  Container(
+                              //   padding: EdgeInsets.symmetric(
+                              //       horizontal: 18.0, vertical: 8.0),
+                              //   decoration: BoxDecoration(
+                              //     borderRadius: BorderRadius.circular(5.0),
+                              //     color: Colors.blue,
+                              //   ),
+                              //   child: Text(
+                              //     "Create",
+                              //     style: TextStyle(color: Colors.white),
+                              //   ),
+                              // ),
+                              )
+                        ],
+                      ),
                     ],
                   )
 

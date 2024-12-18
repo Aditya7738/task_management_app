@@ -77,7 +77,9 @@ class _TasksOverviewState extends State<TasksOverview> {
           actions: [
             GestureDetector(
               onTap: () {
-                Get.to(() => CreateTask());
+                Get.to(() => CreateTask(
+                      forAdmin: false,
+                    ));
               },
               child: Container(
                 alignment: Alignment.center,

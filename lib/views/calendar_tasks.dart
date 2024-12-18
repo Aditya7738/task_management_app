@@ -105,7 +105,9 @@ class _CalendarTasksState extends State<CalendarTasks>
             actions: [
               InkWell(
                   onTap: () {
-                    Get.to(CreateTask());
+                    Get.to(CreateTask(
+                      forAdmin: false,
+                    ));
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8.0),

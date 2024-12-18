@@ -97,6 +97,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
+  custom_radio_group_list:
+    dependency: "direct main"
+    description:
+      name: custom_radio_group_list
+      sha256: "7d8194d8a7a6cad7adb39f31b7edb8160d9a9c74fbbff836d5cebe6e045f23c0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.2"
   dropdown_button2:
     dependency: "direct main"
     description:

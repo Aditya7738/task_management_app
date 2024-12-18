@@ -37,7 +37,8 @@ class SignupController extends GetxController {
     creatingAccount.value = true;
     await auth
         .createUserWithEmailAndPassword(
-            email: emailController.text, password: passwordController.text)
+            email: emailController.text.trim(),
+            password: passwordController.text.trim())
         .then(
       (value) async {
         Get.snackbar("Account is created successfully", "",
@@ -106,7 +107,7 @@ class SignupController extends GetxController {
   Future<void> createUserInDB() async {
     await _fireStore
         .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-        .doc(companyNameController.text)
+        .doc(companyNameController.text.trim())
         .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
         .add({
       "workEmail": emailController.text,
