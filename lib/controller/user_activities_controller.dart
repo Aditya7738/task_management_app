@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_management_app/constants/database_references.dart';
@@ -21,34 +22,109 @@ class UserActivitiesController extends GetxController {
   late Stream<QuerySnapshot<Map<String, dynamic>>> managersCollection;
   late Stream<QuerySnapshot<Map<String, dynamic>>> employeesCollection;
 
-  Stream<QuerySnapshot<Map<String, dynamic>>>? getManagersCollection() {
+  CollectionReference<Map<String, dynamic>> getManagerCollection() {
     return _fireStore
         .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
         .doc(companyName.value)
-        .collection(DatabaseReferences.MANAGERS_COLLECTION_REFERENCE)
-        .snapshots();
+        .collection(DatabaseReferences.MANAGERS_COLLECTION_REFERENCE);
   }
 
-  Future<QuerySnapshot<Map<String, dynamic>>> getFutureManagersCollection() {
+  RxBool deletingProfile = false.obs;
+
+  Future<void> deleteProfile(DocumentSnapshot<Object?> document) async {
+    deletingProfile.value = true;
+    await document.reference.delete().then(
+      (value) {
+        deletingProfile.value = false;
+        Get.back();
+        Get.snackbar("Selected profile deleted successfully", "",
+            colorText: Colors.white,
+            backgroundColor: Get.theme.primaryColor,
+            duration: Duration(seconds: 3),
+            borderRadius: 20.0,
+            snackPosition: SnackPosition.TOP);
+      },
+    ).onError((error, stackTrace) {
+      print("Firebase Error: $error");
+
+      String cleanedError =
+          error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+      //cleanedText.trim();
+
+      deletingProfile.value = false;
+      Get.snackbar("Error", cleanedError,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: Duration(seconds: 5),
+          borderRadius: 20.0,
+          snackPosition: SnackPosition.TOP);
+    });
+  }
+
+  RxBool updatingProfile = false.obs;
+
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+
+  Future<void> updateProfile(DocumentSnapshot<Object?> document) async {
+    updatingProfile.value = true;
+    await document.reference.update({
+      "firstName": firstNameController.text,
+      "lastName": lastNameController.text,
+    }).then(
+      (value) {
+        updatingProfile.value = false;
+        Get.back();
+        Get.snackbar("Selected profile updated successfully", "",
+            colorText: Colors.white,
+            backgroundColor: Get.theme.primaryColor,
+            duration: Duration(seconds: 3),
+            borderRadius: 20.0,
+            snackPosition: SnackPosition.TOP);
+      },
+    ).onError(
+      (error, stackTrace) {
+        print("Firebase Error: $error");
+
+        String cleanedError =
+            error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+        //cleanedText.trim();
+
+        updatingProfile.value = false;
+        Get.snackbar("Error", cleanedError,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: Duration(seconds: 5),
+            borderRadius: 20.0,
+            snackPosition: SnackPosition.TOP);
+      },
+    );
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>>? getManagersData() {
+    return getManagerCollection().snapshots();
+  }
+
+  // Future<QuerySnapshot<Map<String, dynamic>>> getFutureManagersCollection() {
+  //   return _fireStore
+  //       .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+  //       .doc(companyName.value)
+  //       .collection(DatabaseReferences.MANAGERS_COLLECTION_REFERENCE)
+  //       .get();
+  // }
+
+  // Future<QuerySnapshot<Map<String, dynamic>>> getFutureEmployeesCollection() {
+  //   return _fireStore
+  //       .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+  //       .doc(companyName.value)
+  //       .collection(DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE)
+  //       .get();
+  // }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>>? getEmployeeCollection() {
     return _fireStore
         .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
         .doc(companyName.value)
-        .collection(DatabaseReferences.MANAGERS_COLLECTION_REFERENCE)
-        .get();
-  }
-
-  Future<QuerySnapshot<Map<String, dynamic>>> getFutureEmployeesCollection() {
-    return _fireStore
-        .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-        .doc(companyName.value)
-        .collection(DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE)
-        .get();
-  }
-
-  getEmployeeCollection() async {
-    employeesCollection = _fireStore
-        .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-        .doc(await getCompanyName())
         .collection(DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE)
         .snapshots();
   }

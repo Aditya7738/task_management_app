@@ -224,7 +224,10 @@ class _LoginPageState extends State<LoginPage> {
           ],
         );
       },
-    );
+    ).then((value) {
+      loginController.resetUsernameController.clear();
+      loginController.resetCompanyController.clear();
+    });
   }
 
   @override

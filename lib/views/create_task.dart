@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -13,16 +14,17 @@ import 'package:icons_plus/icons_plus.dart';
 
 class CreateTask extends StatelessWidget {
   final bool forAdmin;
-  CreateTask({super.key, required this.forAdmin});
+  DocumentSnapshot<Object?>? specificDocumentOfUser;
+  CreateTask({super.key, required this.forAdmin, this.specificDocumentOfUser});
 
   CreateTaskController createTaskController = Get.put(CreateTaskController());
 
   DateTime selectedDate = DateTime.now();
 
-  var taskNameController = TextEditingController();
-  var remainderController = TextEditingController();
-  var startDateEditingController = TextEditingController();
-  var dueDateEditingController = TextEditingController();
+  // TextEditingController taskNameController = TextEditingController();
+  // TextEditingController remainderController = TextEditingController();
+  // TextEditingController startDateEditingController = TextEditingController();
+  // TextEditingController dueDateEditingController = TextEditingController();
 
   Future<String> selectedTime(BuildContext context) async {
     TimeOfDay? timeOfDay = await showTimePicker(
@@ -86,7 +88,7 @@ class CreateTask extends StatelessWidget {
                     style: TextStyle(fontSize: FontSizes.textFormFieldFontSize),
                     keyboardType: TextInputType.name,
                     validator: ValidationHelper.nullOrEmptyString,
-                    controller: taskNameController,
+                    controller: createTaskController.taskNameController,
                     decoration: InputDecoration(
                       labelStyle:
                           TextStyle(fontSize: FontSizes.textFormFieldFontSize),
@@ -98,103 +100,14 @@ class CreateTask extends StatelessWidget {
                               BorderSide(color: Colors.blue, width: 2.0),
                           borderRadius:
                               BorderRadius.all(Radius.circular(10.0))),
-                      // focusedBorder: OutlineInputBorder(
-                      //     borderRadius: BorderRadius.circular(10.0),
-                      //     borderSide:
-                      //         BorderSide(color: Colors.blue, width: 2.0))
+
                       errorStyle: TextStyle(fontSize: 15.0, color: Colors.red),
                     ),
                   ),
-                  // SizedBox(
-                  //   height: 20.0,
-                  // ),
-                  // Text(
-                  //   "Add Task notes",
-                  //   style: TextStyle(color: Colors.grey, fontSize: 16.0),
-                  // ),
-                  // SizedBox(
-                  //   height: 20.0,
-                  // ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.start,
-                  //   children: [
-                  //     Image.asset(
-                  //       "assets/images/add_round_icon.png",
-                  //       width: 18.0,
-                  //       height: 18.0,
-                  //       color: Colors.blue,
-                  //     ),
-                  //     SizedBox(
-                  //       width: 10.0,
-                  //     ),
-                  //     Text(
-                  //       "Add Checklist",
-                  //       style: TextStyle(color: Colors.blue, fontSize: 16.0),
-                  //     ),
-                  //   ],
-                  // ),
 
                   SizedBox(
                     height: 20.0,
                   ),
-                  // Text(
-                  //   "Board & Section",
-                  //   style: TextStyle(fontSize: 16.0),
-                  // ),
-                  // SizedBox(
-                  //   height: 10.0,
-                  // ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.start,
-                  //   children: [
-                  //     Text(
-                  //       "Sample Board",
-                  //       style: TextStyle(
-                  //           fontSize: 15.0, fontWeight: FontWeight.bold),
-                  //     ),
-                  //     SizedBox(
-                  //       width: 5.0,
-                  //     ),
-                  //     Image.asset(
-                  //       "assets/images/filled_thin_chevron_round_right_icon.png",
-                  //       width: 20.0,
-                  //       height: 20.0,
-                  //       color: const Color.fromARGB(255, 222, 222, 222),
-                  //     ),
-                  //     SizedBox(
-                  //       width: 15.0,
-                  //     ),
-                  //     Obx(() => DropdownButtonHideUnderline(
-                  //           child: DropdownButton(
-                  //             value: createTaskController.selectedSection.value,
-                  //             icon: Container(
-                  //                 margin: const EdgeInsets.only(right: 10.0),
-                  //                 child: Icon(Icons.arrow_drop_down_rounded)),
-                  //             items: createTaskController.sections
-                  //                 .map<DropdownMenuItem<String>>(
-                  //               (section) {
-                  //                 return DropdownMenuItem(
-                  //                     value: section,
-                  //                     child: Padding(
-                  //                       padding: EdgeInsets.only(left: 10.0),
-                  //                       child: Text(section),
-                  //                     ));
-                  //               },
-                  //             ).toList(),
-                  //             onChanged: (value) {
-                  //               createTaskController.selectedSection.value =
-                  //                   value.toString();
-                  //               createTaskController.isSectionSelected.value =
-                  //                   true;
-                  //             },
-                  //           ),
-                  //         )),
-                  //   ],
-                  // ),
-
-                  // SizedBox(
-                  //   height: 10.0,
-                  // ),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -225,26 +138,30 @@ class CreateTask extends StatelessWidget {
                               createTaskController.selectedStatus.value =
                                   value.toString();
 
-                              switch (value.toString()) {
-                                case "Assigned":
-                                  createTaskController.taskLabel.value =
-                                      "Assigned to";
-                                  break;
-                                case "In progress":
-                                  createTaskController.taskLabel.value =
-                                      "In progress by";
-                                  break;
-                                case "Completed":
-                                  createTaskController.taskLabel.value =
-                                      "Completed by";
-                                  break;
-                                case "Hold":
-                                  createTaskController.taskLabel.value =
-                                      "Hold by";
-                                  break;
-                                default:
-                                  createTaskController.taskLabel.value =
-                                      "Assigned to";
+                              createTaskController.statusUpdated.value = true;
+
+                              if (forAdmin == false) {
+                                switch (value.toString()) {
+                                  case "Assigned":
+                                    createTaskController.taskLabel.value =
+                                        "Assigned to";
+                                    break;
+                                  case "In progress":
+                                    createTaskController.taskLabel.value =
+                                        "In progress by";
+                                    break;
+                                  case "Completed":
+                                    createTaskController.taskLabel.value =
+                                        "Completed by";
+                                    break;
+                                  case "Hold":
+                                    createTaskController.taskLabel.value =
+                                        "Hold by";
+                                    break;
+                                  default:
+                                    createTaskController.taskLabel.value =
+                                        "Assigned to";
+                                }
                               }
                             },
                           ),
@@ -252,72 +169,98 @@ class CreateTask extends StatelessWidget {
                       ),
                     ],
                   ),
+                  Obx(() {
+                    if (createTaskController.showStatusError.value) {
+                      return Text(
+                        "You don't have set status of task!",
+                        style: TextStyle(fontSize: 14.0, color: Colors.red),
+                      );
+                    } else {
+                      return SizedBox();
+                    }
+                  }),
 
                   forAdmin == false
-                      ? Row(
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Container(
-                              padding: EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.yellow,
-                              ),
-                              child: Image.asset(
-                                "assets/images/icons8_decision_100.png",
-                                color: Colors.white,
-                                height: 20.0,
-                                width: 20.0,
-                              ),
-                            ),
                             SizedBox(
-                              width: 10.0,
+                              height: 20.0,
                             ),
-                            Obx(
-                              () => Text(
-                                createTaskController.taskLabel.value,
-                                style: TextStyle(
-                                  fontSize: 15.0,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(8.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.yellow,
+                                  ),
+                                  child: Image.asset(
+                                    "assets/images/icons8_decision_100.png",
+                                    color: Colors.white,
+                                    height: 20.0,
+                                    width: 20.0,
+                                  ),
                                 ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10.0,
-                            ),
-                            DropdownButtonHideUnderline(
-                              child: Obx(
-                                () => DropdownButton(
-                                  value: createTaskController.assignedTo.value,
-                                  icon: Container(
-                                      margin:
-                                          const EdgeInsets.only(right: 10.0),
-                                      child:
-                                          Icon(Icons.arrow_drop_down_rounded)),
-                                  items: createTaskController.employeesToAssign
-                                      .map<DropdownMenuItem<String>>(
-                                    (employee) {
-                                      return DropdownMenuItem(
-                                          value: employee,
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsets.only(left: 10.0),
-                                            child: Text(
-                                              employee,
-                                              // style: TextStyle(
-                                              //     fontWeight: FontWeight.normal),
-                                            ),
-                                          ));
-                                    },
-                                  ).toList(),
-                                  onChanged: (value) {
-                                    createTaskController.assignedTo.value =
-                                        value.toString();
-                                    createTaskController
-                                        .isEmployeeAssigned.value = true;
-                                  },
+                                SizedBox(
+                                  width: 10.0,
                                 ),
-                              ),
-                            )
+                                Obx(
+                                  () => Text(
+                                    createTaskController.taskLabel.value,
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10.0,
+                                ),
+                                DropdownButtonHideUnderline(
+                                  child: Obx(
+                                    () => DropdownButton(
+                                      value:
+                                          createTaskController.assignedTo.value,
+                                      icon: Container(
+                                          margin: const EdgeInsets.only(
+                                              right: 10.0),
+                                          child: Icon(
+                                              Icons.arrow_drop_down_rounded)),
+                                      items: createTaskController
+                                          .employeesToAssign
+                                          .map<DropdownMenuItem<String>>(
+                                        (employee) {
+                                          return DropdownMenuItem(
+                                              value: employee,
+                                              child: Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10.0),
+                                                child: Text(
+                                                  employee,
+                                                  // style: TextStyle(
+                                                  //     fontWeight: FontWeight.normal),
+                                                ),
+                                              ));
+                                        },
+                                      ).toList(),
+                                      onChanged: (value) {
+                                        createTaskController.assignedTo.value =
+                                            value.toString();
+                                        createTaskController
+                                            .isEmployeeAssigned.value = true;
+                                      },
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                            Text(
+                              "You don't have set above feild!",
+                              style:
+                                  TextStyle(fontSize: 15.0, color: Colors.red),
+                            ),
                           ],
                         )
                       : SizedBox(),
@@ -415,41 +358,38 @@ class CreateTask extends StatelessWidget {
                   // const SizedBox(
                   //   height: 5.0,
                   // ),
-                  Container(
-                      height: 50.0,
-                      // alignment: Alignment.centerLeft,
-                      child: TextFormField(
-                        style: TextStyle(
-                            fontSize: FontSizes.textFormFieldFontSize),
-                        controller: startDateEditingController,
-                        keyboardType: TextInputType.datetime,
-                        onTap: () async {
-                          print("CALENDAR PRESSED");
+                  TextFormField(
+                    style: TextStyle(fontSize: FontSizes.textFormFieldFontSize),
+                    controller: createTaskController.startDateEditingController,
+                    keyboardType: TextInputType.datetime,
+                    validator: ValidationHelper.nullOrEmptyString,
+                    onTap: () async {
+                      print("CALENDAR PRESSED");
 
-                          startDateEditingController.text =
-                              await _selectedDate(context);
+                      createTaskController.startDateEditingController.text =
+                          await _selectedDate(context);
 
-                          createTaskController.isStartDateSelected.value = true;
-                        },
-                        decoration: InputDecoration(
-                          labelStyle: TextStyle(
-                              fontSize: FontSizes.textFormFieldFontSize),
-                          labelText: "Enter start date",
-                          // errorStyle:
-                          //     TextStyle(fontSize: 15.sp, color: Colors.red),
-                          suffixIcon: const Icon(
-                            Icons.calendar_month_outlined,
-                            size: 20.0,
+                      createTaskController.isStartDateSelected.value = true;
+                    },
+                    decoration: InputDecoration(
+                      labelStyle:
+                          TextStyle(fontSize: FontSizes.textFormFieldFontSize),
+                      labelText: "Enter start date",
+                      // errorStyle:
+                      //     TextStyle(fontSize: 15.sp, color: Colors.red),
+                      suffixIcon: const Icon(
+                        Icons.calendar_month_outlined,
+                        size: 20.0,
+                      ),
+                      border: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.blue,
                           ),
-                          border: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.blue,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0))),
-                        ),
-                        maxLines: 1,
-                      )),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(10.0))),
+                    ),
+                    maxLines: 1,
+                  ),
 
                   SizedBox(
                     height: 20.0,
@@ -461,39 +401,36 @@ class CreateTask extends StatelessWidget {
                   // const SizedBox(
                   //   height: 5.0,
                   // ),
-                  Container(
-                      height: 50.0,
-                      // alignment: Alignment.centerLeft,
-                      child: TextFormField(
-                        style: TextStyle(
-                            fontSize: FontSizes.textFormFieldFontSize),
-                        controller: dueDateEditingController,
-                        keyboardType: TextInputType.datetime,
-                        onTap: () async {
-                          print("CALENDAR PRESSED");
+                  TextFormField(
+                    style: TextStyle(fontSize: FontSizes.textFormFieldFontSize),
+                    controller: createTaskController.dueDateEditingController,
+                    keyboardType: TextInputType.datetime,
+                    validator: ValidationHelper.nullOrEmptyString,
+                    onTap: () async {
+                      print("CALENDAR PRESSED");
 
-                          dueDateEditingController.text =
-                              await _selectedDate(context);
-                        },
-                        decoration: InputDecoration(
-                          labelStyle: TextStyle(
-                              fontSize: FontSizes.textFormFieldFontSize),
-                          labelText: "Enter due date",
-                          // errorStyle:
-                          //     TextStyle(fontSize: 15.sp, color: Colors.red),
-                          suffixIcon: const Icon(
-                            Icons.calendar_month_outlined,
-                            size: 20.0,
-                          ),
-                          // border: const OutlineInputBorder(
-                          //     borderSide: BorderSide(
-                          //       color: Colors.blue,
-                          //     ),
-                          //     borderRadius:
-                          //         BorderRadius.all(Radius.circular(10.0))),
-                        ),
-                        maxLines: 1,
-                      )),
+                      createTaskController.dueDateEditingController.text =
+                          await _selectedDate(context);
+                    },
+                    decoration: InputDecoration(
+                      labelStyle:
+                          TextStyle(fontSize: FontSizes.textFormFieldFontSize),
+                      labelText: "Enter due date",
+                      // errorStyle:
+                      //     TextStyle(fontSize: 15.sp, color: Colors.red),
+                      suffixIcon: const Icon(
+                        Icons.calendar_month_outlined,
+                        size: 20.0,
+                      ),
+                      // border: const OutlineInputBorder(
+                      //     borderSide: BorderSide(
+                      //       color: Colors.blue,
+                      //     ),
+                      //     borderRadius:
+                      //         BorderRadius.all(Radius.circular(10.0))),
+                    ),
+                    maxLines: 1,
+                  ),
 
                   SizedBox(
                     height: 20.0,
@@ -506,38 +443,88 @@ class CreateTask extends StatelessWidget {
                   //   height: 5.0,
                   // ),
                   Container(
-                      height: 50.0,
-                      // alignment: Alignment.centerLeft,
-                      child: TextFormField(
-                        style: TextStyle(
+                    height: 75.0,
+                    child: TextFormField(
+                      validator: ValidationHelper.nullOrEmptyString,
+                      style:
+                          TextStyle(fontSize: FontSizes.textFormFieldFontSize),
+                      controller:
+                          createTaskController.setRemainderOptionController,
+                      //keyboardType: TextInputType.name,
+                      decoration: InputDecoration(
+                        labelStyle: TextStyle(
                             fontSize: FontSizes.textFormFieldFontSize),
-                        controller: remainderController,
-                        keyboardType: TextInputType.datetime,
-                        onTap: () async {
-                          print("CLOCK PRESSED");
-
-                          remainderController.text =
-                              await selectedTime(context);
-                        },
-                        decoration: InputDecoration(
-                          // errorStyle:
-                          //     TextStyle(fontSize: 15.sp, color: Colors.red),
-                          suffixIcon: const Icon(
-                            Iconsax.clock_outline,
-                            size: 20.0,
+                        labelText: "Set remainder",
+                        suffix: DropdownButton(
+                          borderRadius: BorderRadius.circular(10.0),
+                          iconSize: 25.0,
+                          icon: Container(
+                            margin: const EdgeInsets.only(right: 10.0),
+                            child:
+                                const Icon(Icons.keyboard_arrow_down_rounded),
                           ),
-                          labelStyle: TextStyle(
-                              fontSize: FontSizes.textFormFieldFontSize),
-                          labelText: "Set remainder",
-                          // border: const OutlineInputBorder(
-                          //     borderSide: BorderSide(
-                          //       color: Colors.blue,
-                          //     ),
-                          //     borderRadius:
-                          //         BorderRadius.all(Radius.circular(10.0))),
+                          items: repeatTaskController.setRemainderOptions
+                              .map<DropdownMenuItem<String>>(
+                                  (setRemainderOption) {
+                            return DropdownMenuItem<String>(
+                              value: setRemainderOption,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 10.0,
+                                ),
+                                child: Text(setRemainderOption),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            createTaskController.setRemainderOptionController
+                                .text = value.toString();
+                          },
                         ),
-                        maxLines: 1,
-                      )),
+                        border: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 221, 221, 221),
+                            ),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0))),
+                      ),
+                      maxLines: 1,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+
+                  TextFormField(
+                    validator: ValidationHelper.nullOrEmptyString,
+                    style: TextStyle(fontSize: FontSizes.textFormFieldFontSize),
+                    controller: createTaskController.remainderController,
+                    keyboardType: TextInputType.datetime,
+                    onTap: () async {
+                      print("CLOCK PRESSED");
+
+                      createTaskController.remainderController.text =
+                          await selectedTime(context);
+                    },
+                    decoration: InputDecoration(
+                      // errorStyle:
+                      //     TextStyle(fontSize: 15.sp, color: Colors.red),
+                      suffixIcon: const Icon(
+                        Iconsax.clock_outline,
+                        size: 20.0,
+                      ),
+                      labelStyle:
+                          TextStyle(fontSize: FontSizes.textFormFieldFontSize),
+                      labelText: "Select time",
+                      // border: const OutlineInputBorder(
+                      //     borderSide: BorderSide(
+                      //       color: Colors.blue,
+                      //     ),
+                      //     borderRadius:
+                      //         BorderRadius.all(Radius.circular(10.0))),
+                    ),
+                    maxLines: 1,
+                  ),
 
                   SizedBox(
                     height: 15.0,
@@ -591,6 +578,16 @@ class CreateTask extends StatelessWidget {
                     ],
                   ),
 
+                  Obx(() {
+                    if (createTaskController.showPriorityError.value) {
+                      return Text(
+                        "You don't have set priority of task!",
+                        style: TextStyle(fontSize: 14.0, color: Colors.red),
+                      );
+                    } else {
+                      return SizedBox();
+                    }
+                  }),
                   SizedBox(
                     height: 10.0,
                   ),
@@ -753,64 +750,45 @@ class CreateTask extends StatelessWidget {
                   SizedBox(
                     height: 15.0,
                   ),
-                  // Text(
-                  //   "Assigned by",
-                  //   style: TextStyle(color: Colors.grey, fontSize: 13.0),
-                  // ),
-                  // const SizedBox(
-                  //   height: 5.0,
-                  // ),
-                  Container(
-                      height: 50.0,
-                      // alignment: Alignment.centerLeft,
-                      child: TextFormField(
-                        style: TextStyle(
-                            fontSize: FontSizes.textFormFieldFontSize),
-                        validator: ValidationHelper.nullOrEmptyString,
-                        //controller: remainderController,
-                        keyboardType: TextInputType.name,
-                        // onTap: () async {
-                        //   print("CLOCK PRESSED");
 
-                        //   remainderController.text = await selectedTime(context);
-                        // },
-                        decoration: InputDecoration(
-                          labelStyle: TextStyle(
-                              fontSize: FontSizes.textFormFieldFontSize),
-                          labelText: "Assigned by",
-                          // errorStyle:
-                          //     TextStyle(fontSize: 15.sp, color: Colors.red),
-                          suffixIcon: const Icon(
-                            Iconsax.profile_circle_bold,
-                            size: 20.0,
-                          ),
-                          border: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.blue,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0))),
-                        ),
-                        maxLines: 1,
-                      )),
+                  // Container(
+                  //     height: 50.0,
+                  //     // alignment: Alignment.centerLeft,
+                  //     child: TextFormField(
+                  //       style: TextStyle(
+                  //           fontSize: FontSizes.textFormFieldFontSize),
+                  //       validator: ValidationHelper.nullOrEmptyString,
+                  //       //controller: remainderController,
+                  //       keyboardType: TextInputType.name,
+                  //       // onTap: () async {
+                  //       //   print("CLOCK PRESSED");
+
+                  //       //   remainderController.text = await selectedTime(context);
+                  //       // },
+                  //       decoration: InputDecoration(
+                  //         labelStyle: TextStyle(
+                  //             fontSize: FontSizes.textFormFieldFontSize),
+                  //         labelText: "Assigned by",
+                  //         // errorStyle:
+                  //         //     TextStyle(fontSize: 15.sp, color: Colors.red),
+                  //         suffixIcon: const Icon(
+                  //           Iconsax.profile_circle_bold,
+                  //           size: 20.0,
+                  //         ),
+                  //         border: const OutlineInputBorder(
+                  //             borderSide: BorderSide(
+                  //               color: Colors.blue,
+                  //             ),
+                  //             borderRadius:
+                  //                 BorderRadius.all(Radius.circular(10.0))),
+                  //       ),
+                  //       maxLines: 1,
+                  //     )),
 
                   SizedBox(
                     height: 20.0,
                   ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: [
-                  // Padding(
-                  //   padding: const EdgeInsets.only(left: 15.0),
-                  //   child: GestureDetector(
-                  //     onTap: () {},
-                  //     child: Text(
-                  //       "Clear",
-                  //       style:
-                  //           TextStyle(decoration: TextDecoration.underline),
-                  //     ),
-                  //   ),
-                  // ),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -875,42 +853,52 @@ class CreateTask extends StatelessWidget {
                           SizedBox(
                             width: 10.0,
                           ),
+                          // Obx(
+                          //   () =>
                           GestureDetector(
                               onTap: () {
-                                if (_formKey.currentState!.validate()) {
-                                  createTaskController
-                                      .appointments
-                                      .add(Appointment(
-                                          isAllDay: false,
-                                          startTime: DateTime.parse(
-                                              startDateEditingController.text),
-                                          endTime: DateTime.parse(
-                                              dueDateEditingController.text),
-                                          color: getColor(),
-                                          subject: taskNameController.text));
+                                if (createTaskController
+                                        .isPioritySelected.value ==
+                                    false) {
+                                  createTaskController.showPriorityError.value =
+                                      true;
+                                }
 
-                                  Get.back();
+                                if (createTaskController.statusUpdated.value ==
+                                    false) {
+                                  createTaskController.showStatusError.value =
+                                      true;
+                                }
+
+                                if (_formKey.currentState!.validate()) {
+                                  // createTaskController.appointments.add(
+                                  //     Appointment(
+                                  //         isAllDay: false,
+                                  //         startTime: DateTime.parse(
+                                  //             createTaskController
+                                  //                 .startDateEditingController
+                                  //                 .text),
+                                  //         endTime: DateTime.parse(
+                                  //             createTaskController
+                                  //                 .dueDateEditingController
+                                  //                 .text),
+                                  //         color: getColor(),
+                                  //         subject: createTaskController
+                                  //             .taskNameController.text));
+
+                                  //  Get.back();
+                                  createTaskController.createTaskOfManager(
+                                      specificDocumentOfUser);
                                 }
                               },
                               child: ButtonWidget(
-                                  isLoading: false,
+                                  isLoading:
+                                      createTaskController.creatingTask.value,
                                   width: 77.0,
                                   text: "Create",
                                   textColor: Colors.white,
-                                  color: Get.theme.primaryColor)
-                              //  Container(
-                              //   padding: EdgeInsets.symmetric(
-                              //       horizontal: 18.0, vertical: 8.0),
-                              //   decoration: BoxDecoration(
-                              //     borderRadius: BorderRadius.circular(5.0),
-                              //     color: Colors.blue,
-                              //   ),
-                              //   child: Text(
-                              //     "Create",
-                              //     style: TextStyle(color: Colors.white),
-                              //   ),
-                              // ),
-                              )
+                                  color: Get.theme.primaryColor)),
+                          //)
                         ],
                       ),
                     ],
