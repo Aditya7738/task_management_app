@@ -566,7 +566,7 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                               );
                             }).toList(),
                             onChanged: (value) {
-                              print("RELIGION ${value.toString()}");
+                              // print("RELIGION ${value.toString()}");
 
                               repeatTaskController.setRemainderOptionController
                                   .value.text = value.toString();

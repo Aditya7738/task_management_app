@@ -14,15 +14,17 @@ import 'package:icons_plus/icons_plus.dart';
 
 class CreateTask extends StatelessWidget {
   final bool forAdmin;
-  DocumentSnapshot<Object?>? specificDocumentOfUser;
-  CreateTask({super.key, required this.forAdmin, this.specificDocumentOfUser});
+//  DocumentSnapshot<Object?>? specificDocumentOfUser;
+  CreateTask({super.key, required this.forAdmin
+      //, this.specificDocumentOfUser
+      });
 
   CreateTaskController createTaskController = Get.put(CreateTaskController());
 
   DateTime selectedDate = DateTime.now();
 
   // TextEditingController taskNameController = TextEditingController();
-  // TextEditingController remainderController = TextEditingController();
+  // TextEditingController remainderTimeController = TextEditingController();
   // TextEditingController startDateEditingController = TextEditingController();
   // TextEditingController dueDateEditingController = TextEditingController();
 
@@ -366,8 +368,29 @@ class CreateTask extends StatelessWidget {
                     onTap: () async {
                       print("CALENDAR PRESSED");
 
-                      createTaskController.startDateEditingController.text =
-                          await _selectedDate(context);
+                      // createTaskController.startDateEditingController.text =
+                      //     await _selectedDate(context);
+
+                      createTaskController.startDate.value =
+                          await showDatePicker(
+                              context: context,
+                              initialDate: selectedDate,
+                              firstDate: DateTime(2024),
+                              lastDate: DateTime(2025));
+
+                      if (createTaskController.startDate.value != null) {
+                        print(
+                            " DATE ${createTaskController.startDate.value.toLocal().toString()}");
+                        // return "${ createTaskController.startDate.value.day}-${ createTaskController.startDate.value.month}-${ createTaskController.startDate.value.year}";
+                        createTaskController.startDateEditingController.text =
+                            createTaskController.startDate.value
+                                .toLocal()
+                                .toString()
+                                .split(" ")[0];
+                      } else {
+                        createTaskController.startDateEditingController.text =
+                            "00-00-0000";
+                      }
 
                       createTaskController.isStartDateSelected.value = true;
                     },
@@ -409,8 +432,28 @@ class CreateTask extends StatelessWidget {
                     onTap: () async {
                       print("CALENDAR PRESSED");
 
-                      createTaskController.dueDateEditingController.text =
-                          await _selectedDate(context);
+                      // createTaskController.dueDateEditingController.text =
+                      //     await _selectedDate(context);
+
+                      createTaskController.dueDate.value = await showDatePicker(
+                          context: context,
+                          initialDate: selectedDate,
+                          firstDate: DateTime(2024),
+                          lastDate: DateTime(2025));
+
+                      if (createTaskController.dueDate.value != null) {
+                        print(
+                            " DATE ${createTaskController.dueDate.value.toLocal().toString()}");
+                        // return "${ createTaskController.dueDate.value.day}-${ createTaskController.dueDate.value.month}-${ createTaskController.dueDate.value.year}";
+                        createTaskController.dueDateEditingController.text =
+                            createTaskController.dueDate.value
+                                .toLocal()
+                                .toString()
+                                .split(" ")[0];
+                      } else {
+                        createTaskController.dueDateEditingController.text =
+                            "00-00-0000";
+                      }
                     },
                     decoration: InputDecoration(
                       labelStyle:
@@ -476,9 +519,71 @@ class CreateTask extends StatelessWidget {
                               ),
                             );
                           }).toList(),
-                          onChanged: (value) {
-                            createTaskController.setRemainderOptionController
-                                .text = value.toString();
+                          onChanged: (value) async {
+                            if (value.toString() == "Custom") {
+                              // createTaskController.setRemainderOptionController
+                              //     .text =
+                              //     if (await _selectedDate(context) >) {
+
+                              //     }
+                              //     await _selectedDate(context);
+
+                              final DateTime? picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: selectedDate,
+                                  firstDate: DateTime(2024),
+                                  lastDate: DateTime(2025));
+
+                              print("picked != null ${picked != null}");
+
+                              if (picked != null) {
+                                // if (picked.compareTo(createTaskController.dueDate)  &&
+                                //     picked! > createTaskController.startDate) {}
+
+                                print(
+                                    "picked.compareTo(createTaskController.dueDate.value) !=  ${picked.compareTo(createTaskController.dueDate.value) != 1}");
+
+                                if (picked.compareTo(
+                                        createTaskController.dueDate.value) !=
+                                    1) {
+                                  Get.snackbar("Error",
+                                      "Remainder date should be grater than start date",
+                                      backgroundColor: Colors.red,
+                                      colorText: Colors.white,
+                                      duration: Duration(seconds: 5),
+                                      borderRadius: 20.0,
+                                      snackPosition: SnackPosition.TOP);
+                                } else if (picked.compareTo(
+                                        createTaskController.startDate.value) !=
+                                    -1) {
+                                  Get.snackbar("Error",
+                                      "Remainder date should be less than due date",
+                                      backgroundColor: Colors.red,
+                                      colorText: Colors.white,
+                                      duration: Duration(seconds: 5),
+                                      borderRadius: 20.0,
+                                      snackPosition: SnackPosition.TOP);
+                                } else {
+                                  createTaskController
+                                          .setRemainderOptionController.text =
+                                      picked.toLocal().toString().split(" ")[0];
+                                }
+                              }
+
+                              // if (picked != null) {
+                              //   print(" DATE ${picked.toLocal().toString()}");
+                              //   // return "${picked.day}-${picked.month}-${picked.year}";
+                              //   return picked
+                              //       .toLocal()
+                              //       .toString()
+                              //       .split(" ")[0];
+                              // } else {
+                              //   return "00-00-0000";
+                              // }
+                            } else {
+                              createTaskController.setRemainderOptionController
+                                  .text = value.toString();
+                            }
                           },
                         ),
                         border: const OutlineInputBorder(
@@ -498,12 +603,12 @@ class CreateTask extends StatelessWidget {
                   TextFormField(
                     validator: ValidationHelper.nullOrEmptyString,
                     style: TextStyle(fontSize: FontSizes.textFormFieldFontSize),
-                    controller: createTaskController.remainderController,
+                    controller: createTaskController.remainderTimeController,
                     keyboardType: TextInputType.datetime,
                     onTap: () async {
                       print("CLOCK PRESSED");
 
-                      createTaskController.remainderController.text =
+                      createTaskController.remainderTimeController.text =
                           await selectedTime(context);
                     },
                     decoration: InputDecoration(
@@ -525,6 +630,96 @@ class CreateTask extends StatelessWidget {
                     ),
                     maxLines: 1,
                   ),
+
+                  SizedBox(
+                    height: 30.0,
+                  ),
+
+                  GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        constraints: BoxConstraints.expand(
+                            width: Get.width, height: Get.height - 80),
+                        //  isDismissible: false,
+                        context: context,
+                        //showDragHandle: true,
+                        isScrollControlled: true,
+                        builder: (context) {
+                          return RepeatTaskForm();
+                        },
+                      );
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          "assets/images/refresh.png",
+                          width: 15.0,
+                          height: 15.0,
+                          color: Get.theme.primaryColor,
+                        ),
+                        SizedBox(
+                          width: 10.0,
+                        ),
+                        Text(
+                          "Repeat Task",
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            decorationColor: Get.theme.primaryColor,
+                            color: Get.theme.primaryColor,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+
+                  Obx(() {
+                    if (repeatTaskController.dataSetForRepeatTask.value) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 5.0,
+                          ),
+                          Obx(() {
+                            String text = "You want to repeat this task ";
+                            repeatTaskController.selectedDays.forEach(
+                              (element) {
+                                text += "$element, ";
+                              },
+                            );
+
+                            text +=
+                                " on ${repeatTaskController.selectedTab.value} basis";
+                            return Text(text);
+                          }),
+                          SizedBox(
+                            height: 5.0,
+                          ),
+                          GetBuilder<RepeatTaskController>(
+                            builder: (controller) {
+                              if (controller.selectedOption ==
+                                  "Do not stop repeating this task") {
+                                return Text(
+                                    "You choose to not stop repeating task");
+                              } else {
+                                return Text(
+                                    "This repeating task will stop on ${controller.repeatTaskDateEditingController.value.text}");
+                              }
+                            },
+                          ),
+                          SizedBox(
+                            height: 5.0,
+                          ),
+                          Obx(() => Text(
+                              "Remainder is set on ${repeatTaskController.setRemainderOptionController.value.text} due date")),
+                        ],
+                      );
+                    } else {
+                      return SizedBox();
+                    }
+                  }),
 
                   SizedBox(
                     height: 15.0,
@@ -639,84 +834,6 @@ class CreateTask extends StatelessWidget {
                   ),
 
                   SizedBox(
-                    height: 15.0,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      showModalBottomSheet(
-                        constraints: BoxConstraints.expand(
-                            width: Get.width, height: Get.height - 80),
-                        //  isDismissible: false,
-                        context: context,
-                        //showDragHandle: true,
-                        isScrollControlled: true,
-                        builder: (context) {
-                          return RepeatTaskForm();
-                        },
-                      );
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Image.asset("assets/images/refresh.png",
-                            width: 15.0, height: 15.0),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        Text("Repeat Task")
-                      ],
-                    ),
-                  ),
-
-                  Obx(() {
-                    if (repeatTaskController.dataSetForRepeatTask.value) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 5.0,
-                          ),
-                          Obx(() {
-                            String text = "You want to repeat this task ";
-                            repeatTaskController.selectedDays.forEach(
-                              (element) {
-                                text += "$element, ";
-                              },
-                            );
-
-                            text +=
-                                " on ${repeatTaskController.selectedTab.value} basis";
-                            return Text(text);
-                          }),
-                          SizedBox(
-                            height: 5.0,
-                          ),
-                          GetBuilder<RepeatTaskController>(
-                            builder: (controller) {
-                              if (controller.selectedOption ==
-                                  "Do not stop repeating this task") {
-                                return Text(
-                                    "You choose to not stop repeating task");
-                              } else {
-                                return Text(
-                                    "This repeating task will stop on ${controller.repeatTaskDateEditingController.value.text}");
-                              }
-                            },
-                          ),
-                          SizedBox(
-                            height: 5.0,
-                          ),
-                          Obx(() => Text(
-                              "Remainder is set on ${repeatTaskController.setRemainderOptionController.value.text} due date")),
-                        ],
-                      );
-                    } else {
-                      return SizedBox();
-                    }
-                  }),
-
-                  SizedBox(
                     height: 25.0,
                   ),
                   // Text(
@@ -729,8 +846,7 @@ class CreateTask extends StatelessWidget {
                   TextFormField(
                     maxLines: 4,
                     style: TextStyle(fontSize: FontSizes.textFormFieldFontSize),
-                    // controller:
-                    //     captureFormController.addressTextEditController.value,
+                    controller: createTaskController.remarkController,
                     keyboardType: TextInputType.multiline,
                     // validator: ValidationHelper.isFullAddress,
                     decoration: InputDecoration(
@@ -758,12 +874,12 @@ class CreateTask extends StatelessWidget {
                   //       style: TextStyle(
                   //           fontSize: FontSizes.textFormFieldFontSize),
                   //       validator: ValidationHelper.nullOrEmptyString,
-                  //       //controller: remainderController,
+                  //       //controller: remainderTimeController,
                   //       keyboardType: TextInputType.name,
                   //       // onTap: () async {
                   //       //   print("CLOCK PRESSED");
 
-                  //       //   remainderController.text = await selectedTime(context);
+                  //       //   remainderTimeController.text = await selectedTime(context);
                   //       // },
                   //       decoration: InputDecoration(
                   //         labelStyle: TextStyle(
@@ -853,24 +969,23 @@ class CreateTask extends StatelessWidget {
                           SizedBox(
                             width: 10.0,
                           ),
-                          // Obx(
-                          //   () =>
-                          GestureDetector(
-                              onTap: () {
-                                if (createTaskController
-                                        .isPioritySelected.value ==
-                                    false) {
-                                  createTaskController.showPriorityError.value =
-                                      true;
-                                }
+                          Obx(
+                            () => GestureDetector(
+                                onTap: () {
+                                  // if (createTaskController
+                                  //         .isPioritySelected.value ==
+                                  //     false) {
+                                  //   createTaskController.showPriorityError.value =
+                                  //       true;
+                                  // }
 
-                                if (createTaskController.statusUpdated.value ==
-                                    false) {
-                                  createTaskController.showStatusError.value =
-                                      true;
-                                }
+                                  // if (createTaskController.statusUpdated.value ==
+                                  //     false) {
+                                  //   createTaskController.showStatusError.value =
+                                  //       true;
+                                  // }
 
-                                if (_formKey.currentState!.validate()) {
+                                  // if (_formKey.currentState!.validate()) {
                                   // createTaskController.appointments.add(
                                   //     Appointment(
                                   //         isAllDay: false,
@@ -888,17 +1003,18 @@ class CreateTask extends StatelessWidget {
 
                                   //  Get.back();
                                   createTaskController.createTaskOfManager(
-                                      specificDocumentOfUser);
-                                }
-                              },
-                              child: ButtonWidget(
-                                  isLoading:
-                                      createTaskController.creatingTask.value,
-                                  width: 77.0,
-                                  text: "Create",
-                                  textColor: Colors.white,
-                                  color: Get.theme.primaryColor)),
-                          //)
+                                      //specificDocumentOfUser
+                                      );
+                                  // }
+                                },
+                                child: ButtonWidget(
+                                    isLoading:
+                                        createTaskController.creatingTask.value,
+                                    width: 77.0,
+                                    text: "Create",
+                                    textColor: Colors.white,
+                                    color: Get.theme.primaryColor)),
+                          )
                         ],
                       ),
                     ],

@@ -22,7 +22,7 @@ class RepeatTaskController extends GetxController {
   var setRemainderOptionController = TextEditingController().obs;
 
   List<String> setRemainderOptions = [
-    "On due date",
+    // "On due date",
     "1 day before",
     "2 days before",
     "3 days before",

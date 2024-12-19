@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:task_management_app/constants/fontsizes.dart';
+import 'package:task_management_app/controller/create_task_controller.dart';
 import 'package:task_management_app/controller/login_controller.dart';
 import 'package:task_management_app/controller/user_activities_controller.dart';
 import 'package:task_management_app/controller/user_task_details_controller.dart';
@@ -251,6 +252,8 @@ class _UsersActivitiesState extends State<UsersActivities> {
     );
   }
 
+  CreateTaskController _createTaskController = Get.put(CreateTaskController());
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -466,6 +469,9 @@ class _UsersActivitiesState extends State<UsersActivities> {
                                               children: [
                                                 GestureDetector(
                                                   onTap: () {
+                                                    _createTaskController
+                                                        .data.value = data;
+
                                                     Get.to(() => CreateTask(
                                                           forAdmin: true,
                                                         ));
@@ -666,8 +672,8 @@ class _UsersActivitiesState extends State<UsersActivities> {
                                                   onTap: () {
                                                     Get.to(() => CreateTask(
                                                           forAdmin: true,
-                                                          specificDocumentOfUser:
-                                                              document,
+                                                          // specificDocumentOfUser:
+                                                          //     document,
                                                         ));
                                                   },
                                                   child: Container(

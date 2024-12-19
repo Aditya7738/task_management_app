@@ -42,11 +42,15 @@ class CreateTaskController extends GetxController {
   RxBool statusUpdated = false.obs;
 
   TextEditingController taskNameController = TextEditingController();
-  TextEditingController remainderController = TextEditingController();
+  TextEditingController remainderTimeController = TextEditingController();
   TextEditingController startDateEditingController = TextEditingController();
   TextEditingController dueDateEditingController = TextEditingController();
 
   TextEditingController setRemainderOptionController = TextEditingController();
+  TextEditingController remarkController = TextEditingController();
+
+  dynamic startDate = DateTime.now().obs;
+  dynamic dueDate = DateTime.now().obs;
 
   // RxString startDate = "Not set yet".obs;
 
@@ -67,55 +71,87 @@ class CreateTaskController extends GetxController {
 
   RxBool creatingTask = false.obs;
 
-  Future<void> createTaskOfManager(
-      DocumentSnapshot<Object?>? specificDocumentOfUser) async {
+  RxMap<String, dynamic> data = <String, dynamic>{}.obs;
+
+  Future<void> createTaskOfManager() async {
     creatingTask.value = true;
-    String name = "";
-    await specificDocumentOfUser?.reference.get().then(
-      (value) {
-        Map<String, dynamic> data = value.data()! as Map<String, dynamic>;
-        name = data["firstName"].toString() + data["lastName"].toString();
 
-        print("Name: $name");
-      },
-    );
+    try {
+      print("data[username] ${data["username"]}");
 
-    //error
+      DocumentReference reference;
 
-    await _fireStore
-        .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-        .doc(_userActivitiesController.companyName.value.toUpperCase())
-        .collection(DatabaseReferences.MANAGERS_COLLECTION_REFERENCE)
-        .doc(specificDocumentOfUser!.id)
-        .collection(DatabaseReferences.TASKS_COLLECTION_REFERENCE)
-        .add({
-      "taskName": taskNameController.text,
-      "status": selectedStatus.value,
-      "startDate": startDateEditingController.text,
-      "dueDate": dueDateEditingController.text,
-      "remainder": remainderController.text,
-      "remainderTime": setRemainderOptionController.text,
-      "priority": selectedPriority.value,
-      "tag": selectedTag.value,
-      "remarks": remainderController.text,
-    }).then((value) {
-      creatingTask.value = false;
+      await _fireStore
+          .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+          .doc(_userActivitiesController.companyName.value.toUpperCase())
+          .collection(DatabaseReferences.MANAGERS_COLLECTION_REFERENCE)
+          .where("username", isEqualTo: data["username"])
+          .get()
+          .then(
+        (value) async {
+          reference = value.docs.first.reference;
 
-      Get.back();
+          await _fireStore
+              .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+              .doc(_userActivitiesController.companyName.value.toUpperCase())
+              .collection(DatabaseReferences.MANAGERS_COLLECTION_REFERENCE)
+              .doc(reference.id)
+              .collection(DatabaseReferences.TASKS_COLLECTION_REFERENCE)
+              .add({
+            "taskName": taskNameController.text,
+            "status": selectedStatus.value,
+            "startDate": startDateEditingController.text,
+            "dueDate": dueDateEditingController.text,
+            "remainderTime": remainderTimeController.text,
+            "remainderDay": setRemainderOptionController.text,
+            "priority": selectedPriority.value,
+            "tag": selectedTag.value,
+            "remarks": remarkController.text,
+            "isRepeatedTask": false,
+            "repeatTaskDays": [],
+          }).onError(
+            (error, stackTrace) {
+              print("FirestoreManager Error: $error");
 
-      Get.snackbar("Task assigned to $name successfully", "",
-          colorText: Colors.white,
-          backgroundColor: Get.theme.primaryColor,
-          duration: Duration(seconds: 5),
-          borderRadius: 20.0,
-          snackPosition: SnackPosition.TOP);
-    }).onError((error, stackTrace) {
-      print("FirestoreEmp Error: $error");
+              creatingTask.value = false;
+
+              String cleanedError =
+                  error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+
+              Get.snackbar("Error", cleanedError,
+                  colorText: Colors.white,
+                  backgroundColor: Colors.red,
+                  duration: Duration(seconds: 5),
+                  borderRadius: 20.0,
+                  snackPosition: SnackPosition.TOP);
+
+              creatingTask.value = false;
+              return reference as DocumentReference<Map<String, dynamic>>;
+            },
+          );
+        },
+      ).onError((error, stackTrace) {
+        print("FirestoreManager Error: $error");
+
+        creatingTask.value = false;
+
+        String cleanedError =
+            error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+
+        Get.snackbar("Error", cleanedError,
+            colorText: Colors.white,
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 5),
+            borderRadius: 20.0,
+            snackPosition: SnackPosition.TOP);
+      });
+    } catch (e) {
+      print("Error: $e");
 
       creatingTask.value = false;
 
       String cleanedError =
-          error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+          e.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
 
       Get.snackbar("Error", cleanedError,
           colorText: Colors.white,
@@ -123,6 +159,6 @@ class CreateTaskController extends GetxController {
           duration: Duration(seconds: 5),
           borderRadius: 20.0,
           snackPosition: SnackPosition.TOP);
-    });
+    }
   }
 }
