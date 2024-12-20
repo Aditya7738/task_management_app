@@ -32,6 +32,8 @@ class _UsersActivitiesState extends State<UsersActivities> {
 
   LoginController _loginController = Get.put(LoginController());
 
+  CreateTaskController createTaskController = Get.put(CreateTaskController());
+
   @override
   void initState() {
     // TODO: implement initState

@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:task_management_app/constants/database_references.dart';
+import 'package:task_management_app/constants/strings.dart';
+import 'package:task_management_app/controller/repeat_task_controller.dart';
 import 'package:task_management_app/controller/user_activities_controller.dart';
 
 class CreateTaskController extends GetxController {
   FirebaseFirestore _fireStore = FirebaseFirestore.instance;
 
-  List<String> employeesToAssign = ["Choose employee", "abc", "bcd", "efg"];
+  List<String> employeesToAssign = ["Choose employee"];
 
   RxBool isEmployeeAssigned = false.obs;
 
@@ -73,6 +75,98 @@ class CreateTaskController extends GetxController {
 
   RxMap<String, dynamic> data = <String, dynamic>{}.obs;
 
+  RepeatTaskController repeatTaskController = Get.put(RepeatTaskController());
+
+  List<String> getSelectedOptionsList() {
+    if (repeatTaskController.selectedDays.isNotEmpty) {
+      return repeatTaskController.selectedDays;
+    } else if (repeatTaskController.selectedWeekDays.isNotEmpty) {
+      return repeatTaskController.selectedWeekDays;
+    } else if (repeatTaskController.selectedMonths.isNotEmpty) {
+      return repeatTaskController.selectedMonths;
+    } else if (repeatTaskController.selectedYears.isNotEmpty) {
+      return repeatTaskController.selectedYears;
+    } else {
+      return [];
+    }
+  }
+
+  bool isRepeatingTask() {
+    if (repeatTaskController.selectedOption == CommonStrings.selectedOption) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  RxBool showSelectedEmpError = false.obs;
+
+  TextEditingController assignedByController = TextEditingController();
+
+  Future getUserList() async {
+    await _fireStore
+        .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+        .doc(_userActivitiesController.companyName.value.toUpperCase())
+        .collection(DatabaseReferences.MANAGERS_COLLECTION_REFERENCE)
+        .get()
+        .then((value) {
+      if (value.docs.isNotEmpty) {
+        value.docs.forEach((DocumentSnapshot document) {
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          employeesToAssign.add(data["firstName"] + " " + data["lastName"]);
+        });
+      }
+    }).onError(
+      (error, stackTrace) {
+        print("Firebase Error: $error");
+
+        String cleanedError =
+            error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+        //cleanedText.trim();
+
+        //  logingAccount.value = false;
+        Get.snackbar("Error", cleanedError,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: Duration(seconds: 5),
+            borderRadius: 20.0,
+            snackPosition: SnackPosition.TOP);
+      },
+    );
+
+    await _fireStore
+        .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+        .doc(_userActivitiesController.companyName.value.toUpperCase())
+        .collection(DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE)
+        .get()
+        .then((value) {
+      if (value.docs.isNotEmpty) {
+        value.docs.forEach((DocumentSnapshot document) {
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          employeesToAssign.add(data["firstName"] + " " + data["lastName"]);
+        });
+      }
+    }).onError(
+      (error, stackTrace) {
+        print("Firebase Error: $error");
+
+        String cleanedError =
+            error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+        //cleanedText.trim();
+
+        //  logingAccount.value = false;
+        Get.snackbar("Error", cleanedError,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: Duration(seconds: 5),
+            borderRadius: 20.0,
+            snackPosition: SnackPosition.TOP);
+      },
+    );
+
+    print("employeesToAssign.length ${employeesToAssign.length}");
+  }
+
   Future<void> createTaskOfManager() async {
     creatingTask.value = true;
 
@@ -99,6 +193,7 @@ class CreateTaskController extends GetxController {
               .collection(DatabaseReferences.TASKS_COLLECTION_REFERENCE)
               .add({
             "taskName": taskNameController.text,
+            "assignedTo": assignedTo.value,
             "status": selectedStatus.value,
             "startDate": startDateEditingController.text,
             "dueDate": dueDateEditingController.text,
@@ -107,8 +202,16 @@ class CreateTaskController extends GetxController {
             "priority": selectedPriority.value,
             "tag": selectedTag.value,
             "remarks": remarkController.text,
-            "isRepeatedTask": false,
-            "repeatTaskDays": [],
+            "isTaskRepeated": repeatTaskController.dataSetForRepeatTask.value,
+            "repeatTaskOn": getSelectedOptionsList(),
+            "willTaskStopRepeating": repeatTaskController.selectedOption !=
+                CommonStrings.selectedOption,
+            "dateToStopRepeatingTask":
+                repeatTaskController.repeatTaskDateEditingController.value.text,
+            // "remainderDateOfRepeatingTask": "",
+            "remainderTimeOfRepeatingTask":
+                repeatTaskController.remainderTimeController.text,
+            //"assignedBy": ,
           }).onError(
             (error, stackTrace) {
               print("FirestoreManager Error: $error");

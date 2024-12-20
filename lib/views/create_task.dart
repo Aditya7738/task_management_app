@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:task_management_app/constants/fontsizes.dart';
+import 'package:task_management_app/constants/strings.dart';
 import 'package:task_management_app/controller/create_task_controller.dart';
 import 'package:task_management_app/controller/repeat_task_controller.dart';
 import 'package:task_management_app/controller/validation_helper.dart';
@@ -12,22 +13,35 @@ import 'package:task_management_app/widgets/repeat_task_form.dart';
 import 'package:task_management_app/widgets/select_option.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-class CreateTask extends StatelessWidget {
+class CreateTask extends StatefulWidget {
   final bool forAdmin;
 //  DocumentSnapshot<Object?>? specificDocumentOfUser;
   CreateTask({super.key, required this.forAdmin
       //, this.specificDocumentOfUser
       });
 
+  @override
+  State<CreateTask> createState() => _CreateTaskState();
+}
+
+class _CreateTaskState extends State<CreateTask> {
   CreateTaskController createTaskController = Get.put(CreateTaskController());
 
   DateTime selectedDate = DateTime.now();
 
-  // TextEditingController taskNameController = TextEditingController();
-  // TextEditingController remainderTimeController = TextEditingController();
-  // TextEditingController startDateEditingController = TextEditingController();
-  // TextEditingController dueDateEditingController = TextEditingController();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
 
+    createTaskController.showPriorityError.value = false;
+    createTaskController.showSelectedEmpError.value = false;
+    createTaskController.showStatusError.value = false;
+
+    createTaskController.getUserList();
+  }
+
+  // TextEditingController taskNameController = TextEditingController();
   Future<String> selectedTime(BuildContext context) async {
     TimeOfDay? timeOfDay = await showTimePicker(
       initialTime: TimeOfDay.now(),
@@ -142,7 +156,7 @@ class CreateTask extends StatelessWidget {
 
                               createTaskController.statusUpdated.value = true;
 
-                              if (forAdmin == false) {
+                              if (widget.forAdmin) {
                                 switch (value.toString()) {
                                   case "Assigned":
                                     createTaskController.taskLabel.value =
@@ -182,7 +196,7 @@ class CreateTask extends StatelessWidget {
                     }
                   }),
 
-                  forAdmin == false
+                  widget.forAdmin
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -258,14 +272,25 @@ class CreateTask extends StatelessWidget {
                                 )
                               ],
                             ),
-                            Text(
-                              "You don't have set above feild!",
-                              style:
-                                  TextStyle(fontSize: 15.0, color: Colors.red),
-                            ),
+
+                            // Text(
+                            //   "You don't have set above feild!",
+                            //   style:
+                            //       TextStyle(fontSize: 15.0, color: Colors.red),
+                            // ),
                           ],
                         )
                       : SizedBox(),
+                  Obx(() {
+                    if (createTaskController.showSelectedEmpError.value) {
+                      return Text(
+                        "You don't have set above feild!",
+                        style: TextStyle(fontSize: 14.0, color: Colors.red),
+                      );
+                    } else {
+                      return SizedBox();
+                    }
+                  }),
 
                   // Obx(
                   //   () => SelectOption(
@@ -684,14 +709,51 @@ class CreateTask extends StatelessWidget {
                           ),
                           Obx(() {
                             String text = "You want to repeat this task ";
-                            repeatTaskController.selectedDays.forEach(
-                              (element) {
-                                text += "$element, ";
-                              },
-                            );
 
-                            text +=
-                                " on ${repeatTaskController.selectedTab.value} basis";
+                            if (repeatTaskController.selectedTab.value !=
+                                "weekly") {
+                              if (repeatTaskController
+                                  .selectedDays.isNotEmpty) {
+                                repeatTaskController.selectedDays.forEach(
+                                  (element) {
+                                    text += "$element, ";
+                                  },
+                                );
+                              }
+
+                              if (repeatTaskController
+                                  .selectedMonths.isNotEmpty) {
+                                repeatTaskController.selectedMonths.forEach(
+                                  (element) {
+                                    text += "$element, ";
+                                  },
+                                );
+                              }
+
+                              if (repeatTaskController.listOfYears.isNotEmpty) {
+                                repeatTaskController.listOfYears.forEach(
+                                  (element) {
+                                    text += "$element, ";
+                                  },
+                                );
+                              }
+
+                              text +=
+                                  " on ${repeatTaskController.selectedTab.value} basis";
+                            } else {
+                              text +=
+                                  "every ${repeatTaskController.selectNoOfWeek.value} week(s) on ";
+
+                              if (repeatTaskController
+                                  .listOfWeekDays.isNotEmpty) {
+                                repeatTaskController.listOfWeekDays.forEach(
+                                  (element) {
+                                    text += "$element, ";
+                                  },
+                                );
+                              }
+                            }
+
                             return Text(text);
                           }),
                           SizedBox(
@@ -700,7 +762,7 @@ class CreateTask extends StatelessWidget {
                           GetBuilder<RepeatTaskController>(
                             builder: (controller) {
                               if (controller.selectedOption ==
-                                  "Do not stop repeating this task") {
+                                  CommonStrings.selectedOption) {
                                 return Text(
                                     "You choose to not stop repeating task");
                               } else {
@@ -863,43 +925,40 @@ class CreateTask extends StatelessWidget {
                               BorderRadius.all(Radius.circular(10.0))),
                     ),
                   ),
-                  SizedBox(
-                    height: 15.0,
-                  ),
 
-                  // Container(
-                  //     height: 50.0,
-                  //     // alignment: Alignment.centerLeft,
-                  //     child: TextFormField(
-                  //       style: TextStyle(
-                  //           fontSize: FontSizes.textFormFieldFontSize),
-                  //       validator: ValidationHelper.nullOrEmptyString,
-                  //       //controller: remainderTimeController,
-                  //       keyboardType: TextInputType.name,
-                  //       // onTap: () async {
-                  //       //   print("CLOCK PRESSED");
+                  // SizedBox(
+                  //   height: 15.0,
+                  // ),
 
-                  //       //   remainderTimeController.text = await selectedTime(context);
-                  //       // },
-                  //       decoration: InputDecoration(
-                  //         labelStyle: TextStyle(
-                  //             fontSize: FontSizes.textFormFieldFontSize),
-                  //         labelText: "Assigned by",
-                  //         // errorStyle:
-                  //         //     TextStyle(fontSize: 15.sp, color: Colors.red),
-                  //         suffixIcon: const Icon(
-                  //           Iconsax.profile_circle_bold,
-                  //           size: 20.0,
+                  // TextFormField(
+                  //   style: TextStyle(fontSize: FontSizes.textFormFieldFontSize),
+                  //   validator: ValidationHelper.nullOrEmptyString,
+                  //   controller: createTaskController.assignedByController,
+                  //   keyboardType: TextInputType.name,
+                  //   // onTap: () async {
+                  //   //   print("CLOCK PRESSED");
+
+                  //   //   remainderTimeController.text = await selectedTime(context);
+                  //   // },
+                  //   decoration: InputDecoration(
+                  //     labelStyle:
+                  //         TextStyle(fontSize: FontSizes.textFormFieldFontSize),
+                  //     labelText: "Assigned by",
+                  //     // errorStyle:
+                  //     //     TextStyle(fontSize: 15.sp, color: Colors.red),
+                  //     suffixIcon: const Icon(
+                  //       Iconsax.profile_circle_bold,
+                  //       size: 20.0,
+                  //     ),
+                  //     border: const OutlineInputBorder(
+                  //         borderSide: BorderSide(
+                  //           color: Colors.blue,
                   //         ),
-                  //         border: const OutlineInputBorder(
-                  //             borderSide: BorderSide(
-                  //               color: Colors.blue,
-                  //             ),
-                  //             borderRadius:
-                  //                 BorderRadius.all(Radius.circular(10.0))),
-                  //       ),
-                  //       maxLines: 1,
-                  //     )),
+                  //         borderRadius:
+                  //             BorderRadius.all(Radius.circular(10.0))),
+                  //   ),
+                  //   maxLines: 1,
+                  // ),
 
                   SizedBox(
                     height: 20.0,
@@ -972,40 +1031,76 @@ class CreateTask extends StatelessWidget {
                           Obx(
                             () => GestureDetector(
                                 onTap: () {
-                                  // if (createTaskController
-                                  //         .isPioritySelected.value ==
-                                  //     false) {
-                                  //   createTaskController.showPriorityError.value =
-                                  //       true;
-                                  // }
+                                  if (createTaskController
+                                          .isPioritySelected.value ==
+                                      false) {
+                                    createTaskController
+                                        .showPriorityError.value = true;
+                                  }
 
-                                  // if (createTaskController.statusUpdated.value ==
-                                  //     false) {
-                                  //   createTaskController.showStatusError.value =
-                                  //       true;
-                                  // }
+                                  if (createTaskController
+                                          .statusUpdated.value ==
+                                      false) {
+                                    createTaskController.showStatusError.value =
+                                        true;
+                                  }
 
-                                  // if (_formKey.currentState!.validate()) {
-                                  // createTaskController.appointments.add(
-                                  //     Appointment(
-                                  //         isAllDay: false,
-                                  //         startTime: DateTime.parse(
-                                  //             createTaskController
-                                  //                 .startDateEditingController
-                                  //                 .text),
-                                  //         endTime: DateTime.parse(
-                                  //             createTaskController
-                                  //                 .dueDateEditingController
-                                  //                 .text),
-                                  //         color: getColor(),
-                                  //         subject: createTaskController
-                                  //             .taskNameController.text));
+                                  if (createTaskController
+                                          .isEmployeeAssigned.value ==
+                                      false) {
+                                    createTaskController
+                                        .showSelectedEmpError.value = true;
+                                  }
 
-                                  //  Get.back();
-                                  createTaskController.createTaskOfManager(
-                                      //specificDocumentOfUser
-                                      );
-                                  // }
+                                  if (_formKey.currentState!.validate()) {
+                                    // createTaskController.appointments.add(
+                                    //     Appointment(
+                                    //         isAllDay: false,
+                                    //         startTime: DateTime.parse(
+                                    //             createTaskController
+                                    //                 .startDateEditingController
+                                    //                 .text),
+                                    //         endTime: DateTime.parse(
+                                    //             createTaskController
+                                    //                 .dueDateEditingController
+                                    //                 .text),
+                                    //         color: getColor(),
+                                    //         subject: createTaskController
+                                    //             .taskNameController.text));
+
+                                    //  Get.back();
+
+                                    /////////////////////////////////////
+
+                                    // if (forAdmin) {
+                                    //   switch (createTaskController
+                                    //       .selectedStatus.value) {
+                                    //     case "Assigned":
+                                    //       createTaskController.taskLabel.value =
+                                    //           "Assigned to";
+                                    //       break;
+                                    //     case "In progress":
+                                    //       createTaskController.taskLabel.value =
+                                    //           "In progress by";
+                                    //       break;
+                                    //     case "Completed":
+                                    //       createTaskController.taskLabel.value =
+                                    //           "Completed by";
+                                    //       break;
+                                    //     case "Hold":
+                                    //       createTaskController.taskLabel.value =
+                                    //           "Hold by";
+                                    //       break;
+                                    //     default:
+                                    //       createTaskController.taskLabel.value =
+                                    //           "Assigned to";
+                                    //   }
+                                    // }
+
+                                    ////////////////////////////////////////////////
+
+                                    //   createTaskController.createTaskOfManager();
+                                  }
                                 },
                                 child: ButtonWidget(
                                     isLoading:

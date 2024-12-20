@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_management_app/constants/strings.dart';
 
 class RepeatTaskController extends GetxController {
-  String _selectedOption = "Do not stop repeating this task";
+  String _selectedOption = CommonStrings.selectedOption;
 
   String get selectedOption => _selectedOption;
 
@@ -30,6 +31,14 @@ class RepeatTaskController extends GetxController {
     "Custom"
   ];
 
+  // List<String> setRepeatTaskRemainderOptions = [
+  //   // "On due date",
+  //   "1 day before",
+  //   "2 days before",
+  //   "3 days before",
+
+  // ];
+
   List<String> noOfWeeks = [
     "1",
     "2",
@@ -39,7 +48,7 @@ class RepeatTaskController extends GetxController {
 
   RxString selectNoOfWeek = "1".obs;
 
-  RxMap<String, bool> _daysMap = <String, bool>{
+  RxMap<String, bool> daysMap = <String, bool>{
     "Sun": false,
     "Mon": false,
     "Tue": false,
@@ -49,24 +58,55 @@ class RepeatTaskController extends GetxController {
     "Sat": false,
   }.obs;
 
-  get listOfDays => _daysMap.entries.map((e) => e.key).toList();
+  get listOfDays => daysMap.entries.map((e) => e.key).toList();
 
   void toggle(String day) {
     //   print("CONTROLLER ${_productsMap.length}");
-    if (_daysMap.containsKey(day)) {
-      _daysMap[day] = !(_daysMap[day] ?? true);
+    if (daysMap.containsKey(day)) {
+      daysMap[day] = !(daysMap[day] ?? true);
     } else {
-      _daysMap[day] = true;
+      daysMap[day] = true;
     }
-    print("CONTROLLER ${_daysMap.length}");
+    print("CONTROLLER ${daysMap.length}");
   }
 
-  List<String> get selectedDays => _daysMap.entries
+  List<String> get selectedDays => daysMap.entries
       .where((element) => element.value)
       .map((e) => e.key)
       .toList();
 
-  RxMap<String, bool> _monthsMap = <String, bool>{
+//////////////////////////////////////////////////////////////////////////////
+
+  RxMap<String, bool> daysOfWeekMap = <String, bool>{
+    "Sun": false,
+    "Mon": false,
+    "Tue": false,
+    "Wed": false,
+    "Thu": false,
+    "Fri": false,
+    "Sat": false,
+  }.obs;
+
+  get listOfWeekDays => daysOfWeekMap.entries.map((e) => e.key).toList();
+
+  void toggleWeekDays(String day) {
+    //   print("CONTROLLER ${_productsMap.length}");
+    if (daysOfWeekMap.containsKey(day)) {
+      daysOfWeekMap[day] = !(daysOfWeekMap[day] ?? true);
+    } else {
+      daysOfWeekMap[day] = true;
+    }
+    print("CONTROLLER ${daysOfWeekMap.length}");
+  }
+
+  List<String> get selectedWeekDays => daysOfWeekMap.entries
+      .where((element) => element.value)
+      .map((e) => e.key)
+      .toList();
+
+  ///////////////////////////////////////////////////////////////////
+
+  RxMap<String, bool> monthsMap = <String, bool>{
     "Jan": false,
     "Feb": false,
     "Mar": false,
@@ -81,24 +121,57 @@ class RepeatTaskController extends GetxController {
     "Dec": false,
   }.obs;
 
-  get listOfMonths => _monthsMap.entries.map((e) => e.key).toList();
+  get listOfMonths => monthsMap.entries.map((e) => e.key).toList();
 
   void toggleMonth(String month) {
     //   print("CONTROLLER ${_productsMap.length}");
-    if (_monthsMap.containsKey(month)) {
-      _monthsMap[month] = !(_monthsMap[month] ?? true);
+    if (monthsMap.containsKey(month)) {
+      monthsMap[month] = !(monthsMap[month] ?? true);
     } else {
-      _monthsMap[month] = true;
+      monthsMap[month] = true;
     }
-    print("CONTROLLER ${_monthsMap.length}");
+    print("CONTROLLER ${monthsMap.length}");
   }
 
-  get selectedMonths => _monthsMap.entries
+  List<String> get selectedMonths => monthsMap.entries
       .where((element) => element.value)
       .map((e) => e.key)
       .toList();
 
-  RxInt selectedYear = 2024.obs;
+  List<int> getYears() {
+    final currentYear = DateTime.now().year;
+
+    return List.generate(5 + 1, (index) => currentYear + index);
+  }
+
+  RxMap<String, bool> yearsMap = <String, bool>{}.obs;
+
+  void createYearMap() {
+    getYears().forEach((element) {
+      yearsMap[element.toString()] = false;
+    });
+
+    print("YEARS MAP ${yearsMap.length}");
+  }
+
+  get listOfYears => yearsMap.entries.map((e) => e.key).toList();
+
+  void toggleYear(String year) {
+    //   print("CONTROLLER ${_productsMap.length}");
+    if (yearsMap.containsKey(year)) {
+      yearsMap[year] = !(yearsMap[year] ?? true);
+    } else {
+      yearsMap[year] = true;
+    }
+    print("CONTROLLER ${yearsMap.length}");
+  }
+
+  List<String> get selectedYears => yearsMap.entries
+      .where((element) => element.value)
+      .map((e) => e.key)
+      .toList();
+
+  // RxInt selectedYear = 2024.obs;
 
   RxList selectedDaysForRepeatingTask = [].obs;
   // "Repeat task on ".obs;
@@ -106,6 +179,8 @@ class RepeatTaskController extends GetxController {
   RxString dateToStopRepeatingTask = "".obs;
 
   RxString remainderDateOfRepeatingTask = "".obs;
+
+  TextEditingController remainderTimeController = TextEditingController();
 
   //RxString onWhichBasis = "".obs;
 

@@ -140,6 +140,16 @@ class MainApp extends StatelessWidget {
 
     return GetMaterialApp(
         theme: ThemeData(
+          checkboxTheme: CheckboxThemeData(
+              // fillColor:
+              //     MaterialStateProperty.all(Color.fromARGB(255, 17, 35, 230)),
+              fillColor: MaterialStateProperty.resolveWith<Color>(
+                  (Set<MaterialState> states) {
+            if (states.contains(MaterialState.selected)) {
+              return Color.fromARGB(255, 17, 35, 230);
+            }
+            return Colors.transparent;
+          })),
           radioTheme: RadioThemeData(
             fillColor:
                 MaterialStateProperty.all(Color.fromARGB(255, 17, 35, 230)),
