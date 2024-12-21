@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:task_management_app/constants/database_references.dart';
 import 'package:task_management_app/constants/strings.dart';
@@ -22,10 +27,6 @@ class CreateTaskController extends GetxController {
     "Section2",
     "Section3"
   ];
-
-  RxBool isSectionSelected = false.obs;
-
-  RxString selectedSection = "Choose Section".obs;
 
   RxString taskLabel = "Assigned to".obs;
 
@@ -103,7 +104,15 @@ class CreateTaskController extends GetxController {
 
   TextEditingController assignedByController = TextEditingController();
 
+  RxBool gettingUsers = false.obs;
+
   Future getUserList() async {
+    gettingUsers.value = true;
+
+    employeesToAssign.clear();
+
+    employeesToAssign.add("Choose employee");
+
     await _fireStore
         .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
         .doc(_userActivitiesController.companyName.value.toUpperCase())
@@ -116,9 +125,13 @@ class CreateTaskController extends GetxController {
           employeesToAssign.add(data["firstName"] + " " + data["lastName"]);
         });
       }
+
+      gettingUsers.value = false;
     }).onError(
       (error, stackTrace) {
         print("Firebase Error: $error");
+
+        gettingUsers.value = false;
 
         String cleanedError =
             error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
@@ -146,10 +159,12 @@ class CreateTaskController extends GetxController {
           employeesToAssign.add(data["firstName"] + " " + data["lastName"]);
         });
       }
+
+      gettingUsers.value = false;
     }).onError(
       (error, stackTrace) {
         print("Firebase Error: $error");
-
+        gettingUsers.value = false;
         String cleanedError =
             error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
         //cleanedText.trim();
@@ -165,6 +180,61 @@ class CreateTaskController extends GetxController {
     );
 
     print("employeesToAssign.length ${employeesToAssign.length}");
+  }
+
+  SupabaseClient supabase = Supabase.instance.client;
+
+  CreateTaskController createTaskController = Get.put(CreateTaskController());
+
+  Future<void> uploadDocument() async {
+    final String bucketId =
+        await supabase.storage.createBucket(DatabaseReferences.bucketId);
+
+    print("bucketId $bucketId");
+
+    if (await Permission.storage.isGranted) {
+      FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+      if (result != null) {
+        File file = File(result.files.single.path!);
+        //String fullPath =
+        await supabase.storage
+            .from(DatabaseReferences.bucketId)
+            .upload(
+                "${_userActivitiesController.companyName.value}/${createTaskController.assignedTo.value}/documents",
+                file,
+                fileOptions: FileOptions(cacheControl: '3600', upsert: false),
+                retryAttempts: 2)
+            .then(
+          (value) {
+            Get.snackbar("Document uploaded successfully", "",
+                colorText: Colors.white,
+                backgroundColor: Get.theme.primaryColor,
+                duration: Duration(seconds: 4),
+                borderRadius: 20.0,
+                snackPosition: SnackPosition.TOP);
+          },
+        ).onError(
+          (error, stackTrace) {
+            print("SUPABASE Error: $error");
+
+            //  creatingTask.value = false;
+
+            String cleanedError =
+                error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+
+            Get.snackbar("Error", cleanedError,
+                colorText: Colors.white,
+                backgroundColor: Colors.red,
+                duration: Duration(seconds: 5),
+                borderRadius: 20.0,
+                snackPosition: SnackPosition.TOP);
+          },
+        );
+      } else {
+        // User canceled the picker
+      }
+    }
   }
 
   Future<void> createTaskOfManager() async {
@@ -190,7 +260,8 @@ class CreateTaskController extends GetxController {
               .doc(_userActivitiesController.companyName.value.toUpperCase())
               .collection(DatabaseReferences.MANAGERS_COLLECTION_REFERENCE)
               .doc(reference.id)
-              .collection(DatabaseReferences.TASKS_COLLECTION_REFERENCE)
+              .collection(
+                  DatabaseReferences.MANAGERS_TASKS_COLLECTION_REFERENCE)
               .add({
             "taskName": taskNameController.text,
             "assignedTo": assignedTo.value,
@@ -212,7 +283,19 @@ class CreateTaskController extends GetxController {
             "remainderTimeOfRepeatingTask":
                 repeatTaskController.remainderTimeController.text,
             //"assignedBy": ,
-          }).onError(
+          }).then(
+            (value) {
+              // creatingTask.value = false;
+              //   Get.back();
+
+              Get.snackbar("Task assigned successfully", "",
+                  colorText: Colors.white,
+                  backgroundColor: Get.theme.primaryColor,
+                  duration: Duration(seconds: 4),
+                  borderRadius: 20.0,
+                  snackPosition: SnackPosition.TOP);
+            },
+          ).onError(
             (error, stackTrace) {
               print("FirestoreManager Error: $error");
 
@@ -229,7 +312,6 @@ class CreateTaskController extends GetxController {
                   snackPosition: SnackPosition.TOP);
 
               creatingTask.value = false;
-              return reference as DocumentReference<Map<String, dynamic>>;
             },
           );
         },
@@ -248,6 +330,115 @@ class CreateTaskController extends GetxController {
             borderRadius: 20.0,
             snackPosition: SnackPosition.TOP);
       });
+    } catch (e) {
+      print("Error: $e");
+
+      creatingTask.value = false;
+
+      String cleanedError =
+          e.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+
+      Get.snackbar("Error", cleanedError,
+          colorText: Colors.white,
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 5),
+          borderRadius: 20.0,
+          snackPosition: SnackPosition.TOP);
+    }
+
+    DocumentReference adminReference;
+
+    try {
+      await _fireStore
+          .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+          .doc(_userActivitiesController.companyName.value.toUpperCase())
+          .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
+          .where("workEmail",
+              isEqualTo: _userActivitiesController.workEmail.value)
+          .get()
+          .then(
+        (value) async {
+          adminReference = value.docs.first.reference;
+
+          await _fireStore
+              .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+              .doc(_userActivitiesController.companyName.value.toUpperCase())
+              .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
+              .doc(adminReference.id)
+              .collection(
+                  DatabaseReferences.ADMINS_ASSIGNED_TASKS_COLLECTION_REFERENCE)
+              .add({
+            "taskName": taskNameController.text,
+            "assignedTo": assignedTo.value,
+            "status": selectedStatus.value,
+            "startDate": startDateEditingController.text,
+            "dueDate": dueDateEditingController.text,
+            "remainderTime": remainderTimeController.text,
+            "remainderDay": setRemainderOptionController.text,
+            "priority": selectedPriority.value,
+            "tag": selectedTag.value,
+            "remarks": remarkController.text,
+            "isTaskRepeated": repeatTaskController.dataSetForRepeatTask.value,
+            "repeatTaskOn": getSelectedOptionsList(),
+            "willTaskStopRepeating": repeatTaskController.selectedOption !=
+                CommonStrings.selectedOption,
+            "dateToStopRepeatingTask":
+                repeatTaskController.repeatTaskDateEditingController.value.text,
+            // "remainderDateOfRepeatingTask": "",
+            "remainderTimeOfRepeatingTask":
+                repeatTaskController.remainderTimeController.text,
+          }).then(
+            (value) {
+              creatingTask.value = false;
+
+              Get.snackbar("Task stored successfully", "",
+                  colorText: Colors.white,
+                  backgroundColor: Get.theme.primaryColor,
+                  duration: Duration(seconds: 4),
+                  borderRadius: 20.0,
+                  snackPosition: SnackPosition.TOP);
+            },
+          ).onError(
+            (error, stackTrace) {
+              print("FirestoreAdmin Error: $error");
+
+              creatingTask.value = false;
+
+              String cleanedError =
+                  error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+
+              Get.snackbar("Error", cleanedError,
+                  colorText: Colors.white,
+                  backgroundColor: Colors.red,
+                  duration: Duration(seconds: 5),
+                  borderRadius: 20.0,
+                  snackPosition: SnackPosition.TOP);
+            },
+          );
+        },
+      ).onError(
+        (error, stackTrace) {
+          print("FirestoreManager Error: $error");
+
+          creatingTask.value = false;
+
+          String cleanedError =
+              error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+
+          Get.snackbar("Error", cleanedError,
+              colorText: Colors.white,
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 5),
+              borderRadius: 20.0,
+              snackPosition: SnackPosition.TOP);
+        },
+      );
+
+      // doc.get().then(
+      //       (value) {
+      //         value.reference.i
+      //       },
+      //     );
     } catch (e) {
       print("Error: $e");
 

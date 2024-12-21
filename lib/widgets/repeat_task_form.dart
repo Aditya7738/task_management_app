@@ -198,9 +198,9 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                                     index]), //repeatTaskController.productsMap[index],
 
                             onChanged: (value) {
-                              repeatTaskController.toggle(repeatTaskController
-                                      .listOfWeekDays[
-                                  index]); //repeatTaskController.toggle(repeatTaskController.listOfWeekDays[index]);
+                              repeatTaskController.toggleWeekDays(
+                                  repeatTaskController.listOfWeekDays[
+                                      index]); //repeatTaskController.toggle(repeatTaskController.listOfWeekDays[index]);
                             },
                             child: Text(
                                 repeatTaskController.listOfWeekDays[index]),
@@ -424,9 +424,8 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
             onTap: () {
               if (_formKey.currentState!.validate()) {
                 repeatTaskController.dataSetForRepeatTask.value = true;
+                Get.back();
               }
-
-              //    Get.back();
             },
             child: Container(
               // width: 150.64,
@@ -584,10 +583,24 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                                   onTap: () async {
                                     print("CALENDAR PRESSED");
 
+                                    // print(
+                                    //     "controller.selectedOption.contains(On) == false ${controller.selectedOption.contains("On") == false}");
+                                    // if (controller.selectedOption
+                                    //     .contains("On")) {
+                                    //   Get.snackbar(
+                                    //       "Please select radio button first",
+                                    //       "",
+                                    //       backgroundColor: Colors.red,
+                                    //       colorText: Colors.white,
+                                    //       duration: Duration(seconds: 5),
+                                    //       borderRadius: 20.0,
+                                    //       snackPosition: SnackPosition.TOP);
+                                    // } else {
                                     controller
                                         .repeatTaskDateEditingController
                                         .value
                                         .text = await _selectedDate(context);
+                                    // }
                                   },
                                   decoration: InputDecoration(
                                     // errorStyle:

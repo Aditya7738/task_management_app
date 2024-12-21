@@ -17,6 +17,8 @@ class UserActivitiesController extends GetxController {
 
   RxString companyName = "".obs;
 
+  RxString workEmail = "".obs;
+
   SharedPreferencesAsync sharedPreferencesAsync = SharedPreferencesAsync();
 
   late Stream<QuerySnapshot<Map<String, dynamic>>> managersCollection;
@@ -151,6 +153,10 @@ class UserActivitiesController extends GetxController {
     if (await sharedPreferencesAsync.getString("company_name") != null) {
       companyName.value =
           (await sharedPreferencesAsync.getString("company_name"))!;
+    }
+
+    if (await sharedPreferencesAsync.getString("workEmail") != null) {
+      workEmail.value = (await sharedPreferencesAsync.getString("workEmail"))!;
     }
 
     fetchingCompanyName.value = false;

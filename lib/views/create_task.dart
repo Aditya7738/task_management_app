@@ -1,17 +1,24 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:task_management_app/constants/database_references.dart';
 import 'package:task_management_app/constants/fontsizes.dart';
 import 'package:task_management_app/constants/strings.dart';
 import 'package:task_management_app/controller/create_task_controller.dart';
 import 'package:task_management_app/controller/repeat_task_controller.dart';
+import 'package:task_management_app/controller/user_activities_controller.dart';
 import 'package:task_management_app/controller/validation_helper.dart';
 import 'package:task_management_app/widgets/button_widget.dart';
 import 'package:task_management_app/widgets/leading_back_arrow.dart';
 import 'package:task_management_app/widgets/repeat_task_form.dart';
 import 'package:task_management_app/widgets/select_option.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:file_picker/file_picker.dart';
 
 class CreateTask extends StatefulWidget {
   final bool forAdmin;
@@ -28,6 +35,9 @@ class _CreateTaskState extends State<CreateTask> {
   CreateTaskController createTaskController = Get.put(CreateTaskController());
 
   DateTime selectedDate = DateTime.now();
+
+  UserActivitiesController _userActivitiesController =
+      Get.put(UserActivitiesController());
 
   @override
   void initState() {
@@ -269,7 +279,24 @@ class _CreateTaskState extends State<CreateTask> {
                                       },
                                     ),
                                   ),
-                                )
+                                ),
+                                SizedBox(
+                                  width: 10.0,
+                                ),
+                                Obx(() {
+                                  if (createTaskController.gettingUsers.value) {
+                                    return SizedBox(
+                                      width: 15.0,
+                                      height: 15.0,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.0,
+                                        color: Get.theme.primaryColor,
+                                      ),
+                                    );
+                                  } else {
+                                    return SizedBox();
+                                  }
+                                })
                               ],
                             ),
 
@@ -662,17 +689,19 @@ class _CreateTaskState extends State<CreateTask> {
 
                   GestureDetector(
                     onTap: () {
-                      showModalBottomSheet(
-                        constraints: BoxConstraints.expand(
-                            width: Get.width, height: Get.height - 80),
-                        //  isDismissible: false,
-                        context: context,
-                        //showDragHandle: true,
-                        isScrollControlled: true,
-                        builder: (context) {
-                          return RepeatTaskForm();
-                        },
-                      );
+                      if (mounted) {
+                        showModalBottomSheet(
+                          constraints: BoxConstraints.expand(
+                              width: Get.width, height: Get.height - 80),
+                          //  isDismissible: false,
+                          context: context,
+                          //showDragHandle: true,
+                          isScrollControlled: true,
+                          builder: (context) {
+                            return RepeatTaskForm();
+                          },
+                        );
+                      }
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -710,8 +739,10 @@ class _CreateTaskState extends State<CreateTask> {
                           Obx(() {
                             String text = "You want to repeat this task ";
 
+                            print(
+                                "repeatTaskController.selectedTab.value != weekly ${repeatTaskController.selectedTab.value != "Weekly"}");
                             if (repeatTaskController.selectedTab.value !=
-                                "weekly") {
+                                "Weekly") {
                               if (repeatTaskController
                                   .selectedDays.isNotEmpty) {
                                 repeatTaskController.selectedDays.forEach(
@@ -730,8 +761,9 @@ class _CreateTaskState extends State<CreateTask> {
                                 );
                               }
 
-                              if (repeatTaskController.listOfYears.isNotEmpty) {
-                                repeatTaskController.listOfYears.forEach(
+                              if (repeatTaskController
+                                  .selectedYears.isNotEmpty) {
+                                repeatTaskController.selectedYears.forEach(
                                   (element) {
                                     text += "$element, ";
                                   },
@@ -745,8 +777,8 @@ class _CreateTaskState extends State<CreateTask> {
                                   "every ${repeatTaskController.selectNoOfWeek.value} week(s) on ";
 
                               if (repeatTaskController
-                                  .listOfWeekDays.isNotEmpty) {
-                                repeatTaskController.listOfWeekDays.forEach(
+                                  .selectedWeekDays.isNotEmpty) {
+                                repeatTaskController.selectedWeekDays.forEach(
                                   (element) {
                                     text += "$element, ";
                                   },
@@ -775,7 +807,7 @@ class _CreateTaskState extends State<CreateTask> {
                             height: 5.0,
                           ),
                           Obx(() => Text(
-                              "Remainder is set on ${repeatTaskController.setRemainderOptionController.value.text} due date")),
+                              "Remainder is set at ${repeatTaskController.remainderTimeController.text} on due date")),
                         ],
                       );
                     } else {
@@ -967,32 +999,54 @@ class _CreateTaskState extends State<CreateTask> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        //  width: 170.0,
-                        decoration: BoxDecoration(
-                            // border: border,
-                            color: const Color.fromARGB(255, 234, 234, 234),
-                            borderRadius: BorderRadius.circular(15.0)),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 10.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/icons8_attachment_100.png",
-                              width: 21.0,
-                              height: 21.0,
-                            ),
-                            SizedBox(
-                              width: 5.0,
-                            ),
-                            Text(
-                              "Add Attachment",
-                              style: TextStyle(
-                                fontSize: 16,
+                      GestureDetector(
+                        onTap: () {
+                          // if (await Permission.storage.isGranted) {
+                          //   FilePickerResult? result =
+                          //       await FilePicker.platform.pickFiles();
+
+                          //   if (result != null) {
+                          //     File file = File(result.files.single.path!);
+                          //     String fullPath = await supabase.storage
+                          //         .from(DatabaseReferences.bucketId)
+                          //         .upload(
+                          //             "${_userActivitiesController.companyName.value}/${createTaskController.assignedTo.value}/documents",
+                          //             file,
+                          //             fileOptions: FileOptions(
+                          //                 cacheControl: '3600', upsert: false),
+                          //             retryAttempts: 2);
+                          //   } else {
+                          //     // User canceled the picker
+                          //   }
+                          // }
+                        },
+                        child: Container(
+                          //  width: 170.0,
+                          decoration: BoxDecoration(
+                              // border: border,
+                              color: const Color.fromARGB(255, 234, 234, 234),
+                              borderRadius: BorderRadius.circular(15.0)),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/images/icons8_attachment_100.png",
+                                width: 21.0,
+                                height: 21.0,
                               ),
-                            )
-                          ],
+                              SizedBox(
+                                width: 5.0,
+                              ),
+                              Text(
+                                "Add Attachment",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                       Row(
@@ -1099,7 +1153,15 @@ class _CreateTaskState extends State<CreateTask> {
 
                                     ////////////////////////////////////////////////
 
-                                    //   createTaskController.createTaskOfManager();
+                                    if (createTaskController
+                                            .isPioritySelected.value &&
+                                        createTaskController
+                                            .statusUpdated.value &&
+                                        createTaskController
+                                            .isEmployeeAssigned.value) {
+                                      createTaskController
+                                          .createTaskOfManager();
+                                    }
                                   }
                                 },
                                 child: ButtonWidget(

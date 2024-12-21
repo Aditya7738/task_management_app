@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:task_management_app/constants/database_references.dart';
 import 'package:task_management_app/views/admin_dash_board.dart';
 import 'package:task_management_app/views/create_task.dart';
 import 'package:task_management_app/views/dashboard_screen.dart';
@@ -21,6 +23,12 @@ void main() async {
   FirebaseFirestore.instance.settings = const Settings(
     persistenceEnabled: true,
   );
+
+  await Supabase.initialize(
+      url: DatabaseReferences.SUPABASE_PROJECT_URL,
+      anonKey: DatabaseReferences.SUPABASE_API_KEY,
+      storageOptions: StorageClientOptions(retryAttempts: 2));
+
   runApp(MainApp());
 }
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:task_management_app/controller/dashboard_controller.dart';
+import 'package:task_management_app/controller/login_controller.dart';
 import 'package:task_management_app/views/calendar_tasks.dart';
 import 'package:task_management_app/views/create_task.dart';
 import 'package:task_management_app/views/profile_screen.dart';
@@ -26,6 +27,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   ];
 
   DashboardController dashboardController = Get.put(DashboardController());
+  LoginController _loginController = Get.put(LoginController());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loginController.getPermissions();
+  }
 
   @override
   Widget build(BuildContext context) {

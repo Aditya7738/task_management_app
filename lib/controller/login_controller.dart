@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_management_app/views/admin_dash_board.dart';
 import 'package:task_management_app/views/dashboard_screen.dart';
@@ -62,6 +63,9 @@ class LoginController extends GetxController {
         await sharedPreferencesAsync.setString(
             "company_name", companyNameController.text.trim());
         await sharedPreferencesAsync.setString("role", role.value);
+
+        await sharedPreferencesAsync.setString(
+            "workEmail", emailController.value.text.trim());
 
         Get.snackbar("Login successfully", "",
             colorText: Colors.white,
@@ -145,5 +149,19 @@ class LoginController extends GetxController {
             snackPosition: SnackPosition.TOP);
       },
     );
+  }
+
+  Future<void> getPermissions() async {
+    final permissionStatus = await Permission.storage.status;
+
+    if (permissionStatus.isDenied) {
+      await Permission.storage.request();
+
+      if (permissionStatus.isDenied) {
+        await openAppSettings();
+      }
+    } else if (permissionStatus.isPermanentlyDenied) {
+      await openAppSettings();
+    } else {}
   }
 }
