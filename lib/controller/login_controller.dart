@@ -155,13 +155,55 @@ class LoginController extends GetxController {
     final permissionStatus = await Permission.storage.status;
 
     if (permissionStatus.isDenied) {
-      await Permission.storage.request();
+      //PermissionStatus permissionStatus2 =
+      await Permission.storage.request().then(
+        (value) async {
+          Get.snackbar("Storage permission requested", "",
+              colorText: Colors.white,
+              backgroundColor: Get.theme.primaryColor,
+              duration: Duration(seconds: 4),
+              borderRadius: 20.0,
+              snackPosition: SnackPosition.TOP);
 
-      if (permissionStatus.isDenied) {
-        await openAppSettings();
-      }
-    } else if (permissionStatus.isPermanentlyDenied) {
-      await openAppSettings();
-    } else {}
+          if (await Permission.storage.isGranted) {
+            Get.snackbar("Storage permission granted", "",
+                colorText: Colors.white,
+                backgroundColor: Get.theme.primaryColor,
+                duration: Duration(seconds: 4),
+                borderRadius: 20.0,
+                snackPosition: SnackPosition.TOP);
+          } else {
+            Get.snackbar("Error", "Storage permission denied",
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+                duration: Duration(seconds: 5),
+                borderRadius: 20.0,
+                snackPosition: SnackPosition.TOP);
+          }
+        },
+      ).onError(
+        (error, stackTrace) {
+          print("Permission Error: $error");
+
+          String cleanedError =
+              error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+
+          sendingResetMail.value = false;
+          Get.snackbar("Error", cleanedError,
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+              duration: Duration(seconds: 5),
+              borderRadius: 20.0,
+              snackPosition: SnackPosition.TOP);
+        },
+      );
+
+      // if (permissionStatus2.isDenied) {
+      //   await openAppSettings();
+      // }
+    }
+    // else if (permissionStatus.isPermanentlyDenied) {
+    //   await openAppSettings();
+    // } else {}
   }
 }

@@ -1019,6 +1019,7 @@ class _CreateTaskState extends State<CreateTask> {
                           //     // User canceled the picker
                           //   }
                           // }
+                          createTaskController.uploadDocument();
                         },
                         child: Container(
                           //  width: 170.0,

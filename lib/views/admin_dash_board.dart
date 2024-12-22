@@ -26,6 +26,13 @@ class AdminDashboardScreen extends StatefulWidget {
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   List<Widget> tabs = <Widget>[
     UsersActivities(),
+
+    // Center(
+    //   child: Text("Admin Dashboard"),
+    // ),
+    // Center(
+    //   child: Text("Admin Dashboard"),
+    // ),
     TasksOverview(),
 
     // ProfileScreen()
@@ -79,6 +86,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           unselectedItemColor: Colors.grey,
         ),
         body: tabs[admindashboardController.currentIndex.value],
+
+        // body: Center(
+        //   child: Text("Admin Dashboard"),
+        // ),
       ),
     );
   }

@@ -184,56 +184,66 @@ class CreateTaskController extends GetxController {
 
   SupabaseClient supabase = Supabase.instance.client;
 
-  CreateTaskController createTaskController = Get.put(CreateTaskController());
+  // CreateTaskController createTaskController = Get.put(CreateTaskController());
 
   Future<void> uploadDocument() async {
-    final String bucketId =
-        await supabase.storage.createBucket(DatabaseReferences.bucketId);
+    try {
+      // final String bucketId =
+      //     await supabase.storage.createBucket(DatabaseReferences.bucketId);
 
-    print("bucketId $bucketId");
+      //    print("bucketId $bucketId");
 
-    if (await Permission.storage.isGranted) {
-      FilePickerResult? result = await FilePicker.platform.pickFiles();
+      if (await Permission.storage.isGranted) {
+        FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-      if (result != null) {
-        File file = File(result.files.single.path!);
-        //String fullPath =
-        await supabase.storage
-            .from(DatabaseReferences.bucketId)
-            .upload(
-                "${_userActivitiesController.companyName.value}/${createTaskController.assignedTo.value}/documents",
-                file,
-                fileOptions: FileOptions(cacheControl: '3600', upsert: false),
-                retryAttempts: 2)
-            .then(
-          (value) {
-            Get.snackbar("Document uploaded successfully", "",
-                colorText: Colors.white,
-                backgroundColor: Get.theme.primaryColor,
-                duration: Duration(seconds: 4),
-                borderRadius: 20.0,
-                snackPosition: SnackPosition.TOP);
-          },
-        ).onError(
-          (error, stackTrace) {
-            print("SUPABASE Error: $error");
+        if (result != null && result.files.single.path != null) {
+          // File file = File(result.files.single.path!);
 
-            //  creatingTask.value = false;
+          PlatformFile _platformFile = result.files.first;
 
-            String cleanedError =
-                error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+          File _file = File(result.files.single.path!);
 
-            Get.snackbar("Error", cleanedError,
-                colorText: Colors.white,
-                backgroundColor: Colors.red,
-                duration: Duration(seconds: 5),
-                borderRadius: 20.0,
-                snackPosition: SnackPosition.TOP);
-          },
-        );
-      } else {
-        // User canceled the picker
+          print("File path: ${_file.path}");
+          //   //String fullPath =
+          //   await supabase.storage
+          //       .from(DatabaseReferences.bucketId)
+          //       .upload(
+          //           "${_userActivitiesController.companyName.value}/${assignedTo.value}/documents",
+          //           file,
+          //           fileOptions: FileOptions(cacheControl: '3600', upsert: false),
+          //           retryAttempts: 2)
+          //       .then(
+          //     (value) {
+          //       Get.snackbar("Document uploaded successfully", "",
+          //           colorText: Colors.white,
+          //           backgroundColor: Get.theme.primaryColor,
+          //           duration: Duration(seconds: 4),
+          //           borderRadius: 20.0,
+          //           snackPosition: SnackPosition.TOP);
+          //     },
+          //   ).onError(
+          //     (error, stackTrace) {
+          //       print("SUPABASE Error: $error");
+
+          //       //  creatingTask.value = false;
+
+          //       String cleanedError =
+          //           error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+
+          //       Get.snackbar("Error", cleanedError,
+          //           colorText: Colors.white,
+          //           backgroundColor: Colors.red,
+          //           duration: Duration(seconds: 5),
+          //           borderRadius: 20.0,
+          //           snackPosition: SnackPosition.TOP);
+          //     },
+          //   );
+        } else {
+          // User canceled the picker
+        }
       }
+    } catch (e) {
+      print("SUPABASE OR FILEPICKER Error: $e");
     }
   }
 
