@@ -379,10 +379,22 @@ class _UsersTaskDetailsState extends State<UsersTaskDetails>
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-                    TaskList(),
-                    TaskList(),
-                    TaskList(),
-                    TaskList(),
+                    TaskList(
+                      username: "",
+                      forManager: false,
+                    ),
+                    TaskList(
+                      username: "",
+                      forManager: false,
+                    ),
+                    TaskList(
+                      username: "",
+                      forManager: false,
+                    ),
+                    TaskList(
+                      username: "",
+                      forManager: false,
+                    ),
                   ],
                 ),
               ),

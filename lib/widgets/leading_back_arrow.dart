@@ -12,7 +12,6 @@ class LeadingBackArrow extends StatelessWidget {
       },
       child: Icon(
         Icons.arrow_back,
-        // color: Theme.of(context).primaryColor,
         size: 19.0,
       ),
     );

@@ -133,6 +133,8 @@ class UserActivitiesController extends GetxController {
 
   RxBool fetchingCompanyName = false.obs;
 
+  RxBool assignedTaskToManager = false.obs;
+
   Future<String> getCompanyName() async {
     // QuerySnapshot<Map<String, dynamic>> querySnapshot = await _fireStore
     //     .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)

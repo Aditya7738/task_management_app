@@ -12,6 +12,7 @@ import 'package:task_management_app/controller/user_task_details_controller.dart
 import 'package:task_management_app/controller/validation_helper.dart';
 import 'package:task_management_app/views/add_employees.dart';
 import 'package:task_management_app/views/create_task.dart';
+import 'package:task_management_app/views/tasks_screen.dart';
 import 'package:task_management_app/views/users_task_details.dart';
 import 'package:task_management_app/views/login_page.dart';
 import 'package:task_management_app/widgets/button_widget.dart';
@@ -432,109 +433,123 @@ class _UsersActivitiesState extends State<UsersActivities> {
                                     print("key: $key, value: $value");
                                   });
 
-                                  return Container(
-                                    margin: EdgeInsets.only(bottom: 10),
-                                    padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                CircleAvatar(
-                                                  child: Text(data['firstName']
-                                                          [0]
-                                                      .toString()
-                                                      .toUpperCase()),
-                                                ),
-                                                SizedBox(
-                                                  width: 5.0,
-                                                ),
-                                                Text(
-                                                  "${data['firstName']} ${data['lastName']}",
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    _createTaskController
-                                                        .data.value = data;
-
-                                                    Get.to(() => CreateTask(
-                                                          forAdmin: true,
-                                                        ));
-                                                  },
-                                                  child: Container(
-                                                    alignment: Alignment.center,
-                                                    //width: 0,
-                                                    //height: 30,
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 10.0,
-                                                            vertical: 5.0),
-                                                    decoration: BoxDecoration(
-                                                      color: Get
-                                                          .theme.primaryColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                    ),
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Get.to(() => TasksScreen(
+                                            appTitle:
+                                                "${data['firstName']} ${data['lastName']}'s tasks",
+                                            username:
+                                                data['username'].toString(),
+                                            forManager: true,
+                                          ));
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.only(bottom: 10),
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  CircleAvatar(
                                                     child: Text(
-                                                      'Add task',
-                                                      style: TextStyle(
-                                                          color: Colors.white),
+                                                        data['firstName'][0]
+                                                            .toString()
+                                                            .toUpperCase()),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5.0,
+                                                  ),
+                                                  Text(
+                                                    "${data['firstName']} ${data['lastName']}",
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      _createTaskController
+                                                          .data.value = data;
+
+                                                      Get.to(() => CreateTask(
+                                                            forAdmin: true,
+                                                            forManager: true,
+                                                          ));
+                                                    },
+                                                    child: Container(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      //width: 0,
+                                                      //height: 30,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 10.0,
+                                                              vertical: 5.0),
+                                                      decoration: BoxDecoration(
+                                                        color: Get
+                                                            .theme.primaryColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      child: Text(
+                                                        'Add task',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                SizedBox(
-                                                  width: 10.0,
-                                                ),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    print("EDIT MANAGER");
-                                                    showUpdateManagerDialog(
-                                                        context, document);
-                                                  },
-                                                  child: Icon(
-                                                    Iconsax.edit_outline,
-                                                    size: 20.0,
+                                                  SizedBox(
+                                                    width: 10.0,
                                                   ),
-                                                ),
-                                                SizedBox(
-                                                  width: 10.0,
-                                                ),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    print("DELETE MANAGER");
-                                                    // document.reference.delete();
-                                                    // _userActivitiesController
-                                                    //     .deleteManager(
-                                                    //         document);
-                                                    showDeleteConfirmationDialog(
-                                                        context, document);
-                                                  },
-                                                  child: Icon(Icons
-                                                      .delete_outline_outlined),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      print("EDIT MANAGER");
+                                                      showUpdateManagerDialog(
+                                                          context, document);
+                                                    },
+                                                    child: Icon(
+                                                      Iconsax.edit_outline,
+                                                      size: 20.0,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10.0,
+                                                  ),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      print("DELETE MANAGER");
+                                                      // document.reference.delete();
+                                                      // _userActivitiesController
+                                                      //     .deleteManager(
+                                                      //         document);
+                                                      showDeleteConfirmationDialog(
+                                                          context, document);
+                                                    },
+                                                    child: Icon(Icons
+                                                        .delete_outline_outlined),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   );
                                 },
@@ -633,108 +648,122 @@ class _UsersActivitiesState extends State<UsersActivities> {
                                     print("key: $key, value: $value");
                                   });
 
-                                  return Container(
-                                    margin: EdgeInsets.only(bottom: 10),
-                                    padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                CircleAvatar(
-                                                  child: Text(data['firstName']
-                                                          [0]
-                                                      .toString()
-                                                      .toUpperCase()),
-                                                ),
-                                                SizedBox(
-                                                  width: 5.0,
-                                                ),
-                                                Text(
-                                                  "${data['firstName']} ${data['lastName']}",
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Get.to(() => CreateTask(
-                                                          forAdmin: true,
-                                                          // specificDocumentOfUser:
-                                                          //     document,
-                                                        ));
-                                                  },
-                                                  child: Container(
-                                                    alignment: Alignment.center,
-                                                    //width: 0,
-                                                    //height: 30,
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 10.0,
-                                                            vertical: 5.0),
-                                                    decoration: BoxDecoration(
-                                                      color: Get
-                                                          .theme.primaryColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                    ),
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Get.to(() => TasksScreen(
+                                            appTitle:
+                                                "${data['firstName']} ${data['lastName']}'s tasks",
+                                            username:
+                                                data['username'].toString(),
+                                            forManager: false,
+                                          ));
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.only(bottom: 10),
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  CircleAvatar(
                                                     child: Text(
-                                                      'Add task',
-                                                      style: TextStyle(
-                                                          color: Colors.white),
+                                                        data['firstName'][0]
+                                                            .toString()
+                                                            .toUpperCase()),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5.0,
+                                                  ),
+                                                  Text(
+                                                    "${data['firstName']} ${data['lastName']}",
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      Get.to(() => CreateTask(
+                                                            forAdmin: true,
+                                                            // specificDocumentOfUser:
+                                                            //     document,
+                                                            forManager: false,
+                                                          ));
+                                                    },
+                                                    child: Container(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      //width: 0,
+                                                      //height: 30,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 10.0,
+                                                              vertical: 5.0),
+                                                      decoration: BoxDecoration(
+                                                        color: Get
+                                                            .theme.primaryColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      child: Text(
+                                                        'Add task',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                SizedBox(
-                                                  width: 10.0,
-                                                ),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    print("EDIT MANAGER");
-                                                    showUpdateManagerDialog(
-                                                        context, document);
-                                                  },
-                                                  child: Icon(
-                                                    Iconsax.edit_outline,
-                                                    size: 20.0,
+                                                  SizedBox(
+                                                    width: 10.0,
                                                   ),
-                                                ),
-                                                SizedBox(
-                                                  width: 10.0,
-                                                ),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    print("DELETE MANAGER");
-                                                    // document.reference.delete();
-                                                    // _userActivitiesController
-                                                    //     .deleteManager(
-                                                    //         document);
-                                                    showDeleteConfirmationDialog(
-                                                        context, document);
-                                                  },
-                                                  child: Icon(Icons
-                                                      .delete_outline_outlined),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      print("EDIT MANAGER");
+                                                      showUpdateManagerDialog(
+                                                          context, document);
+                                                    },
+                                                    child: Icon(
+                                                      Iconsax.edit_outline,
+                                                      size: 20.0,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10.0,
+                                                  ),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      print("DELETE MANAGER");
+                                                      // document.reference.delete();
+                                                      // _userActivitiesController
+                                                      //     .deleteManager(
+                                                      //         document);
+                                                      showDeleteConfirmationDialog(
+                                                          context, document);
+                                                    },
+                                                    child: Icon(Icons
+                                                        .delete_outline_outlined),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   );
                                 },

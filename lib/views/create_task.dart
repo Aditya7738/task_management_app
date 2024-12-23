@@ -22,10 +22,13 @@ import 'package:file_picker/file_picker.dart';
 
 class CreateTask extends StatefulWidget {
   final bool forAdmin;
+  final bool forManager;
 //  DocumentSnapshot<Object?>? specificDocumentOfUser;
-  CreateTask({super.key, required this.forAdmin
+  CreateTask(
+      {super.key,
+      required this.forAdmin,
       //, this.specificDocumentOfUser
-      });
+      required this.forManager});
 
   @override
   State<CreateTask> createState() => _CreateTaskState();
@@ -48,7 +51,7 @@ class _CreateTaskState extends State<CreateTask> {
     createTaskController.showSelectedEmpError.value = false;
     createTaskController.showStatusError.value = false;
 
-    createTaskController.getUserList();
+    createTaskController.getUserList(widget.forManager);
   }
 
   // TextEditingController taskNameController = TextEditingController();
@@ -1086,84 +1089,85 @@ class _CreateTaskState extends State<CreateTask> {
                           Obx(
                             () => GestureDetector(
                                 onTap: () {
-                                  if (createTaskController
-                                          .isPioritySelected.value ==
-                                      false) {
-                                    createTaskController
-                                        .showPriorityError.value = true;
-                                  }
+                                  // if (createTaskController
+                                  //         .isPioritySelected.value ==
+                                  //     false) {
+                                  //   createTaskController
+                                  //       .showPriorityError.value = true;
+                                  // }
 
-                                  if (createTaskController
-                                          .statusUpdated.value ==
-                                      false) {
-                                    createTaskController.showStatusError.value =
-                                        true;
-                                  }
+                                  // if (createTaskController
+                                  //         .statusUpdated.value ==
+                                  //     false) {
+                                  //   createTaskController.showStatusError.value =
+                                  //       true;
+                                  // }
 
-                                  if (createTaskController
-                                          .isEmployeeAssigned.value ==
-                                      false) {
-                                    createTaskController
-                                        .showSelectedEmpError.value = true;
-                                  }
+                                  // if (createTaskController
+                                  //         .isEmployeeAssigned.value ==
+                                  //     false) {
+                                  //   createTaskController
+                                  //       .showSelectedEmpError.value = true;
+                                  // }
 
-                                  if (_formKey.currentState!.validate()) {
-                                    // createTaskController.appointments.add(
-                                    //     Appointment(
-                                    //         isAllDay: false,
-                                    //         startTime: DateTime.parse(
-                                    //             createTaskController
-                                    //                 .startDateEditingController
-                                    //                 .text),
-                                    //         endTime: DateTime.parse(
-                                    //             createTaskController
-                                    //                 .dueDateEditingController
-                                    //                 .text),
-                                    //         color: getColor(),
-                                    //         subject: createTaskController
-                                    //             .taskNameController.text));
+                                  //  if (_formKey.currentState!.validate()) {
 
-                                    //  Get.back();
+                                  // createTaskController.appointments.add(
+                                  //     Appointment(
+                                  //         isAllDay: false,
+                                  //         startTime: DateTime.parse(
+                                  //             createTaskController
+                                  //                 .startDateEditingController
+                                  //                 .text),
+                                  //         endTime: DateTime.parse(
+                                  //             createTaskController
+                                  //                 .dueDateEditingController
+                                  //                 .text),
+                                  //         color: getColor(),
+                                  //         subject: createTaskController
+                                  //             .taskNameController.text));
 
-                                    /////////////////////////////////////
+                                  //  Get.back();
 
-                                    // if (forAdmin) {
-                                    //   switch (createTaskController
-                                    //       .selectedStatus.value) {
-                                    //     case "Assigned":
-                                    //       createTaskController.taskLabel.value =
-                                    //           "Assigned to";
-                                    //       break;
-                                    //     case "In progress":
-                                    //       createTaskController.taskLabel.value =
-                                    //           "In progress by";
-                                    //       break;
-                                    //     case "Completed":
-                                    //       createTaskController.taskLabel.value =
-                                    //           "Completed by";
-                                    //       break;
-                                    //     case "Hold":
-                                    //       createTaskController.taskLabel.value =
-                                    //           "Hold by";
-                                    //       break;
-                                    //     default:
-                                    //       createTaskController.taskLabel.value =
-                                    //           "Assigned to";
-                                    //   }
-                                    // }
+                                  /////////////////////////////////////
 
-                                    ////////////////////////////////////////////////
+                                  // if (forAdmin) {
+                                  //   switch (createTaskController
+                                  //       .selectedStatus.value) {
+                                  //     case "Assigned":
+                                  //       createTaskController.taskLabel.value =
+                                  //           "Assigned to";
+                                  //       break;
+                                  //     case "In progress":
+                                  //       createTaskController.taskLabel.value =
+                                  //           "In progress by";
+                                  //       break;
+                                  //     case "Completed":
+                                  //       createTaskController.taskLabel.value =
+                                  //           "Completed by";
+                                  //       break;
+                                  //     case "Hold":
+                                  //       createTaskController.taskLabel.value =
+                                  //           "Hold by";
+                                  //       break;
+                                  //     default:
+                                  //       createTaskController.taskLabel.value =
+                                  //           "Assigned to";
+                                  //   }
+                                  // }
 
-                                    if (createTaskController
-                                            .isPioritySelected.value &&
-                                        createTaskController
-                                            .statusUpdated.value &&
-                                        createTaskController
-                                            .isEmployeeAssigned.value) {
-                                      createTaskController
-                                          .createTaskOfManager();
-                                    }
-                                  }
+                                  ////////////////////////////////////////////////
+
+                                  // if (createTaskController
+                                  //         .isPioritySelected.value &&
+                                  //     createTaskController
+                                  //         .statusUpdated.value &&
+                                  //     createTaskController
+                                  //         .isEmployeeAssigned.value) {
+                                  createTaskController
+                                      .createTask(widget.forManager);
+                                  //  }
+                                  //   }
                                 },
                                 child: ButtonWidget(
                                     isLoading:

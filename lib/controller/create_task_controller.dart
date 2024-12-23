@@ -106,17 +106,21 @@ class CreateTaskController extends GetxController {
 
   RxBool gettingUsers = false.obs;
 
-  Future getUserList() async {
+  Future getUserList(bool forManager) async {
     gettingUsers.value = true;
 
     employeesToAssign.clear();
 
     employeesToAssign.add("Choose employee");
 
+    String collectionReference = forManager
+        ? DatabaseReferences.MANAGERS_COLLECTION_REFERENCE
+        : DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE;
+
     await _fireStore
         .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
         .doc(_userActivitiesController.companyName.value.toUpperCase())
-        .collection(DatabaseReferences.MANAGERS_COLLECTION_REFERENCE)
+        .collection(collectionReference)
         .get()
         .then((value) {
       if (value.docs.isNotEmpty) {
@@ -147,37 +151,37 @@ class CreateTaskController extends GetxController {
       },
     );
 
-    await _fireStore
-        .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-        .doc(_userActivitiesController.companyName.value.toUpperCase())
-        .collection(DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE)
-        .get()
-        .then((value) {
-      if (value.docs.isNotEmpty) {
-        value.docs.forEach((DocumentSnapshot document) {
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          employeesToAssign.add(data["firstName"] + " " + data["lastName"]);
-        });
-      }
+    // await _fireStore
+    //     .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+    //     .doc(_userActivitiesController.companyName.value.toUpperCase())
+    //     .collection(DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE)
+    //     .get()
+    //     .then((value) {
+    //   if (value.docs.isNotEmpty) {
+    //     value.docs.forEach((DocumentSnapshot document) {
+    //       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+    //       employeesToAssign.add(data["firstName"] + " " + data["lastName"]);
+    //     });
+    //   }
 
-      gettingUsers.value = false;
-    }).onError(
-      (error, stackTrace) {
-        print("Firebase Error: $error");
-        gettingUsers.value = false;
-        String cleanedError =
-            error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
-        //cleanedText.trim();
+    //   gettingUsers.value = false;
+    // }).onError(
+    //   (error, stackTrace) {
+    //     print("Firebase Error: $error");
+    //     gettingUsers.value = false;
+    //     String cleanedError =
+    //         error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+    //     //cleanedText.trim();
 
-        //  logingAccount.value = false;
-        Get.snackbar("Error", cleanedError,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-            duration: Duration(seconds: 5),
-            borderRadius: 20.0,
-            snackPosition: SnackPosition.TOP);
-      },
-    );
+    //     //  logingAccount.value = false;
+    //     Get.snackbar("Error", cleanedError,
+    //         backgroundColor: Colors.red,
+    //         colorText: Colors.white,
+    //         duration: Duration(seconds: 5),
+    //         borderRadius: 20.0,
+    //         snackPosition: SnackPosition.TOP);
+    //   },
+    // );
 
     print("employeesToAssign.length ${employeesToAssign.length}");
   }
@@ -247,9 +251,14 @@ class CreateTaskController extends GetxController {
     }
   }
 
-  Future<void> createTaskOfManager() async {
+  Future<void> createTask(bool forManager) async {
     creatingTask.value = true;
+    String collectionReference = forManager
+        ? DatabaseReferences.MANAGERS_COLLECTION_REFERENCE
+        : DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE;
 
+    print(
+        "FieldValue.serverTimestamp().toString() ${Timestamp.now().toDate().toString()}");
     try {
       print("data[username] ${data["username"]}");
 
@@ -258,7 +267,7 @@ class CreateTaskController extends GetxController {
       await _fireStore
           .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
           .doc(_userActivitiesController.companyName.value.toUpperCase())
-          .collection(DatabaseReferences.MANAGERS_COLLECTION_REFERENCE)
+          .collection(collectionReference)
           .where("username", isEqualTo: data["username"])
           .get()
           .then(
@@ -268,7 +277,7 @@ class CreateTaskController extends GetxController {
           await _fireStore
               .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
               .doc(_userActivitiesController.companyName.value.toUpperCase())
-              .collection(DatabaseReferences.MANAGERS_COLLECTION_REFERENCE)
+              .collection(collectionReference)
               .doc(reference.id)
               .collection(
                   DatabaseReferences.MANAGERS_TASKS_COLLECTION_REFERENCE)
@@ -292,6 +301,7 @@ class CreateTaskController extends GetxController {
             // "remainderDateOfRepeatingTask": "",
             "remainderTimeOfRepeatingTask":
                 repeatTaskController.remainderTimeController.text,
+            "timeStamp": Timestamp.now().toDate().toString,
             //"assignedBy": ,
           }).then(
             (value) {
@@ -443,12 +453,6 @@ class CreateTaskController extends GetxController {
               snackPosition: SnackPosition.TOP);
         },
       );
-
-      // doc.get().then(
-      //       (value) {
-      //         value.reference.i
-      //       },
-      //     );
     } catch (e) {
       print("Error: $e");
 

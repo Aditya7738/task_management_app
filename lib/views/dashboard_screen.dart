@@ -20,7 +20,10 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   List<Widget> tabs = <Widget>[
-    TasksScreen(),
+    TasksScreen(
+      username: "",
+      forManager: false,
+    ),
     CalendarTasks(),
     BoardScreen(),
     // ProfileScreen()

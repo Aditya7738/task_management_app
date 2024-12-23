@@ -79,6 +79,7 @@ class _TasksOverviewState extends State<TasksOverview> {
               onTap: () {
                 Get.to(() => CreateTask(
                       forAdmin: false,
+                      forManager: true,
                     ));
               },
               child: Container(

@@ -7,7 +7,14 @@ import 'package:task_management_app/views/calendar_tasks.dart';
 import 'package:task_management_app/widgets/task_list.dart';
 
 class TasksScreen extends StatefulWidget {
-  const TasksScreen({super.key});
+  final String? appTitle;
+  final String username;
+  final bool forManager;
+  TasksScreen(
+      {super.key,
+      this.appTitle,
+      required this.username,
+      required this.forManager});
 
   @override
   State<TasksScreen> createState() => _TasksScreenState();
@@ -179,13 +186,13 @@ class _TasksScreenState extends State<TasksScreen>
     return WillPopScope(
       onWillPop: () async {
         //Get.to(BoardScreen());
-        return false;
+        return widget.appTitle == null ? false : true;
       },
       child: Scaffold(
         appBar: AppBar(
             automaticallyImplyLeading: false,
             title: Text(
-              'Task manager',
+              widget.appTitle ?? "Task manager",
               style: TextStyle(fontSize: 16.0),
             ),
             // actions: [
@@ -251,10 +258,22 @@ class _TasksScreenState extends State<TasksScreen>
         body: TabBarView(
           controller: _tabController,
           children: [
-            TaskList(),
-            TaskList(),
-            TaskList(),
-            TaskList(),
+            TaskList(
+              username: widget.username,
+              forManager: widget.forManager,
+            ),
+            TaskList(
+              username: widget.username,
+              forManager: widget.forManager,
+            ),
+            TaskList(
+              username: widget.username,
+              forManager: widget.forManager,
+            ),
+            TaskList(
+              username: widget.username,
+              forManager: widget.forManager,
+            ),
           ],
         ),
       ),
