@@ -259,6 +259,29 @@ class CreateTaskController extends GetxController {
 
     print(
         "FieldValue.serverTimestamp().toString() ${Timestamp.now().toDate().toString()}");
+
+    String taskCollectionRef = "";
+
+    switch (selectedStatus.value) {
+      case "Assigned":
+        taskCollectionRef =
+            DatabaseReferences.MANAGERS_TASKS_COLLECTION_REFERENCE;
+        break;
+      case "In progress":
+        taskCollectionRef =
+            DatabaseReferences.MANAGERS_INPROGRESS_TASKS_COLLECTION_REFERENCE;
+        break;
+      case "Completed":
+        taskCollectionRef =
+            DatabaseReferences.MANAGERS_COMPLETED_TASKS_COLLECTION_REFERENCE;
+        break;
+      case "Hold":
+        taskCollectionRef =
+            DatabaseReferences.MANAGERS_HOLD_TASKS_COLLECTION_REFERENCE;
+        break;
+      default:
+    }
+
     try {
       print("data[username] ${data["username"]}");
 
@@ -279,8 +302,7 @@ class CreateTaskController extends GetxController {
               .doc(_userActivitiesController.companyName.value.toUpperCase())
               .collection(collectionReference)
               .doc(reference.id)
-              .collection(
-                  DatabaseReferences.MANAGERS_TASKS_COLLECTION_REFERENCE)
+              .collection(taskCollectionRef)
               .add({
             "taskName": taskNameController.text,
             "assignedTo": assignedTo.value,
@@ -301,14 +323,14 @@ class CreateTaskController extends GetxController {
             // "remainderDateOfRepeatingTask": "",
             "remainderTimeOfRepeatingTask":
                 repeatTaskController.remainderTimeController.text,
-            "timeStamp": Timestamp.now().toDate().toString,
+            "timeStamp": Timestamp.now().toDate().toString(),
             //"assignedBy": ,
           }).then(
             (value) {
               // creatingTask.value = false;
-              //   Get.back();
+              Get.back();
 
-              Get.snackbar("Task assigned successfully", "",
+              Get.snackbar("Task stored successfully", "",
                   colorText: Colors.white,
                   backgroundColor: Get.theme.primaryColor,
                   duration: Duration(seconds: 4),
@@ -317,7 +339,7 @@ class CreateTaskController extends GetxController {
             },
           ).onError(
             (error, stackTrace) {
-              print("FirestoreManager Error: $error");
+              print("FirestoreManager Task Error: $error");
 
               creatingTask.value = false;
 

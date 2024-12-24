@@ -14,195 +14,256 @@ class TaskScreenController extends GetxController {
 
   RxBool fetchAssignedTaskToEmp = false.obs;
 
+  // Future<QuerySnapshot<Map<String, dynamic>>?> getAssignedTasklist(
+  //     bool ofManager, String username) async {
+  //   //  fetchAssignedTaskToEmp.value = true;
+  //   DocumentReference empRef;
+
+  //   // QuerySnapshot<Map<String, dynamic>> assignedTasks;
+
+  //   String collectionReference = ofManager
+  //       ? DatabaseReferences.MANAGERS_COLLECTION_REFERENCE
+  //       : DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE;
+
+  //   await _fireStore
+  //       .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+  //       .doc(_userActivitiesController.companyName.value.toUpperCase())
+  //       .collection(collectionReference)
+  //       .where("username", isEqualTo: username)
+  //       .get()
+  //       .then(
+  //     (value) async {
+  //       empRef = value.docs.first.reference;
+
+  //       print("EmpRef: ${empRef.id}");
+  //       await _fireStore
+  //           .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+  //           .doc(_userActivitiesController.companyName.value.toUpperCase())
+  //           .collection(collectionReference)
+  //           .doc(empRef.id)
+  //           .collection(DatabaseReferences.MANAGERS_TASKS_COLLECTION_REFERENCE)
+
+  //           .get()
+  //           .then(
+  //         (value) {
+  //           return value;
+  //         },
+  //       ).onError(
+  //         (error, stackTrace) {
+  //           print("Firestore Error: $error");
+
+  //           //  fetchAssignedTaskToEmp.value = false;
+
+  //           String cleanedError =
+  //               error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+
+  //           Get.snackbar("Error", cleanedError,
+  //               colorText: Colors.white,
+  //               backgroundColor: Colors.red,
+  //               duration: Duration(seconds: 5),
+  //               borderRadius: 20.0,
+  //               snackPosition: SnackPosition.TOP);
+
+  //           throw Exception(cleanedError);
+  //         },
+  //       );
+  //       // .onError(
+  //       //   (error, stackTrace) {
+  //       //     print("Firestore Error: $error");
+
+  //       //     //   fetchAssignedTaskToEmp.value = false;
+
+  //       //     String cleanedError =
+  //       //         error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+
+  //       //     Get.snackbar("Error", cleanedError,
+  //       //         colorText: Colors.white,
+  //       //         backgroundColor: Colors.red,
+  //       //         duration: Duration(seconds: 5),
+  //       //         borderRadius: 20.0,
+  //       //         snackPosition: SnackPosition.TOP);
+
+  //       //     throw Exception(cleanedError);
+  //       //   },
+  //       // );
+  //     },
+  //   ).onError(
+  //     (error, stackTrace) {
+  //       print("Firestore Error: $error");
+
+  //       //   fetchAssignedTaskToEmp.value = false;
+
+  //       String cleanedError =
+  //           error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+
+  //       Get.snackbar("Error", cleanedError,
+  //           colorText: Colors.white,
+  //           backgroundColor: Colors.red,
+  //           duration: Duration(seconds: 5),
+  //           borderRadius: 20.0,
+  //           snackPosition: SnackPosition.TOP);
+
+  //       //   throw Exception(cleanedError);
+  //     },
+  //   );
+
+  //   // return Future.error("Failed to fetch assigned tasks");
+
+  //   //   try {
+  //   //     await _fireStore
+  //   //         .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+  //   //         .doc(_userActivitiesController.companyName.value.toUpperCase())
+  //   //         .collection(collectionReference)
+  //   //         .where("workEmail",
+  //   //             isEqualTo: _userActivitiesController.workEmail.value)
+  //   //         .get()
+  //   //         .then(
+  //   //       (value) async {
+  //   //         adminReference = value.docs.first.reference;
+
+  //   //         await _fireStore
+  //   //             .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+  //   //             .doc(_userActivitiesController.companyName.value.toUpperCase())
+  //   //             .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
+  //   //             .doc(adminReference.id)
+  //   //             .collection(
+  //   //                 DatabaseReferences.ADMINS_ASSIGNED_TASKS_COLLECTION_REFERENCE)
+  //   //             .get()
+  //   //             .then(
+  //   //           (value) {
+  //   //             fetchAssignedTaskToEmp.value = false;
+
+  //   //             Get.snackbar("Tasks fetched successfully", "",
+  //   //                 colorText: Colors.white,
+  //   //                 backgroundColor: Get.theme.primaryColor,
+  //   //                 duration: Duration(seconds: 4),
+  //   //                 borderRadius: 20.0,
+  //   //                 snackPosition: SnackPosition.TOP);
+
+  //   //             //     assignedTasks = value;
+
+  //   //             return value;
+  //   //           },
+  //   //         ).onError(
+  //   //           (error, stackTrace) {
+  //   //             print("FirestoreAdmin Error: $error");
+
+  //   //             fetchAssignedTaskToEmp.value = false;
+
+  //   //             String cleanedError =
+  //   //                 error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+
+  //   //             Get.snackbar("Error", cleanedError,
+  //   //                 colorText: Colors.white,
+  //   //                 backgroundColor: Colors.red,
+  //   //                 duration: Duration(seconds: 5),
+  //   //                 borderRadius: 20.0,
+  //   //                 snackPosition: SnackPosition.TOP);
+
+  //   //             throw Exception(cleanedError);
+  //   //           },
+  //   //         );
+  //   //       },
+  //   //     ).onError(
+  //   //       (error, stackTrace) {
+  //   //         print("FirestoreManager Error: $error");
+
+  //   //         fetchAssignedTaskToEmp.value = false;
+
+  //   //         String cleanedError =
+  //   //             error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+
+  //   //         Get.snackbar("Error", cleanedError,
+  //   //             colorText: Colors.white,
+  //   //             backgroundColor: Colors.red,
+  //   //             duration: Duration(seconds: 5),
+  //   //             borderRadius: 20.0,
+  //   //             snackPosition: SnackPosition.TOP);
+
+  //   //         //  throw Exception(cleanedError);
+  //   //       },
+  //   //     );
+
+  //   //     // doc.get().then(
+  //   //     //       (value) {
+  //   //     //         value.reference.i
+  //   //     //       },
+  //   //     //     );
+  //   //   } catch (e) {
+  //   //     print("Error: $e");
+
+  //   //     fetchAssignedTaskToEmp.value = true;
+
+  //   //     String cleanedError =
+  //   //         e.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+
+  //   //     Get.snackbar("Error", cleanedError,
+  //   //         colorText: Colors.white,
+  //   //         backgroundColor: Colors.red,
+  //   //         duration: Duration(seconds: 5),
+  //   //         borderRadius: 20.0,
+  //   //         snackPosition: SnackPosition.TOP);
+  //   //     //  throw Exception("Failed to fetch assigned tasks");
+  //   //   }
+  //   //   return Future.error("Failed to fetch assigned tasks");
+  //   // }
+  // }
+
   Future<QuerySnapshot<Map<String, dynamic>>> getAssignedTasklist(
-      bool ofManager, String username) async {
-    fetchAssignedTaskToEmp.value = true;
+      bool ofManager, String username, String typeOfTasks) async {
+    //  fetchAssignedTaskToEmp.value = true;
     DocumentReference empRef;
 
     // QuerySnapshot<Map<String, dynamic>> assignedTasks;
+
+    String taskCollectionRef = "";
+
+    switch (typeOfTasks) {
+      case "Assigned":
+        taskCollectionRef =
+            DatabaseReferences.MANAGERS_TASKS_COLLECTION_REFERENCE;
+        break;
+      case "In progress":
+        taskCollectionRef =
+            DatabaseReferences.MANAGERS_INPROGRESS_TASKS_COLLECTION_REFERENCE;
+        break;
+      case "Completed":
+        taskCollectionRef =
+            DatabaseReferences.MANAGERS_COMPLETED_TASKS_COLLECTION_REFERENCE;
+        break;
+      case "Hold":
+        taskCollectionRef =
+            DatabaseReferences.MANAGERS_HOLD_TASKS_COLLECTION_REFERENCE;
+        break;
+      default:
+    }
+
+    print("Task Collection Ref: $taskCollectionRef");
 
     String collectionReference = ofManager
         ? DatabaseReferences.MANAGERS_COLLECTION_REFERENCE
         : DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE;
 
-    await _fireStore
+    QuerySnapshot<Map<String, dynamic>> map = await _fireStore
         .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
         .doc(_userActivitiesController.companyName.value.toUpperCase())
         .collection(collectionReference)
         .where("username", isEqualTo: username)
-        .get()
-        .then(
-      (value) async {
-        empRef = value.docs.first.reference;
+        .get();
 
-        await _fireStore
-            .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-            .doc(_userActivitiesController.companyName.value.toUpperCase())
-            .collection(collectionReference)
-            .doc(empRef.id)
-            .collection(DatabaseReferences.MANAGERS_TASKS_COLLECTION_REFERENCE)
-            .get()
-            .then(
-          (value) {
-            return value;
-          },
-        ).onError(
-          (error, stackTrace) {
-            print("Firestore Error: $error");
+    empRef = map.docs.first.reference;
 
-            fetchAssignedTaskToEmp.value = false;
+    print("EmpRef: ${empRef.id}");
+    QuerySnapshot<Map<String, dynamic>> managerTasks = await _fireStore
+        .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+        .doc(_userActivitiesController.companyName.value.toUpperCase())
+        .collection(collectionReference)
+        .doc(empRef.id)
+        .collection(taskCollectionRef
+            //DatabaseReferences.MANAGERS_TASKS_COLLECTION_REFERENCE
+            )
+        .get();
 
-            String cleanedError =
-                error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
-
-            Get.snackbar("Error", cleanedError,
-                colorText: Colors.white,
-                backgroundColor: Colors.red,
-                duration: Duration(seconds: 5),
-                borderRadius: 20.0,
-                snackPosition: SnackPosition.TOP);
-
-            throw Exception(cleanedError);
-          },
-        ).onError(
-          (error, stackTrace) {
-            print("Firestore Error: $error");
-
-            fetchAssignedTaskToEmp.value = false;
-
-            String cleanedError =
-                error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
-
-            Get.snackbar("Error", cleanedError,
-                colorText: Colors.white,
-                backgroundColor: Colors.red,
-                duration: Duration(seconds: 5),
-                borderRadius: 20.0,
-                snackPosition: SnackPosition.TOP);
-
-            throw Exception(cleanedError);
-          },
-        );
-      },
-    ).onError(
-      (error, stackTrace) {
-        print("Firestore Error: $error");
-
-        fetchAssignedTaskToEmp.value = false;
-
-        String cleanedError =
-            error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
-
-        Get.snackbar("Error", cleanedError,
-            colorText: Colors.white,
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 5),
-            borderRadius: 20.0,
-            snackPosition: SnackPosition.TOP);
-
-        throw Exception(cleanedError);
-      },
-    );
-
-    return Future.error("Failed to fetch assigned tasks");
-
-    //   try {
-    //     await _fireStore
-    //         .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-    //         .doc(_userActivitiesController.companyName.value.toUpperCase())
-    //         .collection(collectionReference)
-    //         .where("workEmail",
-    //             isEqualTo: _userActivitiesController.workEmail.value)
-    //         .get()
-    //         .then(
-    //       (value) async {
-    //         adminReference = value.docs.first.reference;
-
-    //         await _fireStore
-    //             .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-    //             .doc(_userActivitiesController.companyName.value.toUpperCase())
-    //             .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
-    //             .doc(adminReference.id)
-    //             .collection(
-    //                 DatabaseReferences.ADMINS_ASSIGNED_TASKS_COLLECTION_REFERENCE)
-    //             .get()
-    //             .then(
-    //           (value) {
-    //             fetchAssignedTaskToEmp.value = false;
-
-    //             Get.snackbar("Tasks fetched successfully", "",
-    //                 colorText: Colors.white,
-    //                 backgroundColor: Get.theme.primaryColor,
-    //                 duration: Duration(seconds: 4),
-    //                 borderRadius: 20.0,
-    //                 snackPosition: SnackPosition.TOP);
-
-    //             //     assignedTasks = value;
-
-    //             return value;
-    //           },
-    //         ).onError(
-    //           (error, stackTrace) {
-    //             print("FirestoreAdmin Error: $error");
-
-    //             fetchAssignedTaskToEmp.value = false;
-
-    //             String cleanedError =
-    //                 error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
-
-    //             Get.snackbar("Error", cleanedError,
-    //                 colorText: Colors.white,
-    //                 backgroundColor: Colors.red,
-    //                 duration: Duration(seconds: 5),
-    //                 borderRadius: 20.0,
-    //                 snackPosition: SnackPosition.TOP);
-
-    //             throw Exception(cleanedError);
-    //           },
-    //         );
-    //       },
-    //     ).onError(
-    //       (error, stackTrace) {
-    //         print("FirestoreManager Error: $error");
-
-    //         fetchAssignedTaskToEmp.value = false;
-
-    //         String cleanedError =
-    //             error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
-
-    //         Get.snackbar("Error", cleanedError,
-    //             colorText: Colors.white,
-    //             backgroundColor: Colors.red,
-    //             duration: Duration(seconds: 5),
-    //             borderRadius: 20.0,
-    //             snackPosition: SnackPosition.TOP);
-
-    //         //  throw Exception(cleanedError);
-    //       },
-    //     );
-
-    //     // doc.get().then(
-    //     //       (value) {
-    //     //         value.reference.i
-    //     //       },
-    //     //     );
-    //   } catch (e) {
-    //     print("Error: $e");
-
-    //     fetchAssignedTaskToEmp.value = true;
-
-    //     String cleanedError =
-    //         e.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
-
-    //     Get.snackbar("Error", cleanedError,
-    //         colorText: Colors.white,
-    //         backgroundColor: Colors.red,
-    //         duration: Duration(seconds: 5),
-    //         borderRadius: 20.0,
-    //         snackPosition: SnackPosition.TOP);
-    //     //  throw Exception("Failed to fetch assigned tasks");
-    //   }
-    //   return Future.error("Failed to fetch assigned tasks");
-    // }
+    return managerTasks;
   }
 }

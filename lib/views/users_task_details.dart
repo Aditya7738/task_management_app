@@ -382,18 +382,22 @@ class _UsersTaskDetailsState extends State<UsersTaskDetails>
                     TaskList(
                       username: "",
                       forManager: false,
+                      typeOfTasks: "Assigned",
                     ),
                     TaskList(
                       username: "",
                       forManager: false,
+                      typeOfTasks: "Assigned",
                     ),
                     TaskList(
                       username: "",
                       forManager: false,
+                      typeOfTasks: "Assigned",
                     ),
                     TaskList(
                       username: "",
                       forManager: false,
+                      typeOfTasks: "Assigned",
                     ),
                   ],
                 ),

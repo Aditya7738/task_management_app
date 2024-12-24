@@ -50,24 +50,24 @@ class _TasksScreenState extends State<TasksScreen>
                   //   letterSpacing: -0.28,
                 ),
               ),
-              SizedBox(width: 5),
-              Container(
-                padding: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  //   color: Colors.green,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.grey,
-                  ),
-                ),
-                child: Text(
-                  '5',
-                  style: TextStyle(
-                    // color: Colors.black,
-                    fontSize: 10,
-                  ),
-                ),
-              ),
+              // SizedBox(width: 5),
+              // Container(
+              //   padding: EdgeInsets.all(5),
+              //   decoration: BoxDecoration(
+              //     //   color: Colors.green,
+              //     shape: BoxShape.circle,
+              //     border: Border.all(
+              //       color: Colors.grey,
+              //     ),
+              //   ),
+              //   child: Text(
+              //     '5',
+              //     style: TextStyle(
+              //       // color: Colors.black,
+              //       fontSize: 10,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -261,18 +261,22 @@ class _TasksScreenState extends State<TasksScreen>
             TaskList(
               username: widget.username,
               forManager: widget.forManager,
+              typeOfTasks: "Assigned",
             ),
             TaskList(
               username: widget.username,
               forManager: widget.forManager,
+              typeOfTasks: "In progress",
             ),
             TaskList(
               username: widget.username,
               forManager: widget.forManager,
+              typeOfTasks: "Completed",
             ),
             TaskList(
               username: widget.username,
               forManager: widget.forManager,
+              typeOfTasks: "Hold",
             ),
           ],
         ),

@@ -3,9 +3,18 @@ class DatabaseReferences {
   static String ADMIN_COLLECTION_REFERENCE = "admin";
   static String EMPLOYEES_COLLECTION_REFERENCE = "employee";
   static String MANAGERS_COLLECTION_REFERENCE = "manager";
-  static String MANAGERS_TASKS_COLLECTION_REFERENCE = "assigned_tasks";
+
   static String ADMINS_ASSIGNED_TASKS_COLLECTION_REFERENCE =
       "assignedTasksToOthers";
+
+  static String MANAGERS_TASKS_COLLECTION_REFERENCE = "assigned_tasks";
+
+  static String MANAGERS_COMPLETED_TASKS_COLLECTION_REFERENCE = "completedByMe";
+
+  static String MANAGERS_INPROGRESS_TASKS_COLLECTION_REFERENCE =
+      "inprogress_tasks";
+
+  static String MANAGERS_HOLD_TASKS_COLLECTION_REFERENCE = "onHold_by_me";
 
   static String SUPABASE_PROJECT_URL =
       "https://pmxmrwhpflssonemwxau.supabase.co";

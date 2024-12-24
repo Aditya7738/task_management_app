@@ -10,7 +10,12 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 class TaskList extends StatefulWidget {
   final String username;
   final bool forManager;
-  TaskList({super.key, required this.forManager, required this.username});
+  final String typeOfTasks;
+  TaskList(
+      {super.key,
+      required this.forManager,
+      required this.username,
+      required this.typeOfTasks});
 
   @override
   State<TaskList> createState() => _TaskListState();
@@ -57,8 +62,8 @@ class _TaskListState extends State<TaskList> {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: FutureBuilder(
-          future:
-              taskScreenController.getAssignedTasklist(true, widget.username),
+          future: taskScreenController.getAssignedTasklist(
+              true, widget.username, widget.typeOfTasks),
           builder: (context, snapshot) {
             if (
                 //true
@@ -99,7 +104,7 @@ class _TaskListState extends State<TaskList> {
 
                       return GestureDetector(
                         onTap: () {
-                          Get.toNamed('/task_detail');
+                          //  Get.toNamed('/task_detail');
                         },
                         child: Container(
                             margin: EdgeInsets.all(8.0),

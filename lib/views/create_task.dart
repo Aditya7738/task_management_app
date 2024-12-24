@@ -601,16 +601,19 @@ class _CreateTaskState extends State<CreateTask> {
                                 if (picked.compareTo(
                                         createTaskController.dueDate.value) !=
                                     1) {
-                                  Get.snackbar("Error",
-                                      "Remainder date should be grater than start date",
-                                      backgroundColor: Colors.red,
-                                      colorText: Colors.white,
-                                      duration: Duration(seconds: 5),
-                                      borderRadius: 20.0,
-                                      snackPosition: SnackPosition.TOP);
+                                  // Get.snackbar("Error",
+                                  //     "Remainder date should be grater than start date",
+                                  //     backgroundColor: Colors.red,
+                                  //     colorText: Colors.white,
+                                  //     duration: Duration(seconds: 5),
+                                  //     borderRadius: 20.0,
+                                  //     snackPosition: SnackPosition.TOP);
                                 } else if (picked.compareTo(
                                         createTaskController.startDate.value) !=
                                     -1) {
+                                  createTaskController
+                                          .setRemainderOptionController.text =
+                                      picked.toLocal().toString().split(" ")[0];
                                   Get.snackbar("Error",
                                       "Remainder date should be less than due date",
                                       backgroundColor: Colors.red,
