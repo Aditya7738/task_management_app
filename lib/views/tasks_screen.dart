@@ -31,7 +31,7 @@ class _TasksScreenState extends State<TasksScreen>
     _tabController = TabController(length: 4, vsync: this);
   }
 
-  List<String> tabNames = ["Assigned", "In progress", "Completed", "Hold"];
+  List<String> tabNames = ["Assigned", "In progress", "Completed", "On hold"];
 
   List<Tab> tabs() {
     List<Tab> tabs = [];

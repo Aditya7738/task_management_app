@@ -7,6 +7,14 @@ class DatabaseReferences {
   static String ADMINS_ASSIGNED_TASKS_COLLECTION_REFERENCE =
       "assignedTasksToOthers";
 
+  static String ADMIN_COMPLETED_TASKS_COLLECTION_REFERENCE = "completedTasks";
+
+  static String ADMIN_INPROGRESS_TASKS_COLLECTION_REFERENCE = "tasksInProgress";
+
+  static String ADMIN_HOLD_TASKS_COLLECTION_REFERENCE = "tasksOnHold";
+
+  ////////////////////////////////////////
+
   static String MANAGERS_TASKS_COLLECTION_REFERENCE = "assigned_tasks";
 
   static String MANAGERS_COMPLETED_TASKS_COLLECTION_REFERENCE = "completedByMe";

@@ -15,11 +15,17 @@ import 'package:task_management_app/controller/user_activities_controller.dart';
 class CreateTaskController extends GetxController {
   FirebaseFirestore _fireStore = FirebaseFirestore.instance;
 
-  List<String> employeesToAssign = ["Choose employee"];
+  RxList<String> employeesToAssign = <String>[].obs;
 
   RxBool isEmployeeAssigned = false.obs;
 
-  RxString assignedTo = "Choose employee".obs;
+  RxString assignedTo = "".obs;
+
+  setAssignedTo(String value) {
+    assignedTo.value = value;
+
+    update();
+  }
 
   List<String> sections = [
     "Choose Section",
@@ -30,7 +36,7 @@ class CreateTaskController extends GetxController {
 
   RxString taskLabel = "Assigned to".obs;
 
-  List<String> statuses = ["Assigned", "In progress", "Completed", "Hold"];
+  List<String> statuses = ["Assigned", "In progress", "Completed", "On hold"];
 
   RxString selectedStatus = "Assigned".obs;
 
@@ -109,9 +115,19 @@ class CreateTaskController extends GetxController {
   Future getUserList(bool forManager) async {
     gettingUsers.value = true;
 
-    employeesToAssign.clear();
+    //employeesToAssign.clear();
 
-    employeesToAssign.add("Choose employee");
+    print("employeesToAssign.length ${employeesToAssign.length}");
+
+    employeesToAssign.value.add("Choose employee");
+
+    employeesToAssign.value.forEach(
+      (element) {
+        print("element $element");
+      },
+    );
+
+    print("employeesToAssign.length ${employeesToAssign.value.length}");
 
     String collectionReference = forManager
         ? DatabaseReferences.MANAGERS_COLLECTION_REFERENCE
@@ -126,7 +142,8 @@ class CreateTaskController extends GetxController {
       if (value.docs.isNotEmpty) {
         value.docs.forEach((DocumentSnapshot document) {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          employeesToAssign.add(data["firstName"] + " " + data["lastName"]);
+          employeesToAssign.value
+              .add(data["firstName"] + " " + data["lastName"]);
         });
       }
 
@@ -148,6 +165,12 @@ class CreateTaskController extends GetxController {
             duration: Duration(seconds: 5),
             borderRadius: 20.0,
             snackPosition: SnackPosition.TOP);
+      },
+    );
+
+    employeesToAssign.value.forEach(
+      (element) {
+        print("element 2 $element");
       },
     );
 
@@ -183,7 +206,9 @@ class CreateTaskController extends GetxController {
     //   },
     // );
 
-    print("employeesToAssign.length ${employeesToAssign.length}");
+    print("employeesToAssign.length ${employeesToAssign.value.length}");
+
+    update();
   }
 
   SupabaseClient supabase = Supabase.instance.client;
@@ -251,6 +276,8 @@ class CreateTaskController extends GetxController {
     }
   }
 
+  var descriptionController = TextEditingController();
+
   Future<void> createTask(bool forManager) async {
     creatingTask.value = true;
     String collectionReference = forManager
@@ -262,22 +289,32 @@ class CreateTaskController extends GetxController {
 
     String taskCollectionRef = "";
 
+    String adminTaskReference = "";
+
     switch (selectedStatus.value) {
       case "Assigned":
         taskCollectionRef =
             DatabaseReferences.MANAGERS_TASKS_COLLECTION_REFERENCE;
+        adminTaskReference =
+            DatabaseReferences.ADMINS_ASSIGNED_TASKS_COLLECTION_REFERENCE;
         break;
       case "In progress":
         taskCollectionRef =
             DatabaseReferences.MANAGERS_INPROGRESS_TASKS_COLLECTION_REFERENCE;
+        adminTaskReference =
+            DatabaseReferences.ADMIN_INPROGRESS_TASKS_COLLECTION_REFERENCE;
         break;
       case "Completed":
         taskCollectionRef =
             DatabaseReferences.MANAGERS_COMPLETED_TASKS_COLLECTION_REFERENCE;
+        adminTaskReference =
+            DatabaseReferences.ADMIN_COMPLETED_TASKS_COLLECTION_REFERENCE;
         break;
-      case "Hold":
+      case "On hold":
         taskCollectionRef =
             DatabaseReferences.MANAGERS_HOLD_TASKS_COLLECTION_REFERENCE;
+        adminTaskReference =
+            DatabaseReferences.ADMIN_HOLD_TASKS_COLLECTION_REFERENCE;
         break;
       default:
     }
@@ -297,6 +334,13 @@ class CreateTaskController extends GetxController {
         (value) async {
           reference = value.docs.first.reference;
 
+          print("taskNameController.text ${taskNameController.text}");
+          print("selectedStatus.text ${selectedStatus.value}");
+          print(
+              "startDateEditingController.text ${startDateEditingController.text}");
+          print(
+              "dueDateEditingController.text ${dueDateEditingController.text}");
+
           await _fireStore
               .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
               .doc(_userActivitiesController.companyName.value.toUpperCase())
@@ -305,6 +349,7 @@ class CreateTaskController extends GetxController {
               .collection(taskCollectionRef)
               .add({
             "taskName": taskNameController.text,
+            "description": descriptionController.text,
             "assignedTo": assignedTo.value,
             "status": selectedStatus.value,
             "startDate": startDateEditingController.text,
@@ -330,7 +375,7 @@ class CreateTaskController extends GetxController {
               // creatingTask.value = false;
               Get.back();
 
-              Get.snackbar("Task stored successfully", "",
+              Get.snackbar("Task stored successfully in user's database", "",
                   colorText: Colors.white,
                   backgroundColor: Get.theme.primaryColor,
                   duration: Duration(seconds: 4),
@@ -407,8 +452,7 @@ class CreateTaskController extends GetxController {
               .doc(_userActivitiesController.companyName.value.toUpperCase())
               .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
               .doc(adminReference.id)
-              .collection(
-                  DatabaseReferences.ADMINS_ASSIGNED_TASKS_COLLECTION_REFERENCE)
+              .collection(adminTaskReference)
               .add({
             "taskName": taskNameController.text,
             "assignedTo": assignedTo.value,
@@ -433,7 +477,7 @@ class CreateTaskController extends GetxController {
             (value) {
               creatingTask.value = false;
 
-              Get.snackbar("Task stored successfully", "",
+              Get.snackbar("Task stored successfully in Admin's database", "",
                   colorText: Colors.white,
                   backgroundColor: Get.theme.primaryColor,
                   duration: Duration(seconds: 4),

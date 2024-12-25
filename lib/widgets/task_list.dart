@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:task_management_app/controller/repeat_task_controller.dart';
 import 'package:task_management_app/controller/task_screen_controller.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:task_management_app/views/task_details.dart';
 
 class TaskList extends StatefulWidget {
   final String username;
@@ -62,8 +63,8 @@ class _TaskListState extends State<TaskList> {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: FutureBuilder(
-          future: taskScreenController.getAssignedTasklist(
-              true, widget.username, widget.typeOfTasks),
+          future: taskScreenController.getTasklist(
+              widget.forManager, widget.username, widget.typeOfTasks),
           builder: (context, snapshot) {
             if (
                 //true
@@ -105,6 +106,7 @@ class _TaskListState extends State<TaskList> {
                       return GestureDetector(
                         onTap: () {
                           //  Get.toNamed('/task_detail');
+                          Get.to(() => TaskDetails(data: data));
                         },
                         child: Container(
                             margin: EdgeInsets.all(8.0),
@@ -241,12 +243,12 @@ class _TaskListState extends State<TaskList> {
                                     style: TextStyle(
                                         fontSize: 15.0,
                                         fontWeight: FontWeight.bold)),
-                                SizedBox(
-                                  height: 4.0,
-                                ),
-                                Text(data['remarks'],
-                                    style: TextStyle(
-                                        fontSize: 13.0, color: Colors.grey)),
+                                // SizedBox(
+                                //   height: 4.0,
+                                // ),
+                                // Text(data['remarks'],
+                                //     style: TextStyle(
+                                //         fontSize: 13.0, color: Colors.grey)),
                               ],
                             )),
                       );

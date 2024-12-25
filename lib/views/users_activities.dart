@@ -47,12 +47,14 @@ class _UsersActivitiesState extends State<UsersActivities> {
     // _userActivitiesController.getEmployeeCollection();
   }
 
-  Future<void> showUpdateManagerDialog(
+  Future<void> showUpdateDialog(
       BuildContext context, DocumentSnapshot document) async {
     // double deviceWidth = MediaQuery.of(context).size.width;
 
     // final customerProvider =
     //     Provider.of<CustomerProvider>(context, listen: false);
+
+    Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
     await showDialog(
       context: context,
       builder: (context) {
@@ -94,24 +96,25 @@ class _UsersActivitiesState extends State<UsersActivities> {
                     keyboardType: TextInputType.name,
                     validator: ValidationHelper.nullOrEmptyString,
                     decoration: InputDecoration(
-                      errorStyle: TextStyle(
-                          fontSize: FontSizes.errorFontSize,
-                          //  deviceWidth > 600
-                          //     ? Fontsizes.tabletErrorTextSize
-                          //     : Fontsizes.errorTextSize,
-                          color: Colors.red),
-                      labelStyle: TextStyle(fontSize: 14.0
-                          // deviceWidth > 600
-                          //     ? Fontsizes.tabletTextFormInputFieldSize
-                          //     : Fontsizes.textFormInputFieldSize
-                          ),
-                      labelText: "Enter new first name",
-
-                      // border: OutlineInputBorder(
-                      //     borderSide: BorderSide(color: Colors.red),
-                      //     borderRadius:
-                      //         BorderRadius.all(Radius.circular(20.0))),
-                    ),
+                        errorStyle: TextStyle(
+                            fontSize: FontSizes.errorFontSize,
+                            //  deviceWidth > 600
+                            //     ? Fontsizes.tabletErrorTextSize
+                            //     : Fontsizes.errorTextSize,
+                            color: Colors.red),
+                        labelStyle: TextStyle(fontSize: 14.0
+                            // deviceWidth > 600
+                            //     ? Fontsizes.tabletTextFormInputFieldSize
+                            //     : Fontsizes.textFormInputFieldSize
+                            ),
+                        labelText: "Enter new first name",
+                        hintText: data['firstName'].toString(),
+                        hintStyle: TextStyle(fontSize: 14.0)
+                        // border: OutlineInputBorder(
+                        //     borderSide: BorderSide(color: Colors.red),
+                        //     borderRadius:
+                        //         BorderRadius.all(Radius.circular(20.0))),
+                        ),
                   ),
 
                   // ),
@@ -128,24 +131,25 @@ class _UsersActivitiesState extends State<UsersActivities> {
                     keyboardType: TextInputType.name,
                     validator: ValidationHelper.nullOrEmptyString,
                     decoration: InputDecoration(
-                      errorStyle: TextStyle(
-                          fontSize: FontSizes.errorFontSize,
-                          //  deviceWidth > 600
-                          //     ? Fontsizes.tabletErrorTextSize
-                          //     : Fontsizes.errorTextSize,
-                          color: Colors.red),
-                      labelStyle: TextStyle(fontSize: 14.0
-                          // deviceWidth > 600
-                          //     ? Fontsizes.tabletTextFormInputFieldSize
-                          //     : Fontsizes.textFormInputFieldSize
-                          ),
-                      labelText: "Enter new last name",
-
-                      // border: OutlineInputBorder(
-                      //     borderSide: BorderSide(color: Colors.red),
-                      //     borderRadius:
-                      //         BorderRadius.all(Radius.circular(20.0))),
-                    ),
+                        errorStyle: TextStyle(
+                            fontSize: FontSizes.errorFontSize,
+                            //  deviceWidth > 600
+                            //     ? Fontsizes.tabletErrorTextSize
+                            //     : Fontsizes.errorTextSize,
+                            color: Colors.red),
+                        labelStyle: TextStyle(fontSize: 14.0
+                            // deviceWidth > 600
+                            //     ? Fontsizes.tabletTextFormInputFieldSize
+                            //     : Fontsizes.textFormInputFieldSize
+                            ),
+                        labelText: "Enter new last name",
+                        hintText: data['lastName'].toString(),
+                        hintStyle: TextStyle(fontSize: 14.0)
+                        // border: OutlineInputBorder(
+                        //     borderSide: BorderSide(color: Colors.red),
+                        //     borderRadius:
+                        //         BorderRadius.all(Radius.circular(20.0))),
+                        ),
                   ),
                 ],
               ),
@@ -515,12 +519,12 @@ class _UsersActivitiesState extends State<UsersActivities> {
                                                     ),
                                                   ),
                                                   SizedBox(
-                                                    width: 10.0,
+                                                    width: 15.0,
                                                   ),
                                                   GestureDetector(
                                                     onTap: () {
                                                       print("EDIT MANAGER");
-                                                      showUpdateManagerDialog(
+                                                      showUpdateDialog(
                                                           context, document);
                                                     },
                                                     child: Icon(
@@ -529,7 +533,7 @@ class _UsersActivitiesState extends State<UsersActivities> {
                                                     ),
                                                   ),
                                                   SizedBox(
-                                                    width: 10.0,
+                                                    width: 15.0,
                                                   ),
                                                   GestureDetector(
                                                     onTap: () {
@@ -729,12 +733,12 @@ class _UsersActivitiesState extends State<UsersActivities> {
                                                     ),
                                                   ),
                                                   SizedBox(
-                                                    width: 10.0,
+                                                    width: 15.0,
                                                   ),
                                                   GestureDetector(
                                                     onTap: () {
                                                       print("EDIT MANAGER");
-                                                      showUpdateManagerDialog(
+                                                      showUpdateDialog(
                                                           context, document);
                                                     },
                                                     child: Icon(
@@ -743,7 +747,7 @@ class _UsersActivitiesState extends State<UsersActivities> {
                                                     ),
                                                   ),
                                                   SizedBox(
-                                                    width: 10.0,
+                                                    width: 15.0,
                                                   ),
                                                   GestureDetector(
                                                     onTap: () {

@@ -209,7 +209,7 @@ class TaskScreenController extends GetxController {
   //   // }
   // }
 
-  Future<QuerySnapshot<Map<String, dynamic>>> getAssignedTasklist(
+  Future<QuerySnapshot<Map<String, dynamic>>> getTasklist(
       bool ofManager, String username, String typeOfTasks) async {
     //  fetchAssignedTaskToEmp.value = true;
     DocumentReference empRef;
