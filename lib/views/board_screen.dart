@@ -115,7 +115,7 @@ class _BoardScreenState extends State<BoardScreen> {
               children: [
                 Container(
                   width: (Get.width * 0.9) - 1.0,
-                  height: Get.height - 152,
+                  height: Get.height - 175,
                   color: const Color.fromARGB(255, 239, 239, 239),
                   padding:
                       EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
@@ -132,11 +132,11 @@ class _BoardScreenState extends State<BoardScreen> {
                   ),
                   //)
                 ),
-                Container(
-                  width: 1.0,
-                  height: Get.height - 152,
-                  color: Colors.grey,
-                ),
+                // Container(
+                //   width: 1.0,
+                //   height: Get.height - 152,
+                //   color: Colors.grey,
+                // ),
               ],
             ),
           ],
@@ -309,18 +309,21 @@ class _BoardScreenState extends State<BoardScreen> {
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ...listCards(),
-              SizedBox(
-                width: 5.0,
-              ),
-              Icon(Iconsax.add_circle_bold),
-            ],
+        body: SizedBox(
+          height: Get.height - 50,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ...listCards(),
+                SizedBox(
+                  width: 5.0,
+                ),
+                Icon(Iconsax.add_circle_bold),
+              ],
+            ),
           ),
         ),
       ),

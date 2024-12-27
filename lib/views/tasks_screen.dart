@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -5,6 +6,7 @@ import 'package:task_management_app/constants/database_references.dart';
 import 'package:task_management_app/controller/task_screen_controller.dart';
 import 'package:task_management_app/views/board_screen.dart';
 import 'package:task_management_app/views/calendar_tasks.dart';
+import 'package:task_management_app/views/login_page.dart';
 import 'package:task_management_app/widgets/task_list.dart';
 
 class TasksScreen extends StatefulWidget {
@@ -42,7 +44,12 @@ class _TasksScreenState extends State<TasksScreen>
     //  taskScreenController.getMap(collectionReference, widget.username);
   }
 
-  List<String> tabNames = ["Assigned", "In progress", "Completed", "On hold"];
+  List<String> tabNames = [
+    "Assigned",
+    "In progress",
+    "On hold",
+    "Completed",
+  ];
 
   List<Tab> tabs() {
     List<Tab> tabs = [];
@@ -191,7 +198,7 @@ class _TasksScreenState extends State<TasksScreen>
   }
 
   //TaskScreenController taskScreenController = Get.put(TaskScreenController());
-
+  FirebaseAuth auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -206,25 +213,30 @@ class _TasksScreenState extends State<TasksScreen>
               widget.appTitle ?? "Task manager",
               style: TextStyle(fontSize: 16.0),
             ),
-            // actions: [
-            //   InkWell(
-            //       onTap: () {
-            //         Get.to(BoardScreen());
-            //       },
-            //       child: Padding(
-            //         padding: const EdgeInsets.only(right: 10.0),
-            //         child: Icon(Iconsax.task_outline),
-            //       )),
-            //   InkWell(
-            //       onTap: () {
-            //         Get.to(CalendarTasks());
-            //       },
-            //       child: Padding(
-            //         padding: const EdgeInsets.only(right: 8.0),
-            //         child: Icon(Iconsax.calendar_add_outline),
-            //       )),
-            // ],
-
+            actions: [
+              // InkWell(
+              //     onTap: () {
+              //       Get.to(BoardScreen());
+              //     },
+              //     child: Padding(
+              //       padding: const EdgeInsets.only(right: 10.0),
+              //       child: Icon(Iconsax.task_outline),
+              //     )),
+              // InkWell(
+              //     onTap: () {
+              //       Get.to(CalendarTasks());
+              //     },
+              //     child: Padding(
+              //       padding: const EdgeInsets.only(right: 8.0),
+              //       child: Icon(Iconsax.calendar_add_outline),
+              //     )),
+              IconButton(
+                  onPressed: () async {
+                    await auth.signOut();
+                    Get.to(() => LoginPage());
+                  },
+                  icon: Icon(Icons.logout_rounded))
+            ],
             bottom: TabBar(
               tabAlignment: TabAlignment.start,
               isScrollable: true,
@@ -287,14 +299,14 @@ class _TasksScreenState extends State<TasksScreen>
               username: widget.username,
               forManager: widget.forManager,
               appTitle: widget.appTitle,
-              typeOfTasks: "Completed",
+              typeOfTasks: "Hold",
               forAdmin: widget.forAdmin,
             ),
             TaskList(
               username: widget.username,
               forManager: widget.forManager,
               appTitle: widget.appTitle,
-              typeOfTasks: "Hold",
+              typeOfTasks: "Completed",
               forAdmin: widget.forAdmin,
             ),
           ],

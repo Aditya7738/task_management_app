@@ -76,7 +76,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Iconsax.calendar_add_outline),
-              activeIcon: Icon(Iconsax.user_bold),
+              activeIcon: Icon(Iconsax.calendar_add_bold),
               label: 'Tasks overview',
             ),
           ],

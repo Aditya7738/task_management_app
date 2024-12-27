@@ -2,6 +2,7 @@ import 'package:buttons_tabbar/buttons_tabbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_management_app/controller/dashboard_controller.dart';
 import 'package:task_management_app/controller/login_controller.dart';
 import 'package:task_management_app/views/calendar_tasks.dart';
@@ -19,25 +20,35 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  List<Widget> tabs = <Widget>[
-    TasksScreen(
-      username: "",
-      forManager: false,
-      forAdmin: false,
-    ),
-    CalendarTasks(),
-    BoardScreen(),
-    // ProfileScreen()
-  ];
-
   DashboardController dashboardController = Get.put(DashboardController());
   LoginController _loginController = Get.put(LoginController());
+
+  // String roleName = "";
+  // String username = "";
+
+  List<Widget> tabs() {
+    print("Role name: ${dashboardController.roleName.value}");
+    print(
+        "dashboardController. roleName.value == Manager ${dashboardController.roleName.value == "Manager"}");
+    return <Widget>[
+      TasksScreen(
+        username: dashboardController.username.value,
+        forManager:
+            dashboardController.roleName.value == "Manager" ? true : false,
+        forAdmin: false,
+      ),
+      CalendarTasks(),
+      BoardScreen(),
+      // ProfileScreen()
+    ];
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _loginController.getPermissions();
+    dashboardController.fetchSharedRefData();
   }
 
   @override
@@ -70,7 +81,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
           currentIndex: dashboardController.currentIndex.value,
           unselectedItemColor: Colors.grey,
         ),
-        body: tabs[dashboardController.currentIndex.value],
+        body: dashboardController.fetchingSharedRefData.value
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: Get.theme.primaryColor,
+                ),
+              )
+            : tabs()[dashboardController.currentIndex.value],
       ),
     );
   }

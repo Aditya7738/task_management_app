@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_management_app/constants/database_references.dart';
+import 'package:task_management_app/controller/dashboard_controller.dart';
 import 'package:task_management_app/controller/user_activities_controller.dart';
 import 'package:task_management_app/views/admin_dash_board.dart';
 import 'package:task_management_app/views/tasks_screen.dart';
@@ -16,6 +17,8 @@ class TaskScreenController extends GetxController {
       Get.put(UserActivitiesController());
 
   RxBool fetchAssignedTaskToEmp = false.obs;
+
+  DashboardController _dashboardController = Get.put(DashboardController());
 
   Future<QuerySnapshot<Map<String, dynamic>>> getTasklist(
       bool ofManager, String username, String typeOfTasks) async {
@@ -52,9 +55,22 @@ class TaskScreenController extends GetxController {
         ? DatabaseReferences.MANAGERS_COLLECTION_REFERENCE
         : DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE;
 
+    String companyName = "";
+
+    print("ofManager: $ofManager");
+
+    if (ofManager) {
+      print("username ${_dashboardController.companyName.value}");
+      companyName = _dashboardController.companyName.value.toUpperCase();
+    } else {
+      companyName = _userActivitiesController.companyName.value.toUpperCase();
+    }
+
+    print("Company Name: $companyName");
+
     QuerySnapshot<Map<String, dynamic>> map = await _fireStore
         .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-        .doc(_userActivitiesController.companyName.value.toUpperCase())
+        .doc(companyName)
         .collection(collectionReference)
         .where("username", isEqualTo: username)
         .get();
@@ -64,7 +80,7 @@ class TaskScreenController extends GetxController {
     print("EmpRef: ${empRef.id}");
     QuerySnapshot<Map<String, dynamic>> tasks = await _fireStore
         .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-        .doc(_userActivitiesController.companyName.value.toUpperCase())
+        .doc(companyName)
         .collection(collectionReference)
         .doc(empRef.id
             //"UiCrFsXSwx6Fqxr1VeQS"
@@ -298,8 +314,13 @@ class TaskScreenController extends GetxController {
     }
   }
 
-  Future<void> deleteTask(DocumentSnapshot<Object?> document, String? appTitle,
-      String username, bool forManager, bool forAdmin) async {
+  Future<void> deleteTask(
+      DocumentSnapshot<Object?> document,
+      String? appTitle,
+      String username,
+      bool forManager,
+      bool forAdmin,
+      bool forTaskOverview) async {
     deletingTask.value = true;
     await document.reference.delete().then(
       (value) async {
@@ -311,12 +332,14 @@ class TaskScreenController extends GetxController {
         Get.offUntil(MaterialPageRoute(builder: (_) => AdminDashboardScreen()),
             (route) => false);
 
-        Get.to(() => TasksScreen(
-              appTitle: appTitle,
-              username: username,
-              forManager: forManager,
-              forAdmin: forAdmin,
-            ));
+        if (!forTaskOverview) {
+          Get.to(() => TasksScreen(
+                appTitle: appTitle,
+                username: username,
+                forManager: forManager,
+                forAdmin: forAdmin,
+              ));
+        }
 
         Get.snackbar("Selected task deleted successfully", "",
             colorText: Colors.white,

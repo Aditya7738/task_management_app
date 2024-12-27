@@ -338,30 +338,31 @@ class _UsersActivitiesState extends State<UsersActivities> {
                     ),
                   ),
                 ),
-                Center(
-                  child: SizedBox(
-                    width: Get.width * 0.5,
-                    height: Get.height * 0.4,
-                    child: PieChart(
-                      PieChartData(
-                        sections: [
-                          PieChartSectionData(
-                            color: Colors.red,
-                            value: 40,
-                            radius: 40,
-                            title: '40% Inactive employees',
-                          ),
-                          PieChartSectionData(
-                            radius: 60,
-                            color: Colors.green,
-                            value: 60,
-                            title: '60% Active employees',
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                // Center(
+                //   child: SizedBox(
+                //     width: Get.width * 0.5,
+                //     height: Get.height * 0.4,
+                //     child: PieChart(
+                //       PieChartData(
+                //         sections: [
+                //           PieChartSectionData(
+                //             color: Colors.red,
+                //             value: 40,
+                //             radius: 40,
+                //             title: '40% Inactive employees',
+                //           ),
+                //           PieChartSectionData(
+                //             radius: 60,
+                //             color: Colors.green,
+                //             value: 60,
+                //             title: '60% Active employees',
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // ),
+
                 // SizedBox(
                 //   height: 50.0,
                 //   child: TextFormField(

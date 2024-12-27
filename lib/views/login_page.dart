@@ -466,10 +466,6 @@ class _LoginPageState extends State<LoginPage> {
                                     //     : Fontsizes.textFormInputFieldSize
                                     ),
                                 labelText: "Enter your email",
-                                // border: OutlineInputBorder(
-                                //     borderSide: BorderSide(color: Colors.red),
-                                //     borderRadius:
-                                //         BorderRadius.all(Radius.circular(20.0))),
                               ),
                             );
                           } else {
@@ -494,11 +490,7 @@ class _LoginPageState extends State<LoginPage> {
                                     //     ? Fontsizes.tabletTextFormInputFieldSize
                                     //     : Fontsizes.textFormInputFieldSize
                                     ),
-                                labelText: "Enter assigned username",
-                                // border: OutlineInputBorder(
-                                //     borderSide: BorderSide(color: Colors.red),
-                                //     borderRadius:
-                                //         BorderRadius.all(Radius.circular(20.0))),
+                                labelText: "Enter your username",
                               ),
                             );
                           }

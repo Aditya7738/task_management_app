@@ -6,36 +6,34 @@ import 'package:intl/intl.dart';
 import 'package:task_management_app/controller/repeat_task_controller.dart';
 import 'package:task_management_app/controller/task_screen_controller.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:task_management_app/controller/tasks_overview_controller.dart';
 import 'package:task_management_app/views/task_details.dart';
 import 'package:task_management_app/views/update_task.dart';
 import 'package:task_management_app/widgets/button_widget.dart';
 
-class TaskList extends StatefulWidget {
-  final String username;
-  final bool forAdmin;
-  final bool forManager;
+class AdminsTaskList extends StatefulWidget {
   final String typeOfTasks;
-  final String? appTitle;
-  TaskList(
-      {super.key,
-      required this.forManager,
-      required this.username,
-      required this.typeOfTasks,
-      required this.appTitle,
-      required this.forAdmin});
+
+  AdminsTaskList({
+    super.key,
+    required this.typeOfTasks,
+  });
 
   @override
-  State<TaskList> createState() => _TaskListState();
+  State<AdminsTaskList> createState() => _AdminsTaskListState();
 }
 
-class _TaskListState extends State<TaskList> {
-  TaskScreenController taskScreenController = Get.put(TaskScreenController());
+class _AdminsTaskListState extends State<AdminsTaskList> {
+  TasksOverviewController tasksOvTasksOverviewController =
+      Get.put(TasksOverviewController());
 
   var options = [
     "Edit",
     "Move to",
     "Delete",
   ];
+
+  TaskScreenController _taskScreenController = Get.put(TaskScreenController());
 
   Future<void> showDeleteConfirmationDialog(
       BuildContext context, DocumentSnapshot document) async {
@@ -60,17 +58,15 @@ class _TaskListState extends State<TaskList> {
           actions: [
             GestureDetector(
                 onTap: () {
+                  // _tasksOverviewController.deleteTask(document, widget.appTitle,
+                  //     widget.username, widget.forManager, widget.forAdmin);
                   _taskScreenController.deleteTask(
-                      document,
-                      widget.appTitle,
-                      widget.username,
-                      widget.forManager,
-                      widget.forAdmin,
-                      false);
+                      document, "", "", false, true, true);
                 },
                 child: Obx(
                   () => ButtonWidget(
-                    isLoading: _taskScreenController.deletingTask.value,
+                    isLoading: // false,
+                        _taskScreenController.deletingTask.value,
                     width: 100.0,
                     color: Colors.red,
                     text: "Delete",
@@ -108,7 +104,7 @@ class _TaskListState extends State<TaskList> {
     // TODO: implement initState
     super.initState();
 
-    //taskScreenController.getAssignedTasklist();
+    //tasksOvTasksOverviewController.getAssignedAdminsTasklist();
   }
 
   String getDayTime(String date) {
@@ -130,7 +126,8 @@ class _TaskListState extends State<TaskList> {
     return formattedDate;
   }
 
-  TaskScreenController _taskScreenController = Get.put(TaskScreenController());
+  TasksOverviewController _tasksOverviewController =
+      Get.put(TasksOverviewController());
 
   @override
   Widget build(BuildContext context) {
@@ -139,8 +136,8 @@ class _TaskListState extends State<TaskList> {
         child:
             //  Obx(() {
             //   print(
-            //       "gettingUsernameOfEmp: ${_taskScreenController.gettingUsernameOfEmp.value}");
-            //   if (_taskScreenController.gettingUsernameOfEmp.value) {
+            //       "gettingUsernameOfEmp: ${_tasksOverviewController.gettingUsernameOfEmp.value}");
+            //   if (_tasksOverviewController.gettingUsernameOfEmp.value) {
             //     return SizedBox(
             //       width: Get.width,
             //       height: Get.height * 0.26,
@@ -153,8 +150,7 @@ class _TaskListState extends State<TaskList> {
             //   } else {
             //     return
             FutureBuilder(
-                future: taskScreenController.getTasklist(
-                    widget.forManager, widget.username, widget.typeOfTasks),
+                future: _tasksOverviewController.getTasks(widget.typeOfTasks),
                 builder: (context, snapshot) {
                   if (
                       //true
@@ -189,6 +185,16 @@ class _TaskListState extends State<TaskList> {
 
                             data.forEach((key, value) {
                               print("key: $key, value: $value");
+
+                              print("value.runtimeType ${value.runtimeType}");
+
+                              if (value == null) {
+                                print(
+                                    "${document.reference.id} $key value is null");
+                              }
+
+                              print(
+                                  "////////////////////////////////////////////////////////");
                             });
 
                             // String date = data['timeStamp'];
@@ -233,7 +239,8 @@ class _TaskListState extends State<TaskList> {
                                                 width: 5.0,
                                               ),
                                               Text(
-                                                  getDayTime(data['timeStamp']),
+                                                  getDayTime(data['timeStamp']
+                                                      .toString()),
                                                   style: TextStyle(
                                                       fontSize: 12.0)),
                                               // SizedBox(
@@ -286,21 +293,14 @@ class _TaskListState extends State<TaskList> {
                                               onChanged: (value) {
                                                 switch (value) {
                                                   case "Edit":
-
-                                                    //change forEmp to forManager or vice versa
                                                     Get.to(() => UpdateTask(
                                                           //  data: data,
-                                                          forAdmin:
-                                                              widget.forAdmin,
-                                                          forEmp:
-                                                              widget.forManager,
+                                                          forAdmin: true,
+                                                          forEmp: false,
                                                           document: document,
-                                                          username:
-                                                              widget.username,
-                                                          appTitle:
-                                                              widget.appTitle,
-                                                          forTaskOverview:
-                                                              false,
+                                                          username: "",
+                                                          appTitle: "",
+                                                          forTaskOverview: true,
                                                         ));
                                                     break;
                                                   case "Move to":
@@ -355,7 +355,7 @@ class _TaskListState extends State<TaskList> {
                                       SizedBox(
                                         height: 6.0,
                                       ),
-                                      Text(data['taskName'],
+                                      Text(data['taskName'].toString(),
                                           style: TextStyle(
                                               fontSize: 15.0,
                                               fontWeight: FontWeight.bold)),

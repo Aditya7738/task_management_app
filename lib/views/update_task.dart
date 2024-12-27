@@ -23,18 +23,20 @@ import 'package:file_picker/file_picker.dart';
 
 class UpdateTask extends StatefulWidget {
   final bool forAdmin;
-  final bool forManager;
+  final bool forEmp;
   final String username;
   final DocumentSnapshot document;
   final String? appTitle;
+  final bool forTaskOverview;
 
   UpdateTask(
       {super.key,
       required this.forAdmin,
-      required this.forManager,
+      required this.forEmp,
       //required this.data,
       required this.document,
       required this.username,
+      required this.forTaskOverview,
       this.appTitle});
 
   @override
@@ -94,7 +96,7 @@ class _CreateTaskState extends State<UpdateTask> {
     if (widget.forAdmin) {
     } else {
       _updateTaskController.employeesToAssign.clear();
-      _updateTaskController.getUserList(widget.forManager);
+      _updateTaskController.getUserList(widget.forEmp);
       _updateTaskController.assignedTo.value =
           _updateTaskController.employeesToAssign.isNotEmpty
               ? _updateTaskController.employeesToAssign[0]
@@ -148,7 +150,7 @@ class _CreateTaskState extends State<UpdateTask> {
         if (widget.forAdmin) {
         } else {
           _updateTaskController.employeesToAssign.clear();
-          // _updateTaskController.getUserList(widget.forManager);
+          // _updateTaskController.getUserList(widget.forEmp);
           _updateTaskController.assignedTo.value =
               _updateTaskController.employeesToAssign.isNotEmpty
                   ? _updateTaskController.employeesToAssign[0]
@@ -1336,13 +1338,13 @@ class _CreateTaskState extends State<UpdateTask> {
                                     //         .isEmployeeAssigned.value) {
 
                                     await _updateTaskController.updateTask(
-                                      widget.document,
-                                      widget.username,
-                                      widget.forManager,
-                                      widget.appTitle,
-                                      widget.forAdmin,
-                                      data["taskName"].toString(),
-                                    );
+                                        widget.document,
+                                        widget.username,
+                                        widget.forEmp,
+                                        widget.appTitle,
+                                        widget.forAdmin,
+                                        data["taskName"].toString(),
+                                        widget.forTaskOverview);
 
                                     if (widget.forAdmin == false) {
                                       _updateTaskController

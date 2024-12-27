@@ -46,10 +46,13 @@ class LoginController extends GetxController {
     logingAccount.value = true;
 
     if (role.value != "Admin") {
-      emailController.value.text = usernameController.text +
+      emailController.value.text = usernameController.text.trim() +
           "@" +
           companyNameController.text.toLowerCase().trim() +
           ".com";
+
+      await sharedPreferencesAsync.setString(
+          "username", usernameController.text.trim());
     }
 
     await auth
@@ -62,6 +65,7 @@ class LoginController extends GetxController {
 
         await sharedPreferencesAsync.setString(
             "company_name", companyNameController.text.trim());
+
         await sharedPreferencesAsync.setString("role", role.value);
 
         await sharedPreferencesAsync.setString(

@@ -12,8 +12,10 @@ import 'package:task_management_app/constants/strings.dart';
 import 'package:task_management_app/controller/repeat_task_controller.dart';
 import 'package:task_management_app/controller/user_activities_controller.dart';
 import 'package:task_management_app/views/admin_dash_board.dart';
+import 'package:task_management_app/views/dashboard_screen.dart';
 import 'package:task_management_app/views/tasks_screen.dart';
 import 'package:task_management_app/views/users_activities.dart';
+import 'package:task_management_app/widgets/admins_task_list.dart';
 
 class UpdateTaskController extends GetxController {
   FirebaseFirestore _fireStore = FirebaseFirestore.instance;
@@ -282,7 +284,7 @@ class UpdateTaskController extends GetxController {
   var descriptionController = TextEditingController();
 
   Future<void> updateAdminSideTask(String taskName) async {
-    DocumentReference adminReference;
+    // DocumentReference adminReference;
     String adminTaskTypeReference = "";
 
     switch (selectedStatus.value) {
@@ -306,26 +308,23 @@ class UpdateTaskController extends GetxController {
     }
 
     DocumentReference taskReference;
-
+    //adminReference = value.docs.first.reference;
+    String adminReferenceId = "";
     try {
       await _fireStore
           .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
           .doc(_userActivitiesController.companyName.value.toUpperCase())
           .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
-          .where("workEmail",
-              isEqualTo: _userActivitiesController.workEmail.value)
           .get()
           .then(
         (value) async {
-          adminReference = value.docs.first.reference;
-
-          print("taskName $taskName");
+          adminReferenceId = value.docs.first.reference.id;
 
           await _fireStore
               .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
               .doc(_userActivitiesController.companyName.value.toUpperCase())
               .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
-              .doc(adminReference.id)
+              .doc(adminReferenceId)
               .collection(adminTaskTypeReference)
               .where("taskName", isEqualTo: taskName)
               .get()
@@ -337,7 +336,7 @@ class UpdateTaskController extends GetxController {
                   .doc(
                       _userActivitiesController.companyName.value.toUpperCase())
                   .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
-                  .doc(adminReference.id)
+                  .doc(adminReferenceId)
                   .collection(adminTaskTypeReference)
                   .doc(taskReference.id)
                   .update({
@@ -382,7 +381,7 @@ class UpdateTaskController extends GetxController {
                       .replaceAll(RegExp(r'\[.*?\]'), '')
                       .trim();
 
-                  Get.snackbar("Error", cleanedError,
+                  Get.snackbar("FirestoreAdmin Error", cleanedError,
                       colorText: Colors.white,
                       backgroundColor: Colors.red,
                       duration: Duration(seconds: 5),
@@ -405,20 +404,6 @@ class UpdateTaskController extends GetxController {
                 snackPosition: SnackPosition.TOP);
           });
         },
-      ).onError(
-        (error, stackTrace) {
-          print("FirestoreManager Error: $error");
-
-          String cleanedError =
-              error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
-
-          Get.snackbar("Admin not found", cleanedError,
-              colorText: Colors.white,
-              backgroundColor: Colors.red,
-              duration: Duration(seconds: 5),
-              borderRadius: 20.0,
-              snackPosition: SnackPosition.TOP);
-        },
       );
     } catch (e) {
       print("Error: $e");
@@ -433,10 +418,18 @@ class UpdateTaskController extends GetxController {
           borderRadius: 20.0,
           snackPosition: SnackPosition.TOP);
     }
+
+    print("taskName $taskName");
   }
 
-  Future<void> updateTask(DocumentSnapshot<Object?> document, String username,
-      bool forManager, String? appTitle, bool forAdmin, String taskName) async {
+  Future<void> updateTask(
+      DocumentSnapshot<Object?> document,
+      String username,
+      bool forManager,
+      String? appTitle,
+      bool forAdmin,
+      String taskName,
+      bool forTaskOverview) async {
     updatingTask.value = true;
 
     await document.reference.update({
@@ -467,15 +460,22 @@ class UpdateTaskController extends GetxController {
 
         updatingTask.value = false;
 
-        Get.offUntil(MaterialPageRoute(builder: (_) => AdminDashboardScreen()),
-            (route) => false);
+        if (!forTaskOverview) {
+          Get.offUntil(
+              MaterialPageRoute(builder: (_) => AdminDashboardScreen()),
+              (route) => false);
 
-        Get.to(() => TasksScreen(
-              appTitle: appTitle,
-              username: username,
-              forManager: forManager,
-              forAdmin: forAdmin,
-            ));
+          Get.to(() => TasksScreen(
+                appTitle: appTitle,
+                username: username,
+                forManager: forManager,
+                forAdmin: forAdmin,
+              ));
+        } else {
+          //write seperate function for manager
+          Get.offUntil(MaterialPageRoute(builder: (_) => DashboardScreen()),
+              (route) => false);
+        }
 
         Get.snackbar("Task is updated successfully", "",
             colorText: Colors.white,
