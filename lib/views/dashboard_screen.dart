@@ -23,6 +23,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     TasksScreen(
       username: "",
       forManager: false,
+      forAdmin: false,
     ),
     CalendarTasks(),
     BoardScreen(),

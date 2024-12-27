@@ -455,6 +455,7 @@ class CreateTaskController extends GetxController {
               .collection(adminTaskReference)
               .add({
             "taskName": taskNameController.text,
+            "description": descriptionController.text,
             "assignedTo": assignedTo.value,
             "status": selectedStatus.value,
             "startDate": startDateEditingController.text,
@@ -473,6 +474,7 @@ class CreateTaskController extends GetxController {
             // "remainderDateOfRepeatingTask": "",
             "remainderTimeOfRepeatingTask":
                 repeatTaskController.remainderTimeController.text,
+            "timeStamp": Timestamp.now().toDate().toString(),
           }).then(
             (value) {
               creatingTask.value = false;

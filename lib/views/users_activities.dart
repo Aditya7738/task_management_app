@@ -41,7 +41,10 @@ class _UsersActivitiesState extends State<UsersActivities> {
     super.initState();
     print(
         "_loginController.emailController.value.text ${_loginController.emailController.value.text}");
-    _userActivitiesController.getCompanyName();
+
+    if (_userActivitiesController.companyName.value.isEmpty) {
+      _userActivitiesController.getCompanyName();
+    }
 
     // _userActivitiesController.getManagersCollection();
     // _userActivitiesController.getEmployeeCollection();
@@ -55,6 +58,12 @@ class _UsersActivitiesState extends State<UsersActivities> {
     //     Provider.of<CustomerProvider>(context, listen: false);
 
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+    _userActivitiesController.firstNameController.text =
+        data['firstName'].toString();
+    _userActivitiesController.lastNameController.text =
+        data['lastName'].toString();
+
     await showDialog(
       context: context,
       builder: (context) {
@@ -96,25 +105,25 @@ class _UsersActivitiesState extends State<UsersActivities> {
                     keyboardType: TextInputType.name,
                     validator: ValidationHelper.nullOrEmptyString,
                     decoration: InputDecoration(
-                        errorStyle: TextStyle(
-                            fontSize: FontSizes.errorFontSize,
-                            //  deviceWidth > 600
-                            //     ? Fontsizes.tabletErrorTextSize
-                            //     : Fontsizes.errorTextSize,
-                            color: Colors.red),
-                        labelStyle: TextStyle(fontSize: 14.0
-                            // deviceWidth > 600
-                            //     ? Fontsizes.tabletTextFormInputFieldSize
-                            //     : Fontsizes.textFormInputFieldSize
-                            ),
-                        labelText: "Enter new first name",
-                        hintText: data['firstName'].toString(),
-                        hintStyle: TextStyle(fontSize: 14.0)
-                        // border: OutlineInputBorder(
-                        //     borderSide: BorderSide(color: Colors.red),
-                        //     borderRadius:
-                        //         BorderRadius.all(Radius.circular(20.0))),
-                        ),
+                      errorStyle: TextStyle(
+                          fontSize: FontSizes.errorFontSize,
+                          //  deviceWidth > 600
+                          //     ? Fontsizes.tabletErrorTextSize
+                          //     : Fontsizes.errorTextSize,
+                          color: Colors.red),
+                      labelStyle: TextStyle(fontSize: 14.0
+                          // deviceWidth > 600
+                          //     ? Fontsizes.tabletTextFormInputFieldSize
+                          //     : Fontsizes.textFormInputFieldSize
+                          ),
+                      labelText: "Enter new first name",
+                      // hintText: data['firstName'].toString(),
+                      // hintStyle: TextStyle(fontSize: 14.0)
+                      // border: OutlineInputBorder(
+                      //     borderSide: BorderSide(color: Colors.red),
+                      //     borderRadius:
+                      //         BorderRadius.all(Radius.circular(20.0))),
+                    ),
                   ),
 
                   // ),
@@ -131,25 +140,25 @@ class _UsersActivitiesState extends State<UsersActivities> {
                     keyboardType: TextInputType.name,
                     validator: ValidationHelper.nullOrEmptyString,
                     decoration: InputDecoration(
-                        errorStyle: TextStyle(
-                            fontSize: FontSizes.errorFontSize,
-                            //  deviceWidth > 600
-                            //     ? Fontsizes.tabletErrorTextSize
-                            //     : Fontsizes.errorTextSize,
-                            color: Colors.red),
-                        labelStyle: TextStyle(fontSize: 14.0
-                            // deviceWidth > 600
-                            //     ? Fontsizes.tabletTextFormInputFieldSize
-                            //     : Fontsizes.textFormInputFieldSize
-                            ),
-                        labelText: "Enter new last name",
-                        hintText: data['lastName'].toString(),
-                        hintStyle: TextStyle(fontSize: 14.0)
-                        // border: OutlineInputBorder(
-                        //     borderSide: BorderSide(color: Colors.red),
-                        //     borderRadius:
-                        //         BorderRadius.all(Radius.circular(20.0))),
-                        ),
+                      errorStyle: TextStyle(
+                          fontSize: FontSizes.errorFontSize,
+                          //  deviceWidth > 600
+                          //     ? Fontsizes.tabletErrorTextSize
+                          //     : Fontsizes.errorTextSize,
+                          color: Colors.red),
+                      labelStyle: TextStyle(fontSize: 14.0
+                          // deviceWidth > 600
+                          //     ? Fontsizes.tabletTextFormInputFieldSize
+                          //     : Fontsizes.textFormInputFieldSize
+                          ),
+                      labelText: "Enter new last name",
+                      // hintText: data['lastName'].toString(),
+                      // hintStyle: TextStyle(fontSize: 14.0)
+                      // border: OutlineInputBorder(
+                      //     borderSide: BorderSide(color: Colors.red),
+                      //     borderRadius:
+                      //         BorderRadius.all(Radius.circular(20.0))),
+                    ),
                   ),
                 ],
               ),
@@ -353,22 +362,22 @@ class _UsersActivitiesState extends State<UsersActivities> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 50.0,
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'Search user',
-                      prefixIcon: Icon(
-                        Icons.search,
-                        size: 20.0,
-                      ),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                ),
+                // SizedBox(
+                //   height: 50.0,
+                //   child: TextFormField(
+                //     decoration: InputDecoration(
+                //       hintText: 'Search user',
+                //       prefixIcon: Icon(
+                //         Icons.search,
+                //         size: 20.0,
+                //       ),
+                //       border: OutlineInputBorder(
+                //         borderSide: BorderSide(color: Colors.grey),
+                //         borderRadius: BorderRadius.circular(10),
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 SizedBox(
                   height: 20,
                 ),
@@ -445,6 +454,7 @@ class _UsersActivitiesState extends State<UsersActivities> {
                                             username:
                                                 data['username'].toString(),
                                             forManager: true,
+                                            forAdmin: true,
                                           ));
                                     },
                                     child: Container(
@@ -660,6 +670,7 @@ class _UsersActivitiesState extends State<UsersActivities> {
                                             username:
                                                 data['username'].toString(),
                                             forManager: false,
+                                            forAdmin: true,
                                           ));
                                     },
                                     child: Container(

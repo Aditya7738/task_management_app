@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:task_management_app/constants/database_references.dart';
 import 'package:task_management_app/controller/task_screen_controller.dart';
 import 'package:task_management_app/views/board_screen.dart';
 import 'package:task_management_app/views/calendar_tasks.dart';
@@ -10,11 +11,13 @@ class TasksScreen extends StatefulWidget {
   final String? appTitle;
   final String username;
   final bool forManager;
+  final bool forAdmin;
   TasksScreen(
       {super.key,
       this.appTitle,
       required this.username,
-      required this.forManager});
+      required this.forManager,
+      required this.forAdmin});
 
   @override
   State<TasksScreen> createState() => _TasksScreenState();
@@ -24,11 +27,19 @@ class _TasksScreenState extends State<TasksScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
+  TaskScreenController taskScreenController = Get.put(TaskScreenController());
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+
+    // String collectionReference = widget.forManager
+    //     ? DatabaseReferences.MANAGERS_COLLECTION_REFERENCE
+    //     : DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE;
+
+    //  taskScreenController.getMap(collectionReference, widget.username);
   }
 
   List<String> tabNames = ["Assigned", "In progress", "Completed", "On hold"];
@@ -179,7 +190,7 @@ class _TasksScreenState extends State<TasksScreen>
     return tabs;
   }
 
-  TaskScreenController taskScreenController = Get.put(TaskScreenController());
+  //TaskScreenController taskScreenController = Get.put(TaskScreenController());
 
   @override
   Widget build(BuildContext context) {
@@ -221,7 +232,7 @@ class _TasksScreenState extends State<TasksScreen>
               tabs: tabs(),
               onTap: (index) {
                 // print(index);
-                // taskScreenController.selectedTask.value = tabNames[index];
+                taskScreenController.selectedTaskTab.value = tabNames[index];
               },
             )
             //  ButtonsTabBar(
@@ -261,22 +272,30 @@ class _TasksScreenState extends State<TasksScreen>
             TaskList(
               username: widget.username,
               forManager: widget.forManager,
+              appTitle: widget.appTitle,
               typeOfTasks: "Assigned",
+              forAdmin: widget.forAdmin,
             ),
             TaskList(
               username: widget.username,
               forManager: widget.forManager,
+              appTitle: widget.appTitle,
               typeOfTasks: "In progress",
+              forAdmin: widget.forAdmin,
             ),
             TaskList(
               username: widget.username,
               forManager: widget.forManager,
+              appTitle: widget.appTitle,
               typeOfTasks: "Completed",
+              forAdmin: widget.forAdmin,
             ),
             TaskList(
               username: widget.username,
               forManager: widget.forManager,
+              appTitle: widget.appTitle,
               typeOfTasks: "Hold",
+              forAdmin: widget.forAdmin,
             ),
           ],
         ),

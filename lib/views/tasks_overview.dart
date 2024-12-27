@@ -238,22 +238,22 @@ class _TasksOverviewState extends State<TasksOverview> {
                 SizedBox(
                   height: 10.0,
                 ),
-                SizedBox(
-                  height: 50.0,
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'Search user',
-                      prefixIcon: Icon(
-                        Icons.search,
-                        size: 20.0,
-                      ),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                ),
+                // SizedBox(
+                //   height: 50.0,
+                //   child: TextFormField(
+                //     decoration: InputDecoration(
+                //       hintText: 'Search user',
+                //       prefixIcon: Icon(
+                //         Icons.search,
+                //         size: 20.0,
+                //       ),
+                //       border: OutlineInputBorder(
+                //         borderSide: BorderSide(color: Colors.grey),
+                //         borderRadius: BorderRadius.circular(10),
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 SizedBox(
                   height: 10,
                 ),

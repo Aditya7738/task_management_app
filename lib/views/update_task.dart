@@ -11,6 +11,7 @@ import 'package:task_management_app/constants/fontsizes.dart';
 import 'package:task_management_app/constants/strings.dart';
 import 'package:task_management_app/controller/create_task_controller.dart';
 import 'package:task_management_app/controller/repeat_task_controller.dart';
+import 'package:task_management_app/controller/update_task_controller.dart';
 import 'package:task_management_app/controller/user_activities_controller.dart';
 import 'package:task_management_app/controller/validation_helper.dart';
 import 'package:task_management_app/widgets/button_widget.dart';
@@ -20,24 +21,35 @@ import 'package:task_management_app/widgets/select_option.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:file_picker/file_picker.dart';
 
-class CreateTask extends StatefulWidget {
+class UpdateTask extends StatefulWidget {
   final bool forAdmin;
   final bool forManager;
-//  DocumentSnapshot<Object?>? specificDocumentOfUser;
-  CreateTask(
+  final String username;
+  final DocumentSnapshot document;
+  final String? appTitle;
+
+  UpdateTask(
       {super.key,
       required this.forAdmin,
-      //, this.specificDocumentOfUser
-      required this.forManager});
+      required this.forManager,
+      //required this.data,
+      required this.document,
+      required this.username,
+      this.appTitle});
 
   @override
-  State<CreateTask> createState() => _CreateTaskState();
+  State<UpdateTask> createState() => _CreateTaskState();
 }
 
-class _CreateTaskState extends State<CreateTask> {
-  CreateTaskController createTaskController = Get.put(CreateTaskController());
+class _CreateTaskState extends State<UpdateTask> {
+  // _updateTaskController _updateTaskController = Get.put(_updateTaskController());
+
+  UpdateTaskController _updateTaskController = Get.put(UpdateTaskController());
 
   DateTime selectedDate = DateTime.now();
+
+  Map<String, dynamic> data = <String, dynamic>{};
+  // widget. document.data()! as Map<String, dynamic>;
 
   UserActivitiesController _userActivitiesController =
       Get.put(UserActivitiesController());
@@ -47,23 +59,45 @@ class _CreateTaskState extends State<CreateTask> {
     // TODO: implement initState
     super.initState();
 
-    createTaskController.showPriorityError.value = false;
+    data = widget.document.data()! as Map<String, dynamic>;
 
-    createTaskController.showStatusError.value = false;
+    //_updateTaskController.employeesToAssign.clear();
+    _updateTaskController.showPriorityError.value = false;
+    _updateTaskController.showSelectedEmpError.value = false;
+    _updateTaskController.showStatusError.value = false;
 
-    print(
-        "createTaskController.employeesToAssign.length ${createTaskController.employeesToAssign.length}");
+    _updateTaskController.taskNameController.text = data["taskName"].toString();
 
-    //createTaskController.assignedTo.value = "Choose employee";
-    createTaskController.showSelectedEmpError.value = false;
+    _updateTaskController.descriptionController.text =
+        data["description"].toString();
+
+    _updateTaskController.selectedStatus.value = data["status"].toString();
+
+    _updateTaskController.startDateEditingController.text =
+        data["startDate"].toString();
+
+    _updateTaskController.dueDateEditingController.text =
+        data["dueDate"].toString();
+
+    _updateTaskController.setRemainderOptionController.text =
+        data["remainderDay"].toString();
+
+    _updateTaskController.remainderTimeController.text =
+        data["remainderTime"].toString();
+
+    _updateTaskController.selectedPriority.value = data["priority"].toString();
+
+    _updateTaskController.selectedTag.value = data["tag"].toString();
+
+    _updateTaskController.remarkController.text = data["remarks"].toString();
 
     if (widget.forAdmin) {
     } else {
-      createTaskController.employeesToAssign.clear();
-      createTaskController.getUserList(widget.forManager);
-      createTaskController.assignedTo.value =
-          createTaskController.employeesToAssign.isNotEmpty
-              ? createTaskController.employeesToAssign[0]
+      _updateTaskController.employeesToAssign.clear();
+      _updateTaskController.getUserList(widget.forManager);
+      _updateTaskController.assignedTo.value =
+          _updateTaskController.employeesToAssign.isNotEmpty
+              ? _updateTaskController.employeesToAssign[0]
               : "Choose employee";
     }
   }
@@ -111,34 +145,35 @@ class _CreateTaskState extends State<CreateTask> {
 
         print("onWillPop CALLED");
 
-        createTaskController.employeesToAssign.value.clear();
+        if (widget.forAdmin) {
+        } else {
+          _updateTaskController.employeesToAssign.clear();
+          // _updateTaskController.getUserList(widget.forManager);
+          _updateTaskController.assignedTo.value =
+              _updateTaskController.employeesToAssign.isNotEmpty
+                  ? _updateTaskController.employeesToAssign[0]
+                  : "Choose employee";
+        }
 
-        // createTaskController
-        //     .setAssignedTo("Choose employee");
-        createTaskController.assignedTo.value =
-            createTaskController.employeesToAssign.isNotEmpty
-                ? createTaskController.employeesToAssign[0]
-                : "Choose employee";
+        // print(
+        //     "_updateTaskController.assignedTo.value ${_updateTaskController.assignedTo.value}");
 
-        print(
-            "createTaskController.eassignedTo.value ${createTaskController.assignedTo.value}");
+        _updateTaskController.taskNameController.clear();
 
-        createTaskController.taskNameController.clear();
+        _updateTaskController.startDateEditingController.clear();
 
-        createTaskController.startDateEditingController.clear();
+        _updateTaskController.dueDateEditingController.clear();
 
-        createTaskController.dueDateEditingController.clear();
+        _updateTaskController.remainderTimeController.clear();
 
-        createTaskController.remainderTimeController.clear();
+        _updateTaskController.setRemainderOptionController.clear();
 
-        createTaskController.setRemainderOptionController.clear();
+        _updateTaskController.selectedStatus.value = "Assigned";
 
-        createTaskController.selectedStatus.value = "Assigned";
+        _updateTaskController.selectedPriority.value = "High";
+        _updateTaskController.selectedTag.value = "No tags added";
 
-        createTaskController.selectedPriority.value = "High";
-        createTaskController.selectedTag.value = "No tags added";
-
-        createTaskController.remarkController.clear();
+        _updateTaskController.remarkController.clear();
 
         return true;
       },
@@ -146,7 +181,7 @@ class _CreateTaskState extends State<CreateTask> {
         appBar: AppBar(
           leading: LeadingBackArrow(),
           title: Text(
-            "Create New Task",
+            "Update Task",
             style: TextStyle(fontSize: 17.0),
           ),
         ),
@@ -158,7 +193,7 @@ class _CreateTaskState extends State<CreateTask> {
                   left: 20.0,
                   right: 20.0,
                   bottom: 20.0,
-                  top: 5.0,
+                  top: 10.0,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,19 +204,20 @@ class _CreateTaskState extends State<CreateTask> {
                           TextStyle(fontSize: FontSizes.textFormFieldFontSize),
                       keyboardType: TextInputType.name,
                       validator: ValidationHelper.nullOrEmptyString,
-                      controller: createTaskController.taskNameController,
+                      controller: _updateTaskController.taskNameController,
                       decoration: InputDecoration(
                         labelStyle: TextStyle(
                             fontSize: FontSizes.textFormFieldFontSize),
-                        labelText: "Enter task name",
-                        // hintText: "Enter task name",
-                        // hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
+                        labelText: "Update task name",
+                        // hintText: widget.data["taskName"].toString(),
+                        // hintStyle: TextStyle(
+                        //   fontSize: FontSizes.textFormFieldFontSize,
+                        // ),
                         border: const OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Colors.blue, width: 2.0),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10.0))),
-
                         errorStyle:
                             TextStyle(fontSize: 15.0, color: Colors.red),
                       ),
@@ -191,18 +227,18 @@ class _CreateTaskState extends State<CreateTask> {
                       height: 20.0,
                     ),
                     TextFormField(
+                      minLines: 2,
+                      maxLines: 4,
                       style:
                           TextStyle(fontSize: FontSizes.textFormFieldFontSize),
                       keyboardType: TextInputType.multiline,
-                      minLines: 2,
-                      maxLines: 4,
                       validator: ValidationHelper.nullOrEmptyString,
-                      controller: createTaskController.descriptionController,
+                      controller: _updateTaskController.descriptionController,
                       decoration: InputDecoration(
                         labelStyle: TextStyle(
                             fontSize: FontSizes.textFormFieldFontSize),
-                        labelText: "Enter task description",
-                        // hintText: "Enter task name",
+                        labelText: "Update task description",
+                        // hintText: "Update task name",
                         // hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
                         border: const OutlineInputBorder(
                             borderSide:
@@ -222,18 +258,18 @@ class _CreateTaskState extends State<CreateTask> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text("Status"),
+                        Text("Update status"),
                         SizedBox(
                           width: 10.0,
                         ),
                         Obx(
                           () => DropdownButtonHideUnderline(
                             child: DropdownButton(
-                              value: createTaskController.selectedStatus.value,
+                              value: _updateTaskController.selectedStatus.value,
                               icon: Container(
                                   margin: const EdgeInsets.only(right: 10.0),
                                   child: Icon(Icons.arrow_drop_down_rounded)),
-                              items: createTaskController.statuses
+                              items: _updateTaskController.statuses
                                   .map<DropdownMenuItem<String>>(
                                 (status) {
                                   return DropdownMenuItem(
@@ -245,31 +281,32 @@ class _CreateTaskState extends State<CreateTask> {
                                 },
                               ).toList(),
                               onChanged: (value) {
-                                createTaskController.selectedStatus.value =
+                                _updateTaskController.selectedStatus.value =
                                     value.toString();
 
-                                createTaskController.statusUpdated.value = true;
+                                _updateTaskController.statusUpdated.value =
+                                    true;
 
                                 if (widget.forAdmin) {
                                   switch (value.toString()) {
                                     case "Assigned":
-                                      createTaskController.taskLabel.value =
+                                      _updateTaskController.taskLabel.value =
                                           "Assigned to";
                                       break;
                                     case "In progress":
-                                      createTaskController.taskLabel.value =
+                                      _updateTaskController.taskLabel.value =
                                           "In progress by";
                                       break;
                                     case "Completed":
-                                      createTaskController.taskLabel.value =
+                                      _updateTaskController.taskLabel.value =
                                           "Completed by";
                                       break;
                                     case "Hold":
-                                      createTaskController.taskLabel.value =
+                                      _updateTaskController.taskLabel.value =
                                           "Hold by";
                                       break;
                                     default:
-                                      createTaskController.taskLabel.value =
+                                      _updateTaskController.taskLabel.value =
                                           "Assigned to";
                                   }
                                 }
@@ -280,7 +317,7 @@ class _CreateTaskState extends State<CreateTask> {
                       ],
                     ),
                     Obx(() {
-                      if (createTaskController.showStatusError.value) {
+                      if (_updateTaskController.showStatusError.value) {
                         return Text(
                           "You don't have set status of task!",
                           style: TextStyle(fontSize: 14.0, color: Colors.red),
@@ -319,7 +356,7 @@ class _CreateTaskState extends State<CreateTask> {
                                   ),
                                   Obx(
                                     () => Text(
-                                      createTaskController.taskLabel.value,
+                                      _updateTaskController.taskLabel.value,
                                       style: TextStyle(
                                         fontSize: 15.0,
                                       ),
@@ -329,7 +366,7 @@ class _CreateTaskState extends State<CreateTask> {
                                     width: 10.0,
                                   ),
                                   DropdownButtonHideUnderline(
-                                    child: GetBuilder<CreateTaskController>(
+                                    child: GetBuilder<UpdateTaskController>(
                                         builder: (controller) {
                                       print(
                                           "DDL controller.assignedTo.value ${controller.assignedTo.value}");
@@ -378,7 +415,7 @@ class _CreateTaskState extends State<CreateTask> {
                                     width: 10.0,
                                   ),
                                   Obx(() {
-                                    if (createTaskController
+                                    if (_updateTaskController
                                         .gettingUsers.value) {
                                       return SizedBox(
                                         width: 15.0,
@@ -404,7 +441,7 @@ class _CreateTaskState extends State<CreateTask> {
                           )
                         : SizedBox(),
                     Obx(() {
-                      if (createTaskController.showSelectedEmpError.value) {
+                      if (_updateTaskController.showSelectedEmpError.value) {
                         return Text(
                           "You don't have set above feild!",
                           style: TextStyle(fontSize: 14.0, color: Colors.red),
@@ -430,7 +467,7 @@ class _CreateTaskState extends State<CreateTask> {
                     //       ),
                     //     ),
                     //     title: "Assigned to",
-                    //     items: createTaskController.assignee
+                    //     items: _updateTaskController.assignee
                     //         .map<DropdownMenuItem<String>>(
                     //       (assignee) {
                     //         return DropdownMenuItem(
@@ -442,9 +479,9 @@ class _CreateTaskState extends State<CreateTask> {
                     //       },
                     //     ).toList(),
                     //     onChanged: (value) {
-                    //       createTaskController.assignedTo.value = value.toString();
+                    //       _updateTaskController.assignedTo.value = value.toString();
                     //     },
-                    //     value: createTaskController.assignedTo.value,
+                    //     value: _updateTaskController.assignedTo.value,
                     //   ),
                     // ),
 
@@ -511,42 +548,43 @@ class _CreateTaskState extends State<CreateTask> {
                       style:
                           TextStyle(fontSize: FontSizes.textFormFieldFontSize),
                       controller:
-                          createTaskController.startDateEditingController,
+                          _updateTaskController.startDateEditingController,
                       keyboardType: TextInputType.datetime,
                       validator: ValidationHelper.nullOrEmptyString,
                       onTap: () async {
                         print("CALENDAR PRESSED");
 
-                        // createTaskController.startDateEditingController.text =
+                        // _updateTaskController.startDateEditingController.text =
                         //     await _selectedDate(context);
 
-                        createTaskController.startDate.value =
+                        _updateTaskController.startDate.value =
                             await showDatePicker(
                                 context: context,
                                 initialDate: DateTime.now(),
                                 firstDate: DateTime(2024),
                                 lastDate: DateTime(2025));
 
-                        if (createTaskController.startDate.value != null) {
+                        if (_updateTaskController.startDate.value != null) {
                           print(
-                              " DATE ${createTaskController.startDate.value.toLocal().toString()}");
-                          // return "${ createTaskController.startDate.value.day}-${ createTaskController.startDate.value.month}-${ createTaskController.startDate.value.year}";
-                          createTaskController.startDateEditingController.text =
-                              createTaskController.startDate.value
+                              " DATE ${_updateTaskController.startDate.value.toLocal().toString()}");
+                          // return "${ _updateTaskController.startDate.value.day}-${ _updateTaskController.startDate.value.month}-${ _updateTaskController.startDate.value.year}";
+                          _updateTaskController
+                                  .startDateEditingController.text =
+                              _updateTaskController.startDate.value
                                   .toLocal()
                                   .toString()
                                   .split(" ")[0];
                         } else {
-                          createTaskController.startDateEditingController.text =
-                              "00-00-0000";
+                          _updateTaskController
+                              .startDateEditingController.text = "00-00-0000";
                         }
 
-                        createTaskController.isStartDateSelected.value = true;
+                        _updateTaskController.isStartDateSelected.value = true;
                       },
                       decoration: InputDecoration(
                         labelStyle: TextStyle(
                             fontSize: FontSizes.textFormFieldFontSize),
-                        labelText: "Enter start date",
+                        labelText: "Update start date",
                         // errorStyle:
                         //     TextStyle(fontSize: 15.sp, color: Colors.red),
                         suffixIcon: const Icon(
@@ -576,40 +614,41 @@ class _CreateTaskState extends State<CreateTask> {
                     TextFormField(
                       style:
                           TextStyle(fontSize: FontSizes.textFormFieldFontSize),
-                      controller: createTaskController.dueDateEditingController,
+                      controller:
+                          _updateTaskController.dueDateEditingController,
                       keyboardType: TextInputType.datetime,
                       validator: ValidationHelper.nullOrEmptyString,
                       onTap: () async {
                         print("CALENDAR PRESSED");
 
-                        // createTaskController.dueDateEditingController.text =
+                        // _updateTaskController.dueDateEditingController.text =
                         //     await _selectedDate(context);
 
-                        createTaskController.dueDate.value =
+                        _updateTaskController.dueDate.value =
                             await showDatePicker(
                                 context: context,
                                 initialDate: DateTime.now(),
                                 firstDate: DateTime(2024),
                                 lastDate: DateTime(2025));
 
-                        if (createTaskController.dueDate.value != null) {
+                        if (_updateTaskController.dueDate.value != null) {
                           print(
-                              " DATE ${createTaskController.dueDate.value.toLocal().toString()}");
-                          // return "${ createTaskController.dueDate.value.day}-${ createTaskController.dueDate.value.month}-${ createTaskController.dueDate.value.year}";
-                          createTaskController.dueDateEditingController.text =
-                              createTaskController.dueDate.value
+                              " DATE ${_updateTaskController.dueDate.value.toLocal().toString()}");
+                          // return "${ _updateTaskController.dueDate.value.day}-${ _updateTaskController.dueDate.value.month}-${ _updateTaskController.dueDate.value.year}";
+                          _updateTaskController.dueDateEditingController.text =
+                              _updateTaskController.dueDate.value
                                   .toLocal()
                                   .toString()
                                   .split(" ")[0];
                         } else {
-                          createTaskController.dueDateEditingController.text =
+                          _updateTaskController.dueDateEditingController.text =
                               "00-00-0000";
                         }
                       },
                       decoration: InputDecoration(
                         labelStyle: TextStyle(
                             fontSize: FontSizes.textFormFieldFontSize),
-                        labelText: "Enter due date",
+                        labelText: "Update due date",
                         // errorStyle:
                         //     TextStyle(fontSize: 15.sp, color: Colors.red),
                         suffixIcon: const Icon(
@@ -643,12 +682,12 @@ class _CreateTaskState extends State<CreateTask> {
                         style: TextStyle(
                             fontSize: FontSizes.textFormFieldFontSize),
                         controller:
-                            createTaskController.setRemainderOptionController,
+                            _updateTaskController.setRemainderOptionController,
                         //keyboardType: TextInputType.name,
                         decoration: InputDecoration(
                           labelStyle: TextStyle(
                               fontSize: FontSizes.textFormFieldFontSize),
-                          labelText: "Set remainder",
+                          labelText: "Update remainder date",
                           suffix: DropdownButton(
                             borderRadius: BorderRadius.circular(10.0),
                             iconSize: 25.0,
@@ -672,7 +711,7 @@ class _CreateTaskState extends State<CreateTask> {
                             }).toList(),
                             onChanged: (value) async {
                               if (value.toString() == "Custom") {
-                                // createTaskController.setRemainderOptionController
+                                // _updateTaskController.setRemainderOptionController
                                 //     .text =
                                 //     if (await _selectedDate(context) >) {
 
@@ -688,14 +727,14 @@ class _CreateTaskState extends State<CreateTask> {
                                 print("picked != null ${picked != null}");
 
                                 if (picked != null) {
-                                  // if (picked.compareTo(createTaskController.dueDate)  &&
-                                  //     picked! > createTaskController.startDate) {}
+                                  // if (picked.compareTo(_updateTaskController.dueDate)  &&
+                                  //     picked! > _updateTaskController.startDate) {}
 
                                   print(
-                                      "picked.compareTo(createTaskController.dueDate.value) !=  ${picked.compareTo(createTaskController.dueDate.value) != 1}");
+                                      "picked.compareTo(_updateTaskController.dueDate.value) !=  ${picked.compareTo(_updateTaskController.dueDate.value) != 1}");
 
-                                  if (picked.compareTo(
-                                          createTaskController.dueDate.value) !=
+                                  if (picked.compareTo(_updateTaskController
+                                          .dueDate.value) !=
                                       1) {
                                     // Get.snackbar("Error",
                                     //     "Remainder date should be grater than start date",
@@ -706,27 +745,27 @@ class _CreateTaskState extends State<CreateTask> {
                                     //     snackPosition: SnackPosition.TOP);
                                     print(
                                         "setRemainderOptionController DATE ${picked.toLocal().toString()}");
-                                    createTaskController
+                                    _updateTaskController
                                             .setRemainderOptionController.text =
                                         picked
                                             .toLocal()
                                             .toString()
                                             .split(" ")[0];
                                   } else if (picked.compareTo(
-                                          createTaskController
+                                          _updateTaskController
                                               .startDate.value) !=
                                       -1) {
-                                    //  createTaskController.startDateEditingController.text =
-                                    //                           createTaskController.startDate.value
+                                    //  _updateTaskController.startDateEditingController.text =
+                                    //                           _updateTaskController.startDate.value
                                     //                               .toLocal()
                                     //                               .toString()
                                     //                               .split(" ")[0];
 
-                                    // createTaskController
+                                    // _updateTaskController
                                     //         .setRemainderOptionController.text =
                                     //     picked.toLocal().toString().split(" ")[0];
 
-                                    //  createTaskController.startDate.value =
+                                    //  _updateTaskController.startDate.value =
                                     //                         await showDatePicker(
                                     //                             context: context,
                                     //                             initialDate: DateTime.now(),
@@ -743,7 +782,7 @@ class _CreateTaskState extends State<CreateTask> {
                                   } else {
                                     print(
                                         "setRemainderOptionController DATE ${picked.toLocal().toString()}");
-                                    createTaskController
+                                    _updateTaskController
                                             .setRemainderOptionController.text =
                                         picked
                                             .toLocal()
@@ -763,7 +802,7 @@ class _CreateTaskState extends State<CreateTask> {
                                 //   return "00-00-0000";
                                 // }
                               } else {
-                                createTaskController
+                                _updateTaskController
                                     .setRemainderOptionController
                                     .text = value.toString();
                               }
@@ -787,12 +826,12 @@ class _CreateTaskState extends State<CreateTask> {
                       validator: ValidationHelper.nullOrEmptyString,
                       style:
                           TextStyle(fontSize: FontSizes.textFormFieldFontSize),
-                      controller: createTaskController.remainderTimeController,
+                      controller: _updateTaskController.remainderTimeController,
                       keyboardType: TextInputType.datetime,
                       onTap: () async {
                         print("CLOCK PRESSED");
 
-                        createTaskController.remainderTimeController.text =
+                        _updateTaskController.remainderTimeController.text =
                             await selectedTime(context);
                       },
                       decoration: InputDecoration(
@@ -804,7 +843,7 @@ class _CreateTaskState extends State<CreateTask> {
                         ),
                         labelStyle: TextStyle(
                             fontSize: FontSizes.textFormFieldFontSize),
-                        labelText: "Select time",
+                        labelText: "Update remainder time",
                         // border: const OutlineInputBorder(
                         //     borderSide: BorderSide(
                         //       color: Colors.blue,
@@ -848,7 +887,7 @@ class _CreateTaskState extends State<CreateTask> {
                             width: 10.0,
                           ),
                           Text(
-                            "Repeat Task",
+                            "Update Repeat Task",
                             style: TextStyle(
                               decoration: TextDecoration.underline,
                               decorationColor: Get.theme.primaryColor,
@@ -963,7 +1002,7 @@ class _CreateTaskState extends State<CreateTask> {
                           width: 10.0,
                         ),
                         Text(
-                          "Select priority",
+                          "Update priority",
                           // style: TextStyle(color: Colors.grey, fontSize: 13.0),
                         ),
                         const SizedBox(
@@ -973,11 +1012,11 @@ class _CreateTaskState extends State<CreateTask> {
                           child: Obx(
                             () => DropdownButton(
                               value:
-                                  createTaskController.selectedPriority.value,
+                                  _updateTaskController.selectedPriority.value,
                               icon: Container(
                                   margin: const EdgeInsets.only(right: 10.0),
                                   child: Icon(Icons.arrow_drop_down_rounded)),
-                              items: createTaskController.priorities
+                              items: _updateTaskController.priorities
                                   .map<DropdownMenuItem<String>>(
                                 (priority) {
                                   return DropdownMenuItem(
@@ -989,9 +1028,9 @@ class _CreateTaskState extends State<CreateTask> {
                                 },
                               ).toList(),
                               onChanged: (value) {
-                                createTaskController.selectedPriority.value =
+                                _updateTaskController.selectedPriority.value =
                                     value.toString();
-                                createTaskController.isPioritySelected.value =
+                                _updateTaskController.isPioritySelected.value =
                                     true;
                               },
                             ),
@@ -1001,7 +1040,7 @@ class _CreateTaskState extends State<CreateTask> {
                     ),
 
                     Obx(() {
-                      if (createTaskController.showPriorityError.value) {
+                      if (_updateTaskController.showPriorityError.value) {
                         return Text(
                           "You don't have set priority of task!",
                           style: TextStyle(fontSize: 14.0, color: Colors.red),
@@ -1026,7 +1065,7 @@ class _CreateTaskState extends State<CreateTask> {
                           width: 10.0,
                         ),
                         Text(
-                          "Select Tags",
+                          "Update Tags",
                           // style: TextStyle(color: Colors.grey, fontSize: 13.0),
                         ),
                         const SizedBox(
@@ -1035,11 +1074,11 @@ class _CreateTaskState extends State<CreateTask> {
                         DropdownButtonHideUnderline(
                           child: Obx(
                             () => DropdownButton(
-                              value: createTaskController.selectedTag.value,
+                              value: _updateTaskController.selectedTag.value,
                               icon: Container(
                                   margin: const EdgeInsets.only(right: 10.0),
                                   child: Icon(Icons.arrow_drop_down_rounded)),
-                              items: createTaskController.tags
+                              items: _updateTaskController.tags
                                   .map<DropdownMenuItem<String>>(
                                 (tag) {
                                   return DropdownMenuItem(
@@ -1051,7 +1090,7 @@ class _CreateTaskState extends State<CreateTask> {
                                 },
                               ).toList(),
                               onChanged: (value) {
-                                createTaskController.selectedTag.value =
+                                _updateTaskController.selectedTag.value =
                                     value.toString();
                               },
                             ),
@@ -1074,13 +1113,13 @@ class _CreateTaskState extends State<CreateTask> {
                       maxLines: 4,
                       style:
                           TextStyle(fontSize: FontSizes.textFormFieldFontSize),
-                      controller: createTaskController.remarkController,
+                      controller: _updateTaskController.remarkController,
                       keyboardType: TextInputType.multiline,
                       // validator: ValidationHelper.isFullAddress,
                       decoration: InputDecoration(
                         labelStyle: TextStyle(
                             fontSize: FontSizes.textFormFieldFontSize),
-                        labelText: "Remarks",
+                        labelText: "Update remarks",
                         // errorStyle: TextStyle(
                         //     fontSize: Fontsizes.errorTextSize, color: Colors.red),
                         border: const OutlineInputBorder(
@@ -1099,7 +1138,7 @@ class _CreateTaskState extends State<CreateTask> {
                     // TextFormField(
                     //   style: TextStyle(fontSize: FontSizes.textFormFieldFontSize),
                     //   validator: ValidationHelper.nullOrEmptyString,
-                    //   controller: createTaskController.assignedByController,
+                    //   controller: _updateTaskController.assignedByController,
                     //   keyboardType: TextInputType.name,
                     //   // onTap: () async {
                     //   //   print("CLOCK PRESSED");
@@ -1144,7 +1183,7 @@ class _CreateTaskState extends State<CreateTask> {
                             //     String fullPath = await supabase.storage
                             //         .from(DatabaseReferences.bucketId)
                             //         .upload(
-                            //             "${_userActivitiesController.companyName.value}/${createTaskController.assignedTo.value}/documents",
+                            //             "${_userActivitiesController.companyName.value}/${_updateTaskController.assignedTo.value}/documents",
                             //             file,
                             //             fileOptions: FileOptions(
                             //                 cacheControl: '3600', upsert: false),
@@ -1153,7 +1192,7 @@ class _CreateTaskState extends State<CreateTask> {
                             //     // User canceled the picker
                             //   }
                             // }
-                            createTaskController.uploadDocument();
+                            _updateTaskController.uploadDocument();
                           },
                           child: Container(
                             //  width: 170.0,
@@ -1175,9 +1214,9 @@ class _CreateTaskState extends State<CreateTask> {
                                   width: 5.0,
                                 ),
                                 Text(
-                                  "Add Attachment",
+                                  "Update Attachment",
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 15,
                                   ),
                                 )
                               ],
@@ -1220,42 +1259,42 @@ class _CreateTaskState extends State<CreateTask> {
                             Obx(
                               () => GestureDetector(
                                   onTap: () async {
-                                    // if (createTaskController
+                                    // if (_updateTaskController
                                     //         .isPioritySelected.value ==
                                     //     false) {
-                                    //   createTaskController
+                                    //   _updateTaskController
                                     //       .showPriorityError.value = true;
                                     // }
 
-                                    // if (createTaskController
+                                    // if (_updateTaskController
                                     //         .statusUpdated.value ==
                                     //     false) {
-                                    //   createTaskController.showStatusError.value =
+                                    //   _updateTaskController.showStatusError.value =
                                     //       true;
                                     // }
 
-                                    // if (createTaskController
+                                    // if (_updateTaskController
                                     //         .isEmployeeAssigned.value ==
                                     //     false) {
-                                    //   createTaskController
+                                    //   _updateTaskController
                                     //       .showSelectedEmpError.value = true;
                                     // }
 
                                     //  if (_formKey.currentState!.validate()) {
 
-                                    // createTaskController.appointments.add(
+                                    // _updateTaskController.appointments.add(
                                     //     Appointment(
                                     //         isAllDay: false,
                                     //         startTime: DateTime.parse(
-                                    //             createTaskController
+                                    //             _updateTaskController
                                     //                 .startDateEditingController
                                     //                 .text),
                                     //         endTime: DateTime.parse(
-                                    //             createTaskController
+                                    //             _updateTaskController
                                     //                 .dueDateEditingController
                                     //                 .text),
                                     //         color: getColor(),
-                                    //         subject: createTaskController
+                                    //         subject: _updateTaskController
                                     //             .taskNameController.text));
 
                                     //  Get.back();
@@ -1263,96 +1302,104 @@ class _CreateTaskState extends State<CreateTask> {
                                     /////////////////////////////////////
 
                                     // if (forAdmin) {
-                                    //   switch (createTaskController
+                                    //   switch (_updateTaskController
                                     //       .selectedStatus.value) {
                                     //     case "Assigned":
-                                    //       createTaskController.taskLabel.value =
+                                    //       _updateTaskController.taskLabel.value =
                                     //           "Assigned to";
                                     //       break;
                                     //     case "In progress":
-                                    //       createTaskController.taskLabel.value =
+                                    //       _updateTaskController.taskLabel.value =
                                     //           "In progress by";
                                     //       break;
                                     //     case "Completed":
-                                    //       createTaskController.taskLabel.value =
+                                    //       _updateTaskController.taskLabel.value =
                                     //           "Completed by";
                                     //       break;
                                     //     case "Hold":
-                                    //       createTaskController.taskLabel.value =
+                                    //       _updateTaskController.taskLabel.value =
                                     //           "Hold by";
                                     //       break;
                                     //     default:
-                                    //       createTaskController.taskLabel.value =
+                                    //       _updateTaskController.taskLabel.value =
                                     //           "Assigned to";
                                     //   }
                                     // }
 
                                     ////////////////////////////////////////////////
 
-                                    // if (createTaskController
+                                    // if (_updateTaskController
                                     //         .isPioritySelected.value &&
-                                    //     createTaskController
+                                    //     _updateTaskController
                                     //         .statusUpdated.value &&
-                                    //     createTaskController
+                                    //     _updateTaskController
                                     //         .isEmployeeAssigned.value) {
 
-                                    await createTaskController
-                                        .createTask(widget.forManager);
+                                    await _updateTaskController.updateTask(
+                                      widget.document,
+                                      widget.username,
+                                      widget.forManager,
+                                      widget.appTitle,
+                                      widget.forAdmin,
+                                      data["taskName"].toString(),
+                                    );
 
-                                    createTaskController.employeesToAssign.value
-                                        .clear();
+                                    if (widget.forAdmin == false) {
+                                      _updateTaskController
+                                          .employeesToAssign.value
+                                          .clear();
 
-                                    // createTaskController
-                                    //     .setAssignedTo("Choose employee");
-                                    createTaskController.assignedTo.value =
-                                        createTaskController
-                                                .employeesToAssign.isNotEmpty
-                                            ? createTaskController
-                                                .employeesToAssign[0]
-                                            : "Choose employee";
+                                      _updateTaskController.assignedTo.value =
+                                          _updateTaskController
+                                                  .employeesToAssign.isNotEmpty
+                                              ? _updateTaskController
+                                                  .employeesToAssign[0]
+                                              : "Choose employee";
+                                    }
 
                                     print(
-                                        "createTaskController.eassignedTo.value ${createTaskController.assignedTo.value}");
+                                        "_updateTaskController.eassignedTo.value ${_updateTaskController.assignedTo.value}");
 
-                                    createTaskController.taskNameController
+                                    _updateTaskController.taskNameController
                                         .clear();
 
-                                    createTaskController.descriptionController
+                                    _updateTaskController.descriptionController
                                         .clear();
 
-                                    createTaskController
+                                    _updateTaskController
                                         .startDateEditingController
                                         .clear();
 
-                                    createTaskController
+                                    _updateTaskController
                                         .dueDateEditingController
                                         .clear();
 
-                                    createTaskController.remainderTimeController
+                                    _updateTaskController
+                                        .remainderTimeController
                                         .clear();
 
-                                    createTaskController
+                                    _updateTaskController
                                         .setRemainderOptionController
                                         .clear();
 
-                                    createTaskController.selectedStatus.value =
+                                    _updateTaskController.selectedStatus.value =
                                         "Assigned";
 
-                                    createTaskController
+                                    _updateTaskController
                                         .selectedPriority.value = "High";
-                                    createTaskController.selectedTag.value =
+                                    _updateTaskController.selectedTag.value =
                                         "No tags added";
 
-                                    createTaskController.remarkController
+                                    _updateTaskController.remarkController
                                         .clear();
                                     //  }
                                     //   }
                                   },
                                   child: ButtonWidget(
-                                      isLoading: createTaskController
-                                          .creatingTask.value,
-                                      width: 77.0,
-                                      text: "Create",
+                                      isLoading: _updateTaskController
+                                          .updatingTask.value,
+                                      width: 85.0,
+                                      text: "Update",
                                       textColor: Colors.white,
                                       color: Get.theme.primaryColor)),
                             )
@@ -1372,7 +1419,7 @@ class _CreateTaskState extends State<CreateTask> {
   }
 
   Color getColor() {
-    switch (createTaskController.selectedPriority.value) {
+    switch (_updateTaskController.selectedPriority.value) {
       case "High":
         return Colors.red;
       case "Medium":
