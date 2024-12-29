@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:task_management_app/constants/database_references.dart';
 import 'package:task_management_app/constants/strings.dart';
+import 'package:task_management_app/controller/dashboard_controller.dart';
 import 'package:task_management_app/controller/repeat_task_controller.dart';
 import 'package:task_management_app/controller/user_activities_controller.dart';
 import 'package:task_management_app/views/admin_dash_board.dart';
@@ -117,7 +118,7 @@ class UpdateTaskController extends GetxController {
 
   RxBool gettingUsers = false.obs;
 
-  Future getUserList(bool forManager) async {
+  Future getUserList(bool forManager, bool forUsersProfile) async {
     gettingUsers.value = true;
 
     //employeesToAssign.clear();
@@ -138,9 +139,17 @@ class UpdateTaskController extends GetxController {
         ? DatabaseReferences.MANAGERS_COLLECTION_REFERENCE
         : DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE;
 
+    String companyName = "";
+    if (forUsersProfile) {
+      //companyName = _userActivitiesController.companyName.value;
+      companyName = _dashboardController.companyName.value.toUpperCase();
+    } else {
+      companyName = _userActivitiesController.companyName.value.toUpperCase();
+    }
+
     await _fireStore
         .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-        .doc(_userActivitiesController.companyName.value.toUpperCase())
+        .doc(companyName)
         .collection(collectionReference)
         .get()
         .then((value) {
@@ -283,7 +292,10 @@ class UpdateTaskController extends GetxController {
 
   var descriptionController = TextEditingController();
 
-  Future<void> updateAdminSideTask(String taskName) async {
+  DashboardController _dashboardController = Get.put(DashboardController());
+
+  Future<void> updateAdminSideTask(
+      String taskName, bool forUsersProfile) async {
     // DocumentReference adminReference;
     String adminTaskTypeReference = "";
 
@@ -310,19 +322,35 @@ class UpdateTaskController extends GetxController {
     DocumentReference taskReference;
     //adminReference = value.docs.first.reference;
     String adminReferenceId = "";
+
+    String companyName = "";
+
+    if (forUsersProfile) {
+      //companyName = _userActivitiesController.companyName.value;
+      companyName = _dashboardController.companyName.value.toUpperCase();
+    } else {
+      companyName = _userActivitiesController.companyName.value.toUpperCase();
+    }
+
+    print("companyName $companyName");
+
     try {
       await _fireStore
           .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-          .doc(_userActivitiesController.companyName.value.toUpperCase())
+          .doc(companyName)
           .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
           .get()
           .then(
         (value) async {
           adminReferenceId = value.docs.first.reference.id;
 
+          print("adminReferenceId $adminReferenceId");
+
+          print("taskName $taskName");
+
           await _fireStore
               .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-              .doc(_userActivitiesController.companyName.value.toUpperCase())
+              .doc(companyName)
               .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
               .doc(adminReferenceId)
               .collection(adminTaskTypeReference)
@@ -331,10 +359,11 @@ class UpdateTaskController extends GetxController {
               .then(
             (value) async {
               taskReference = value.docs.first.reference;
+
+              print("taskReference.id ${taskReference.id}");
               await _fireStore
                   .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-                  .doc(
-                      _userActivitiesController.companyName.value.toUpperCase())
+                  .doc(companyName)
                   .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
                   .doc(adminReferenceId)
                   .collection(adminTaskTypeReference)
@@ -429,8 +458,10 @@ class UpdateTaskController extends GetxController {
       String? appTitle,
       bool forAdmin,
       String taskName,
-      bool forTaskOverview) async {
+      bool forTaskOverview,
+      bool forUsersProfile) async {
     updatingTask.value = true;
+    //await updateAdminSideTask(taskName, forUsersProfile);
 
     await document.reference.update({
       "taskName": taskNameController.text,
@@ -456,23 +487,26 @@ class UpdateTaskController extends GetxController {
       "timeStamp": Timestamp.now().toDate().toString(),
     }).then(
       (value) async {
-        await updateAdminSideTask(taskName);
+        await updateAdminSideTask(taskName, forUsersProfile);
 
         updatingTask.value = false;
 
-        if (!forTaskOverview) {
+        if (forUsersProfile == false) {
           Get.offUntil(
               MaterialPageRoute(builder: (_) => AdminDashboardScreen()),
               (route) => false);
-
-          Get.to(() => TasksScreen(
-                appTitle: appTitle,
-                username: username,
-                forManager: forManager,
-                forAdmin: forAdmin,
-              ));
+          if (!forTaskOverview) {
+            Get.to(() => TasksScreen(
+                  appTitle: appTitle,
+                  username: username,
+                  forManager: forManager,
+                  forAdmin: forAdmin,
+                  forUsersProfile: forUsersProfile,
+                ));
+          } else {
+            //write seperate function for manager
+          }
         } else {
-          //write seperate function for manager
           Get.offUntil(MaterialPageRoute(builder: (_) => DashboardScreen()),
               (route) => false);
         }

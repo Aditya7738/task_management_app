@@ -31,12 +31,14 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
 
-    loginController.emailController.value.clear();
-    loginController.companyNameController.text = "";
-    loginController.passwordController.text = "";
-    loginController.usernameController.text = "";
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      loginController.emailController.value.clear();
+      loginController.companyNameController.text = "";
+      loginController.passwordController.text = "";
+      loginController.usernameController.text = "";
 
-    loginController.role.value = "Manager";
+      loginController.role.value = "Manager";
+    });
   }
 
   void showResetPasswordDialog(BuildContext context) {
@@ -94,8 +96,10 @@ class _LoginPageState extends State<LoginPage> {
                       onChanged: (value) {
                         print("onChanged");
                         if (loginController.role.value == "Admin") {
-                          loginController.companyNameController.text =
-                              loginController.guessCompanyName(value);
+                          if (value.contains("@")) {
+                            loginController.companyNameController.text =
+                                loginController.guessCompanyName(value);
+                          }
                         }
                       },
                       decoration: InputDecoration(
@@ -450,8 +454,11 @@ class _LoginPageState extends State<LoginPage> {
                               },
                               onChanged: (value) {
                                 print("onChanged");
-                                loginController.companyNameController.text =
-                                    loginController.guessCompanyName(value);
+
+                                if (value.contains("@")) {
+                                  loginController.companyNameController.text =
+                                      loginController.guessCompanyName(value);
+                                }
                               },
                               decoration: InputDecoration(
                                 errorStyle: TextStyle(
@@ -476,6 +483,10 @@ class _LoginPageState extends State<LoginPage> {
                                   //     ? Fontsizes.tabletTextFormInputFieldSize
                                   //     : Fontsizes.textFormInputFieldSize
                                   ),
+                              validator: (value) {
+                                return ValidationHelper.nullOrEmptyString(
+                                    value);
+                              },
                               controller: loginController.usernameController,
                               keyboardType: TextInputType.name,
                               decoration: InputDecoration(
@@ -508,9 +519,9 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                           controller: loginController.companyNameController,
                           keyboardType: TextInputType.name,
-                          // validator: (value) {
-                          //   return ValidationHelper.isEmailValid(value);
-                          // },
+                          validator: (value) {
+                            return ValidationHelper.nullOrEmptyString(value);
+                          },
                           decoration: InputDecoration(
                             // errorStyle: TextStyle(
                             //     fontSize: FontSizes.errorFontSize,
@@ -526,11 +537,6 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
 
                             labelText: "Company name",
-
-                            // border: OutlineInputBorder(
-                            //     borderSide: BorderSide(color: Colors.red),
-                            //     borderRadius:
-                            //         BorderRadius.all(Radius.circular(20.0))),
                           ),
                         ),
 
@@ -550,6 +556,7 @@ class _LoginPageState extends State<LoginPage> {
                             obscureText:
                                 loginController.isPasswordInvisible.value,
                             keyboardType: TextInputType.visiblePassword,
+                            validator: ValidationHelper.isPasswordContain,
                             decoration: InputDecoration(
                               errorStyle: TextStyle(
                                   fontSize: FontSizes.errorFontSize,

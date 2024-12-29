@@ -18,14 +18,15 @@ import 'package:task_management_app/views/login_page.dart';
 import 'package:task_management_app/widgets/button_widget.dart';
 import 'package:task_management_app/widgets/list_of_user.dart';
 
-class UsersActivities extends StatefulWidget {
-  UsersActivities({super.key});
+class AssignedTasksToOthersList extends StatefulWidget {
+  AssignedTasksToOthersList({super.key});
 
   @override
-  State<UsersActivities> createState() => _UsersActivitiesState();
+  State<AssignedTasksToOthersList> createState() =>
+      _AssignedTasksToOthersListState();
 }
 
-class _UsersActivitiesState extends State<UsersActivities> {
+class _AssignedTasksToOthersListState extends State<AssignedTasksToOthersList> {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   UserActivitiesController _userActivitiesController =
@@ -39,12 +40,12 @@ class _UsersActivitiesState extends State<UsersActivities> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print(
-        "_loginController.emailController.value.text ${_loginController.emailController.value.text}");
+    // print(
+    //     "_loginController.emailController.value.text ${_loginController.emailController.value.text}");
 
-    if (_userActivitiesController.companyName.value.isEmpty) {
-      _userActivitiesController.getCompanyName();
-    }
+    // if (_userActivitiesController.companyName.value.isEmpty) {
+    //   _userActivitiesController.getCompanyName();
+    // }
 
     // _userActivitiesController.getManagersCollection();
     // _userActivitiesController.getEmployeeCollection();
@@ -280,28 +281,21 @@ class _UsersActivitiesState extends State<UsersActivities> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: Text('Users Activities'),
+          title: Text('Assign tasks'),
           titleTextStyle: TextStyle(fontSize: 17.0, color: Colors.black),
           actions: [
             GestureDetector(
               onTap: () {
-                //Get.to(() => AddUsers());
-                // showModalBottomSheet(
-                //   constraints: BoxConstraints.expand(
-                //       width: Get.width, height: Get.height),
-                //   isScrollControlled: true,
-                //   context: context,
-                //   builder: (context) {
-                //     return AddEmployees();
-                //   },
-                // );
-
-                Get.to(() => AddEmployees());
+                Get.to(() => CreateTask(
+                      forAdmin: false,
+                      forManager: true,
+                      forUsersProfile: true,
+                    ));
               },
               child: Container(
                 alignment: Alignment.center,
                 //  margin: EdgeInsets.only(right: 10),
-                width: 120,
+                width: 80,
                 height: 30,
                 decoration: BoxDecoration(
                   color: Get.theme.primaryColor,
@@ -309,7 +303,7 @@ class _UsersActivitiesState extends State<UsersActivities> {
                 ),
                 child: Text(
                   maxLines: 1,
-                  'Add employee',
+                  'Assign',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -329,15 +323,15 @@ class _UsersActivitiesState extends State<UsersActivities> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: Get.width,
-                  child: Obx(
-                    () => Text(
-                      "${_userActivitiesController.companyName.value.toUpperCase()} company's employees activities",
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
+                // SizedBox(
+                //   width: Get.width,
+                //   child: Obx(
+                //     () => Text(
+                //       "${_userActivitiesController.companyName.value.toUpperCase()} company's employees activities",
+                //       textAlign: TextAlign.center,
+                //     ),
+                //   ),
+                // ),
                 // Center(
                 //   child: SizedBox(
                 //     width: Get.width * 0.5,
@@ -379,228 +373,10 @@ class _UsersActivitiesState extends State<UsersActivities> {
                 //     ),
                 //   ),
                 // ),
-                SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  'Managers',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Obx(() {
-                  if (_userActivitiesController.fetchingCompanyName.value) {
-                    return SizedBox(
-                      width: Get.width,
-                      height: Get.height * 0.26,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: Get.theme.primaryColor,
-                        ),
-                      ),
-                    );
-                  } else {
-                    return StreamBuilder(
-                      // future: _userActivitiesController
-                      //     .getFutureManagersCollection(),
-                      stream: _userActivitiesController.getManagersData(),
-                      builder: (context, snapshot) {
-                        if (
-                            //true
-                            snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                          return SizedBox(
-                            width: Get.width,
-                            height: Get.height * 0.26,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: Get.theme.primaryColor,
-                              ),
-                            ),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text(
-                              'Error: ${snapshot.error}',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          );
-                        } else if (snapshot.hasData) {
-                          if (snapshot.data!.docs.isNotEmpty) {
-                            print(
-                                "snapshot.data!.docs.length ${snapshot.data!.docs.length}");
-
-                            return
-                                // SizedBox(
-                                //   width: Get.width,
-                                //   height: Get.height * 0.65,
-                                //   child:
-                                ListView(
-                              shrinkWrap: true,
-                              children: snapshot.data!.docs.map(
-                                (DocumentSnapshot document) {
-                                  Map<String, dynamic> data =
-                                      document.data()! as Map<String, dynamic>;
-
-                                  data.forEach((key, value) {
-                                    print("key: $key, value: $value");
-                                  });
-
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Get.to(() => TasksScreen(
-                                            appTitle:
-                                                "${data['firstName']} ${data['lastName']}'s tasks",
-                                            username:
-                                                data['username'].toString(),
-                                            forManager: true,
-                                            forAdmin: true,
-                                            forUsersProfile: false,
-                                          ));
-                                    },
-                                    child: Container(
-                                      margin: EdgeInsets.only(bottom: 10),
-                                      padding: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  CircleAvatar(
-                                                    child: Text(
-                                                        data['firstName'][0]
-                                                            .toString()
-                                                            .toUpperCase()),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 5.0,
-                                                  ),
-                                                  Text(
-                                                    "${data['firstName']} ${data['lastName']}",
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      _createTaskController
-                                                          .data.value = data;
-
-                                                      Get.to(() => CreateTask(
-                                                            forAdmin: true,
-                                                            forManager: true,
-                                                            forUsersProfile:
-                                                                false,
-                                                          ));
-                                                    },
-                                                    child: Container(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      //width: 0,
-                                                      //height: 30,
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 10.0,
-                                                              vertical: 5.0),
-                                                      decoration: BoxDecoration(
-                                                        color: Get
-                                                            .theme.primaryColor,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                      ),
-                                                      child: Text(
-                                                        'Add task',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 15.0,
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      print("EDIT MANAGER");
-                                                      showUpdateDialog(
-                                                          context, document);
-                                                    },
-                                                    child: Icon(
-                                                      Iconsax.edit_outline,
-                                                      size: 20.0,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 15.0,
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      print("DELETE MANAGER");
-                                                      // document.reference.delete();
-                                                      // _userActivitiesController
-                                                      //     .deleteManager(
-                                                      //         document);
-                                                      showDeleteConfirmationDialog(
-                                                          context, document);
-                                                    },
-                                                    child: Icon(Icons
-                                                        .delete_outline_outlined),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ).toList(),
-                            );
-
-                            // );
-                          } else {
-                            return Center(
-                              child: Text(
-                                'No data found',
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            );
-                          }
-                        } else {
-                          return Center(
-                            child: Text(
-                              'Null data found',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          );
-                        }
-                      },
-                    );
-                  }
-                }),
-                // ListOfUser(
-                //   stream: _userActivitiesController.getManagersCollection(),
+                // SizedBox(
+                //   height: 20,
                 // ),
-                SizedBox(
-                  height: 10,
-                ),
+
                 Text(
                   'Employees',
                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -674,8 +450,8 @@ class _UsersActivitiesState extends State<UsersActivities> {
                                             username:
                                                 data['username'].toString(),
                                             forManager: false,
-                                            forAdmin: true,
-                                            forUsersProfile: false,
+                                            forAdmin: false,
+                                            forUsersProfile: true,
                                           ));
                                     },
                                     child: Container(
@@ -723,7 +499,7 @@ class _UsersActivitiesState extends State<UsersActivities> {
                                                             //     document,
                                                             forManager: false,
                                                             forUsersProfile:
-                                                                false,
+                                                                true,
                                                           ));
                                                     },
                                                     child: Container(

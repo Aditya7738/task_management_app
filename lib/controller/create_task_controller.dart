@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:task_management_app/constants/database_references.dart';
 import 'package:task_management_app/constants/strings.dart';
+import 'package:task_management_app/controller/dashboard_controller.dart';
 import 'package:task_management_app/controller/repeat_task_controller.dart';
 import 'package:task_management_app/controller/user_activities_controller.dart';
 
@@ -112,7 +113,9 @@ class CreateTaskController extends GetxController {
 
   RxBool gettingUsers = false.obs;
 
-  Future getUserList(bool forManager) async {
+  DashboardController _dashboardController = Get.put(DashboardController());
+
+  Future getUserList(bool forManager, bool forUsersProfile) async {
     gettingUsers.value = true;
 
     //employeesToAssign.clear();
@@ -127,15 +130,24 @@ class CreateTaskController extends GetxController {
       },
     );
 
+    String companyName = "";
+
+    if (forUsersProfile) {
+      print("username ${_dashboardController.companyName.value}");
+      companyName = _dashboardController.companyName.value.toUpperCase();
+    } else {
+      companyName = _userActivitiesController.companyName.value.toUpperCase();
+    }
+
     print("employeesToAssign.length ${employeesToAssign.value.length}");
 
     String collectionReference = forManager
-        ? DatabaseReferences.MANAGERS_COLLECTION_REFERENCE
-        : DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE;
+        ? DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE
+        : DatabaseReferences.MANAGERS_COLLECTION_REFERENCE;
 
     await _fireStore
         .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-        .doc(_userActivitiesController.companyName.value.toUpperCase())
+        .doc(companyName)
         .collection(collectionReference)
         .get()
         .then((value) {
@@ -278,7 +290,7 @@ class CreateTaskController extends GetxController {
 
   var descriptionController = TextEditingController();
 
-  Future<void> createTask(bool forManager) async {
+  Future<void> createTask(bool forManager, bool forUsersProfile) async {
     creatingTask.value = true;
     String collectionReference = forManager
         ? DatabaseReferences.MANAGERS_COLLECTION_REFERENCE
@@ -319,6 +331,15 @@ class CreateTaskController extends GetxController {
       default:
     }
 
+    String companyName = "";
+
+    if (forUsersProfile) {
+      print("username ${_dashboardController.companyName.value}");
+      companyName = _dashboardController.companyName.value.toUpperCase();
+    } else {
+      companyName = _userActivitiesController.companyName.value.toUpperCase();
+    }
+
     try {
       print("data[username] ${data["username"]}");
 
@@ -326,7 +347,7 @@ class CreateTaskController extends GetxController {
 
       await _fireStore
           .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-          .doc(_userActivitiesController.companyName.value.toUpperCase())
+          .doc(companyName)
           .collection(collectionReference)
           .where("username", isEqualTo: data["username"])
           .get()
@@ -343,7 +364,7 @@ class CreateTaskController extends GetxController {
 
           await _fireStore
               .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-              .doc(_userActivitiesController.companyName.value.toUpperCase())
+              .doc(companyName)
               .collection(collectionReference)
               .doc(reference.id)
               .collection(taskCollectionRef)
@@ -371,16 +392,37 @@ class CreateTaskController extends GetxController {
             "timeStamp": Timestamp.now().toDate().toString(),
             //"assignedBy": ,
           }).then(
-            (value) {
-              // creatingTask.value = false;
-              Get.back();
+            (value) async {
+              await createTaskOnAdminSide(adminTaskReference, forUsersProfile);
 
-              Get.snackbar("Task stored successfully in user's database", "",
-                  colorText: Colors.white,
-                  backgroundColor: Get.theme.primaryColor,
-                  duration: Duration(seconds: 4),
-                  borderRadius: 20.0,
-                  snackPosition: SnackPosition.TOP);
+              creatingTask.value = false;
+//               Get.back();
+
+//               Get.snackbar(
+//   'Title',
+//   'Message',
+//   duration: Duration(seconds: 3),
+//   onDismissed: (_) {
+//     Future.delayed(Duration(milliseconds: 500), () {
+//       Get.back();
+//     });
+//   },
+// );
+
+              // Get.snackbar("Task stored successfully in user's database", "",
+              //     colorText: Colors.white,
+              //     backgroundColor: Get.theme.primaryColor,
+              //     duration: Duration(seconds: 4),
+              //     borderRadius: 20.0,
+              //     //                   : (_) {
+              //     //                     //try on all
+              //     //   Future.delayed(Duration(milliseconds: 500), () {
+              //     //     Get.back();
+              //     //   });
+              //     // },
+              //     snackPosition: SnackPosition.TOP);
+
+              Get.back();
             },
           ).onError(
             (error, stackTrace) {
@@ -432,26 +474,38 @@ class CreateTaskController extends GetxController {
           borderRadius: 20.0,
           snackPosition: SnackPosition.TOP);
     }
+  }
 
-    DocumentReference adminReference;
+  Future<void> createTaskOnAdminSide(
+      String adminTaskReference, bool forUsersProfile) async {
+    String companyName = "";
+
+    if (forUsersProfile) {
+      print("username ${_dashboardController.companyName.value}");
+      companyName = _dashboardController.companyName.value.toUpperCase();
+    } else {
+      companyName = _userActivitiesController.companyName.value.toUpperCase();
+    }
+
+    String adminReferenceId = "";
 
     try {
       await _fireStore
           .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-          .doc(_userActivitiesController.companyName.value.toUpperCase())
+          .doc(companyName)
           .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
-          .where("workEmail",
-              isEqualTo: _userActivitiesController.workEmail.value)
           .get()
           .then(
         (value) async {
-          adminReference = value.docs.first.reference;
+          adminReferenceId = value.docs.first.reference.id;
+
+          print("adminReferenceId $adminReferenceId");
 
           await _fireStore
               .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-              .doc(_userActivitiesController.companyName.value.toUpperCase())
+              .doc(companyName)
               .collection(DatabaseReferences.ADMIN_COLLECTION_REFERENCE)
-              .doc(adminReference.id)
+              .doc(adminReferenceId)
               .collection(adminTaskReference)
               .add({
             "taskName": taskNameController.text,
@@ -477,20 +531,20 @@ class CreateTaskController extends GetxController {
             "timeStamp": Timestamp.now().toDate().toString(),
           }).then(
             (value) {
-              creatingTask.value = false;
+              //     creatingTask.value = false;
 
-              Get.snackbar("Task stored successfully in Admin's database", "",
-                  colorText: Colors.white,
-                  backgroundColor: Get.theme.primaryColor,
-                  duration: Duration(seconds: 4),
-                  borderRadius: 20.0,
-                  snackPosition: SnackPosition.TOP);
+              // Get.snackbar("Task stored successfully in Admin's database", "",
+              //     colorText: Colors.white,
+              //     backgroundColor: Get.theme.primaryColor,
+              //     duration: Duration(seconds: 4),
+              //     borderRadius: 20.0,
+              //     snackPosition: SnackPosition.TOP);
             },
           ).onError(
             (error, stackTrace) {
               print("FirestoreAdmin Error: $error");
 
-              creatingTask.value = false;
+              //       creatingTask.value = false;
 
               String cleanedError =
                   error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
@@ -508,7 +562,7 @@ class CreateTaskController extends GetxController {
         (error, stackTrace) {
           print("FirestoreManager Error: $error");
 
-          creatingTask.value = false;
+          //    creatingTask.value = false;
 
           String cleanedError =
               error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
@@ -524,7 +578,7 @@ class CreateTaskController extends GetxController {
     } catch (e) {
       print("Error: $e");
 
-      creatingTask.value = false;
+      // creatingTask.value = false;
 
       String cleanedError =
           e.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();

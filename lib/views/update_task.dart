@@ -28,6 +28,7 @@ class UpdateTask extends StatefulWidget {
   final DocumentSnapshot document;
   final String? appTitle;
   final bool forTaskOverview;
+  final bool forUsersProfile;
 
   UpdateTask(
       {super.key,
@@ -37,7 +38,8 @@ class UpdateTask extends StatefulWidget {
       required this.document,
       required this.username,
       required this.forTaskOverview,
-      this.appTitle});
+      this.appTitle,
+      required this.forUsersProfile});
 
   @override
   State<UpdateTask> createState() => _CreateTaskState();
@@ -96,7 +98,7 @@ class _CreateTaskState extends State<UpdateTask> {
     if (widget.forAdmin) {
     } else {
       _updateTaskController.employeesToAssign.clear();
-      _updateTaskController.getUserList(widget.forEmp);
+      _updateTaskController.getUserList(widget.forEmp, widget.forUsersProfile);
       _updateTaskController.assignedTo.value =
           _updateTaskController.employeesToAssign.isNotEmpty
               ? _updateTaskController.employeesToAssign[0]
@@ -1344,7 +1346,8 @@ class _CreateTaskState extends State<UpdateTask> {
                                         widget.appTitle,
                                         widget.forAdmin,
                                         data["taskName"].toString(),
-                                        widget.forTaskOverview);
+                                        widget.forTaskOverview,
+                                        widget.forUsersProfile);
 
                                     if (widget.forAdmin == false) {
                                       _updateTaskController

@@ -61,7 +61,7 @@ class _AdminsTaskListState extends State<AdminsTaskList> {
                   // _tasksOverviewController.deleteTask(document, widget.appTitle,
                   //     widget.username, widget.forManager, widget.forAdmin);
                   _taskScreenController.deleteTask(
-                      document, "", "", false, true, true);
+                      document, "", "", false, true, true, false);
                 },
                 child: Obx(
                   () => ButtonWidget(
@@ -301,6 +301,8 @@ class _AdminsTaskListState extends State<AdminsTaskList> {
                                                           username: "",
                                                           appTitle: "",
                                                           forTaskOverview: true,
+                                                          forUsersProfile:
+                                                              false,
                                                         ));
                                                     break;
                                                   case "Move to":

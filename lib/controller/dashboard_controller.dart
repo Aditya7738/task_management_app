@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,7 +19,9 @@ class DashboardController extends GetxController {
   RxBool fetchingSharedRefData = false.obs;
 
   Future<void> fetchSharedRefData() async {
-    fetchingSharedRefData.value = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchingSharedRefData.value = true;
+    });
     if (await sharedPreferencesAsync.getString("role") != null) {
       roleName.value = (await sharedPreferencesAsync.getString("role"))!;
     }
@@ -31,6 +34,8 @@ class DashboardController extends GetxController {
       companyName.value =
           (await sharedPreferencesAsync.getString("company_name"))!;
     }
-    fetchingSharedRefData.value = false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchingSharedRefData.value = false;
+    });
   }
 }

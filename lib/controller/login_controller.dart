@@ -61,8 +61,6 @@ class LoginController extends GetxController {
             password: passwordController.text.trim())
         .then(
       (value) async {
-        logingAccount.value = false;
-
         await sharedPreferencesAsync.setString(
             "company_name", companyNameController.text.trim());
 
@@ -70,6 +68,8 @@ class LoginController extends GetxController {
 
         await sharedPreferencesAsync.setString(
             "workEmail", emailController.value.text.trim());
+
+        logingAccount.value = false;
 
         Get.snackbar("Login successfully", "",
             colorText: Colors.white,

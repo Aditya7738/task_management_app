@@ -5,6 +5,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_management_app/controller/dashboard_controller.dart';
 import 'package:task_management_app/controller/login_controller.dart';
+import 'package:task_management_app/views/assigned_tasks_to_others_list.dart';
 import 'package:task_management_app/views/calendar_tasks.dart';
 import 'package:task_management_app/views/create_task.dart';
 import 'package:task_management_app/views/profile_screen.dart';
@@ -35,10 +36,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
         username: dashboardController.username.value,
         forManager:
             dashboardController.roleName.value == "Manager" ? true : false,
+        forUsersProfile:
+            dashboardController.roleName.value == "Admin" ? false : true,
         forAdmin: false,
       ),
       CalendarTasks(),
-      BoardScreen(),
+      //  BoardScreen(),
+      AssignedTasksToOthersList()
       // ProfileScreen()
     ];
   }
@@ -57,7 +61,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       () => Scaffold(
         bottomNavigationBar: BottomNavigationBar(
           onTap: (index) {
+            // WidgetsBinding.instance.addPostFrameCallback((_) {
             dashboardController.currentIndex.value = index;
+            //  });
           },
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
@@ -71,9 +77,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
               label: 'Calendar',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard_outlined),
-              activeIcon: Icon(Icons.dashboard_sharp),
-              label: 'Task Board',
+              icon: Image.asset(
+                "assets/images/teamwork_outlined.png",
+                width: 30.0,
+                height: 30.0,
+                color: Colors.grey,
+              ),
+              activeIcon: Image.asset(
+                "assets/images/teamwork_bold.png",
+                width: 30.0,
+                height: 30.0,
+                color: Get.theme.primaryColor,
+              ),
+              label: 'Assign tasks',
             ),
           ],
           selectedItemColor: Get.theme.primaryColor,

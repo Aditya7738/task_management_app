@@ -16,13 +16,15 @@ class TaskList extends StatefulWidget {
   final bool forManager;
   final String typeOfTasks;
   final String? appTitle;
+  final bool forUsersProfile;
   TaskList(
       {super.key,
       required this.forManager,
       required this.username,
       required this.typeOfTasks,
       required this.appTitle,
-      required this.forAdmin});
+      required this.forAdmin,
+      required this.forUsersProfile});
 
   @override
   State<TaskList> createState() => _TaskListState();
@@ -66,7 +68,8 @@ class _TaskListState extends State<TaskList> {
                       widget.username,
                       widget.forManager,
                       widget.forAdmin,
-                      false);
+                      false,
+                      widget.forUsersProfile);
                 },
                 child: Obx(
                   () => ButtonWidget(
@@ -154,7 +157,10 @@ class _TaskListState extends State<TaskList> {
             //     return
             FutureBuilder(
                 future: taskScreenController.getTasklist(
-                    widget.forManager, widget.username, widget.typeOfTasks),
+                    widget.forManager,
+                    widget.username,
+                    widget.typeOfTasks,
+                    widget.forUsersProfile),
                 builder: (context, snapshot) {
                   if (
                       //true
@@ -301,6 +307,8 @@ class _TaskListState extends State<TaskList> {
                                                               widget.appTitle,
                                                           forTaskOverview:
                                                               false,
+                                                          forUsersProfile: widget
+                                                              .forUsersProfile,
                                                         ));
                                                     break;
                                                   case "Move to":

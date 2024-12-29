@@ -153,6 +153,7 @@ class _TasksOverviewState extends State<TasksOverview>
                 Get.to(() => CreateTask(
                       forAdmin: false,
                       forManager: true,
+                      forUsersProfile: false,
                     ));
               },
               child: Container(

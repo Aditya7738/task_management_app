@@ -7,6 +7,7 @@ import 'package:task_management_app/controller/add_employees_controller.dart';
 import 'package:task_management_app/controller/validation_helper.dart';
 import 'package:task_management_app/views/login_page.dart';
 import 'package:task_management_app/widgets/button_widget.dart';
+import 'package:task_management_app/widgets/leading_back_arrow.dart';
 
 class AddEmployees extends StatefulWidget {
   AddEmployees({super.key});
@@ -35,16 +36,7 @@ class _AddEmployeesState extends State<AddEmployees> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          leading: InkWell(
-            onTap: () {
-              Get.back();
-            },
-            child: Icon(
-              Icons.close_rounded,
-              //color: Theme.of(context).primaryColor,
-              size: 20.0,
-            ),
-          ),
+          leading: LeadingBackArrow(),
           automaticallyImplyLeading: false,
           title: Text(
             "Add employee",

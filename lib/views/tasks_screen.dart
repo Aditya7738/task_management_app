@@ -14,12 +14,14 @@ class TasksScreen extends StatefulWidget {
   final String username;
   final bool forManager;
   final bool forAdmin;
+  final bool forUsersProfile;
   TasksScreen(
       {super.key,
       this.appTitle,
       required this.username,
       required this.forManager,
-      required this.forAdmin});
+      required this.forAdmin,
+      required this.forUsersProfile});
 
   @override
   State<TasksScreen> createState() => _TasksScreenState();
@@ -230,12 +232,17 @@ class _TasksScreenState extends State<TasksScreen>
               //       padding: const EdgeInsets.only(right: 8.0),
               //       child: Icon(Iconsax.calendar_add_outline),
               //     )),
-              IconButton(
-                  onPressed: () async {
-                    await auth.signOut();
-                    Get.to(() => LoginPage());
-                  },
-                  icon: Icon(Icons.logout_rounded))
+
+              widget.forUsersProfile
+                  ? IconButton(
+                      onPressed: () async {
+                        await auth.signOut();
+                        WidgetsBinding.instance!.addPostFrameCallback((_) {
+                          Get.to(() => LoginPage());
+                        });
+                      },
+                      icon: Icon(Icons.logout_rounded))
+                  : SizedBox()
             ],
             bottom: TabBar(
               tabAlignment: TabAlignment.start,
@@ -287,6 +294,7 @@ class _TasksScreenState extends State<TasksScreen>
               appTitle: widget.appTitle,
               typeOfTasks: "Assigned",
               forAdmin: widget.forAdmin,
+              forUsersProfile: widget.forUsersProfile,
             ),
             TaskList(
               username: widget.username,
@@ -294,6 +302,7 @@ class _TasksScreenState extends State<TasksScreen>
               appTitle: widget.appTitle,
               typeOfTasks: "In progress",
               forAdmin: widget.forAdmin,
+              forUsersProfile: widget.forUsersProfile,
             ),
             TaskList(
               username: widget.username,
@@ -301,6 +310,7 @@ class _TasksScreenState extends State<TasksScreen>
               appTitle: widget.appTitle,
               typeOfTasks: "Hold",
               forAdmin: widget.forAdmin,
+              forUsersProfile: widget.forUsersProfile,
             ),
             TaskList(
               username: widget.username,
@@ -308,6 +318,7 @@ class _TasksScreenState extends State<TasksScreen>
               appTitle: widget.appTitle,
               typeOfTasks: "Completed",
               forAdmin: widget.forAdmin,
+              forUsersProfile: widget.forUsersProfile,
             ),
           ],
         ),
