@@ -11,6 +11,7 @@ import 'package:task_management_app/constants/database_references.dart';
 import 'package:task_management_app/constants/strings.dart';
 import 'package:task_management_app/controller/dashboard_controller.dart';
 import 'package:task_management_app/controller/repeat_task_controller.dart';
+import 'package:task_management_app/controller/update_repeat_task_controller.dart';
 import 'package:task_management_app/controller/user_activities_controller.dart';
 import 'package:task_management_app/views/admin_dash_board.dart';
 import 'package:task_management_app/views/dashboard_screen.dart';
@@ -88,24 +89,28 @@ class UpdateTaskController extends GetxController {
 
   RxMap<String, dynamic> data = <String, dynamic>{}.obs;
 
-  RepeatTaskController repeatTaskController = Get.put(RepeatTaskController());
+  //RepeatTaskController repeatTaskController = Get.put(RepeatTaskController());
+
+  UpdateRepeatTaskController _updateRepeatTaskController =
+      Get.put(UpdateRepeatTaskController());
 
   List<String> getSelectedOptionsList() {
-    if (repeatTaskController.selectedDays.isNotEmpty) {
-      return repeatTaskController.selectedDays;
-    } else if (repeatTaskController.selectedWeekDays.isNotEmpty) {
-      return repeatTaskController.selectedWeekDays;
-    } else if (repeatTaskController.selectedMonths.isNotEmpty) {
-      return repeatTaskController.selectedMonths;
-    } else if (repeatTaskController.selectedYears.isNotEmpty) {
-      return repeatTaskController.selectedYears;
+    if (_updateRepeatTaskController.selectedDays.isNotEmpty) {
+      return _updateRepeatTaskController.selectedDays;
+    } else if (_updateRepeatTaskController.selectedWeekDays.isNotEmpty) {
+      return _updateRepeatTaskController.selectedWeekDays;
+    } else if (_updateRepeatTaskController.selectedMonths.isNotEmpty) {
+      return _updateRepeatTaskController.selectedMonths;
+    } else if (_updateRepeatTaskController.selectedYears.isNotEmpty) {
+      return _updateRepeatTaskController.selectedYears;
     } else {
       return [];
     }
   }
 
   bool isRepeatingTask() {
-    if (repeatTaskController.selectedOption == CommonStrings.selectedOption) {
+    if (_updateRepeatTaskController.selectedOption ==
+        CommonStrings.selectedOption) {
       return true;
     } else {
       return false;
@@ -294,6 +299,9 @@ class UpdateTaskController extends GetxController {
 
   DashboardController _dashboardController = Get.put(DashboardController());
 
+  UpdateRepeatTaskController updateRepeatTaskController =
+      Get.put(UpdateRepeatTaskController());
+
   Future<void> updateAdminSideTask(
       String taskName, bool forUsersProfile) async {
     // DocumentReference adminReference;
@@ -371,7 +379,7 @@ class UpdateTaskController extends GetxController {
                   .update({
                 "taskName": taskNameController.text,
                 "description": descriptionController.text,
-                "assignedTo": assignedTo.value,
+                "assignedTo": "${data['firstName']} ${data['lastName']}",
                 "status": selectedStatus.value,
                 "startDate": startDateEditingController.text,
                 "dueDate": dueDateEditingController.text,
@@ -381,15 +389,23 @@ class UpdateTaskController extends GetxController {
                 "tag": selectedTag.value,
                 "remarks": remarkController.text,
                 "isTaskRepeated":
-                    repeatTaskController.dataSetForRepeatTask.value,
+                    _updateRepeatTaskController.dataSetForRepeatTask.value,
                 "repeatTaskOn": getSelectedOptionsList(),
-                "willTaskStopRepeating": repeatTaskController.selectedOption !=
-                    CommonStrings.selectedOption,
-                "dateToStopRepeatingTask": repeatTaskController
+                "isRepeatTaskWeekBasis":
+                    _updateRepeatTaskController.selectedTab.value == "Weekly",
+                "repeatOnNoOfWeeks"
+                    "": _updateRepeatTaskController.selectNoOfWeek.value,
+                "repeatTaskOnBasisOf":
+                    _updateRepeatTaskController.selectedTab.value,
+
+                "willTaskStopRepeating":
+                    _updateRepeatTaskController.selectedOption !=
+                        CommonStrings.selectedOption,
+                "dateToStopRepeatingTask": _updateRepeatTaskController
                     .repeatTaskDateEditingController.value.text,
                 // "remainderDateOfRepeatingTask": "",
                 "remainderTimeOfRepeatingTask":
-                    repeatTaskController.remainderTimeController.text,
+                    _updateRepeatTaskController.remainderTimeController.text,
                 "timeStamp": Timestamp.now().toDate().toString(),
               }).then(
                 (value) {
@@ -461,12 +477,13 @@ class UpdateTaskController extends GetxController {
       bool forTaskOverview,
       bool forUsersProfile) async {
     updatingTask.value = true;
-    //await updateAdminSideTask(taskName, forUsersProfile);
+
+    print("firstName lastName ${data['firstName']} ${data['lastName']}");
 
     await document.reference.update({
       "taskName": taskNameController.text,
       "description": descriptionController.text,
-      "assignedTo": assignedTo.value,
+      "assignedTo": "${data['firstName']} ${data['lastName']}",
       "status": selectedStatus.value,
       "startDate": startDateEditingController.text,
       "dueDate": dueDateEditingController.text,
@@ -475,15 +492,21 @@ class UpdateTaskController extends GetxController {
       "priority": selectedPriority.value,
       "tag": selectedTag.value,
       "remarks": remarkController.text,
-      "isTaskRepeated": repeatTaskController.dataSetForRepeatTask.value,
+      "isTaskRepeated": _updateRepeatTaskController.dataSetForRepeatTask.value,
       "repeatTaskOn": getSelectedOptionsList(),
-      "willTaskStopRepeating":
-          repeatTaskController.selectedOption != CommonStrings.selectedOption,
-      "dateToStopRepeatingTask":
-          repeatTaskController.repeatTaskDateEditingController.value.text,
+      "isRepeatTaskWeekBasis":
+          _updateRepeatTaskController.selectedTab.value == "Weekly",
+      "repeatOnNoOfWeeks"
+          "": _updateRepeatTaskController.selectNoOfWeek.value,
+      "repeatTaskOnBasisOf": _updateRepeatTaskController.selectedTab.value,
+
+      "willTaskStopRepeating": _updateRepeatTaskController.selectedOption !=
+          CommonStrings.selectedOption,
+      "dateToStopRepeatingTask": _updateRepeatTaskController
+          .repeatTaskDateEditingController.value.text,
       // "remainderDateOfRepeatingTask": "",
       "remainderTimeOfRepeatingTask":
-          repeatTaskController.remainderTimeController.text,
+          _updateRepeatTaskController.remainderTimeController.text,
       "timeStamp": Timestamp.now().toDate().toString(),
     }).then(
       (value) async {

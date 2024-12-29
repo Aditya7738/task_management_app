@@ -29,7 +29,7 @@ class _AdminsTaskListState extends State<AdminsTaskList> {
 
   var options = [
     "Edit",
-    "Move to",
+    // "Move to",
     "Delete",
   ];
 
@@ -295,7 +295,7 @@ class _AdminsTaskListState extends State<AdminsTaskList> {
                                                   case "Edit":
                                                     Get.to(() => UpdateTask(
                                                           //  data: data,
-                                                          forAdmin: true,
+                                                          forAdmin: false,
                                                           forEmp: false,
                                                           document: document,
                                                           username: "",
@@ -305,8 +305,8 @@ class _AdminsTaskListState extends State<AdminsTaskList> {
                                                               false,
                                                         ));
                                                     break;
-                                                  case "Move to":
-                                                    break;
+                                                  // case "Move to":
+                                                  //   break;
                                                   case "Delete":
                                                     showDeleteConfirmationDialog(
                                                         context, document);

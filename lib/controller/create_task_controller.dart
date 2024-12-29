@@ -141,14 +141,14 @@ class CreateTaskController extends GetxController {
 
     print("employeesToAssign.length ${employeesToAssign.value.length}");
 
-    String collectionReference = forManager
-        ? DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE
-        : DatabaseReferences.MANAGERS_COLLECTION_REFERENCE;
+    // String collectionReference = forManager
+    //     ? DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE
+    //     : DatabaseReferences.MANAGERS_COLLECTION_REFERENCE;
 
     await _fireStore
         .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
         .doc(companyName)
-        .collection(collectionReference)
+        .collection(DatabaseReferences.MANAGERS_COLLECTION_REFERENCE)
         .get()
         .then((value) {
       if (value.docs.isNotEmpty) {
@@ -159,12 +159,12 @@ class CreateTaskController extends GetxController {
         });
       }
 
-      gettingUsers.value = false;
+      // gettingUsers.value = false;
     }).onError(
       (error, stackTrace) {
         print("Firebase Error: $error");
 
-        gettingUsers.value = false;
+        //   gettingUsers.value = false;
 
         String cleanedError =
             error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
@@ -186,38 +186,38 @@ class CreateTaskController extends GetxController {
       },
     );
 
-    // await _fireStore
-    //     .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-    //     .doc(_userActivitiesController.companyName.value.toUpperCase())
-    //     .collection(DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE)
-    //     .get()
-    //     .then((value) {
-    //   if (value.docs.isNotEmpty) {
-    //     value.docs.forEach((DocumentSnapshot document) {
-    //       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-    //       employeesToAssign.add(data["firstName"] + " " + data["lastName"]);
-    //     });
-    //   }
+    await _fireStore
+        .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
+        .doc(_userActivitiesController.companyName.value.toUpperCase())
+        .collection(DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE)
+        .get()
+        .then((value) {
+      if (value.docs.isNotEmpty) {
+        value.docs.forEach((DocumentSnapshot document) {
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          employeesToAssign.add(data["firstName"] + " " + data["lastName"]);
+        });
+      }
 
-    //   gettingUsers.value = false;
-    // }).onError(
-    //   (error, stackTrace) {
-    //     print("Firebase Error: $error");
-    //     gettingUsers.value = false;
-    //     String cleanedError =
-    //         error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
-    //     //cleanedText.trim();
+      //  gettingUsers.value = false;
+    }).onError(
+      (error, stackTrace) {
+        print("Firebase Error: $error");
 
-    //     //  logingAccount.value = false;
-    //     Get.snackbar("Error", cleanedError,
-    //         backgroundColor: Colors.red,
-    //         colorText: Colors.white,
-    //         duration: Duration(seconds: 5),
-    //         borderRadius: 20.0,
-    //         snackPosition: SnackPosition.TOP);
-    //   },
-    // );
+        String cleanedError =
+            error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+        //cleanedText.trim();
 
+        //  logingAccount.value = false;
+        Get.snackbar("Error", cleanedError,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: Duration(seconds: 5),
+            borderRadius: 20.0,
+            snackPosition: SnackPosition.TOP);
+      },
+    );
+    gettingUsers.value = false;
     print("employeesToAssign.length ${employeesToAssign.value.length}");
 
     update();
@@ -334,15 +334,18 @@ class CreateTaskController extends GetxController {
     String companyName = "";
 
     if (forUsersProfile) {
-      print("username ${_dashboardController.companyName.value}");
+      print(
+          "_dashboardController.companyName.value ${_dashboardController.companyName.value}");
       companyName = _dashboardController.companyName.value.toUpperCase();
     } else {
       companyName = _userActivitiesController.companyName.value.toUpperCase();
     }
 
-    try {
-      print("data[username] ${data["username"]}");
+    print("data[username] ${data["username"]}");
 
+    print("firstName lastName ${data['firstName']} ${data['lastName']}");
+
+    try {
       DocumentReference reference;
 
       await _fireStore
@@ -371,7 +374,7 @@ class CreateTaskController extends GetxController {
               .add({
             "taskName": taskNameController.text,
             "description": descriptionController.text,
-            "assignedTo": assignedTo.value,
+            "assignedTo": "${data['firstName']} ${data['lastName']}",
             "status": selectedStatus.value,
             "startDate": startDateEditingController.text,
             "dueDate": dueDateEditingController.text,
@@ -382,6 +385,12 @@ class CreateTaskController extends GetxController {
             "remarks": remarkController.text,
             "isTaskRepeated": repeatTaskController.dataSetForRepeatTask.value,
             "repeatTaskOn": getSelectedOptionsList(),
+            "isRepeatTaskWeekBasis":
+                repeatTaskController.selectedTab.value == "Weekly",
+            "repeatOnNoOfWeeks"
+                "": repeatTaskController.selectNoOfWeek.value,
+            "repeatTaskOnBasisOf": repeatTaskController.selectedTab.value,
+
             "willTaskStopRepeating": repeatTaskController.selectedOption !=
                 CommonStrings.selectedOption,
             "dateToStopRepeatingTask":
@@ -510,7 +519,7 @@ class CreateTaskController extends GetxController {
               .add({
             "taskName": taskNameController.text,
             "description": descriptionController.text,
-            "assignedTo": assignedTo.value,
+            "assignedTo": "${data['firstName']} ${data['lastName']}",
             "status": selectedStatus.value,
             "startDate": startDateEditingController.text,
             "dueDate": dueDateEditingController.text,
@@ -521,6 +530,12 @@ class CreateTaskController extends GetxController {
             "remarks": remarkController.text,
             "isTaskRepeated": repeatTaskController.dataSetForRepeatTask.value,
             "repeatTaskOn": getSelectedOptionsList(),
+            "isRepeatTaskWeekBasis":
+                repeatTaskController.selectedTab.value == "Weekly",
+            "repeatOnNoOfWeeks"
+                "": repeatTaskController.selectNoOfWeek.value,
+            "repeatTaskOnBasisOf": repeatTaskController.selectedTab.value,
+
             "willTaskStopRepeating": repeatTaskController.selectedOption !=
                 CommonStrings.selectedOption,
             "dateToStopRepeatingTask":

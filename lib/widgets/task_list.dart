@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:task_management_app/controller/repeat_task_controller.dart';
 import 'package:task_management_app/controller/task_screen_controller.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:task_management_app/controller/update_repeat_task_controller.dart';
+import 'package:task_management_app/controller/update_task_controller.dart';
 import 'package:task_management_app/views/task_details.dart';
 import 'package:task_management_app/views/update_task.dart';
 import 'package:task_management_app/widgets/button_widget.dart';
@@ -35,9 +37,11 @@ class _TaskListState extends State<TaskList> {
 
   var options = [
     "Edit",
-    "Move to",
+    //"Move to",
     "Delete",
   ];
+
+  UpdateTaskController _updateTaskController = Get.put(UpdateTaskController());
 
   Future<void> showDeleteConfirmationDialog(
       BuildContext context, DocumentSnapshot document) async {
@@ -265,6 +269,10 @@ class _TaskListState extends State<TaskList> {
                                           //     onChanged: (value) {},
                                           //   ),
                                           // ),
+
+                                          // widget.forUsersProfile &&
+                                          //         widget.forManager
+                                          //     ?
                                           DropdownButtonHideUnderline(
                                             child: DropdownButton2<String>(
                                               isExpanded: true,
@@ -311,8 +319,8 @@ class _TaskListState extends State<TaskList> {
                                                               .forUsersProfile,
                                                         ));
                                                     break;
-                                                  case "Move to":
-                                                    break;
+                                                  // case "Move to":
+                                                  //   break;
                                                   case "Delete":
                                                     showDeleteConfirmationDialog(
                                                         context, document);
@@ -357,7 +365,8 @@ class _TaskListState extends State<TaskList> {
                                                     left: 14, right: 14),
                                               ),
                                             ),
-                                          ),
+                                          )
+                                          //  : SizedBox()
                                         ],
                                       ),
                                       SizedBox(

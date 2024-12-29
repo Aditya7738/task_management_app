@@ -11,6 +11,7 @@ import 'package:task_management_app/constants/fontsizes.dart';
 import 'package:task_management_app/constants/strings.dart';
 import 'package:task_management_app/controller/create_task_controller.dart';
 import 'package:task_management_app/controller/repeat_task_controller.dart';
+import 'package:task_management_app/controller/update_repeat_task_controller.dart';
 import 'package:task_management_app/controller/update_task_controller.dart';
 import 'package:task_management_app/controller/user_activities_controller.dart';
 import 'package:task_management_app/controller/validation_helper.dart';
@@ -20,6 +21,7 @@ import 'package:task_management_app/widgets/repeat_task_form.dart';
 import 'package:task_management_app/widgets/select_option.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:task_management_app/widgets/update_repeat_task_form.dart';
 
 class UpdateTask extends StatefulWidget {
   final bool forAdmin;
@@ -51,6 +53,9 @@ class _CreateTaskState extends State<UpdateTask> {
   UpdateTaskController _updateTaskController = Get.put(UpdateTaskController());
 
   DateTime selectedDate = DateTime.now();
+
+  UpdateRepeatTaskController _updateRepeatTaskController =
+      Get.put(UpdateRepeatTaskController());
 
   Map<String, dynamic> data = <String, dynamic>{};
   // widget. document.data()! as Map<String, dynamic>;
@@ -490,7 +495,7 @@ class _CreateTaskState extends State<UpdateTask> {
                     // ),
 
                     SizedBox(
-                      height: 20.0,
+                      height: 30.0,
                     ),
                     // Container(
                     //   width: 150.0,
@@ -862,6 +867,242 @@ class _CreateTaskState extends State<UpdateTask> {
                       height: 30.0,
                     ),
 
+                    // Obx(() {
+                    //   if (repeatTaskController.dataSetForRepeatTask.value) {
+                    //     return
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 5.0,
+                        ),
+
+                        // Obx(() {
+                        //   String text = "You want to repeat this task ";
+
+                        //   print(
+                        //       "repeatTaskController.selectedTab.value != weekly ${repeatTaskController.selectedTab.value != "Weekly"}");
+                        //   if (repeatTaskController.selectedTab.value !=
+                        //       "Weekly") {
+                        //     if (repeatTaskController.selectedDays.isNotEmpty) {
+                        //       repeatTaskController.selectedDays.forEach(
+                        //         (element) {
+                        //           text += "$element, ";
+                        //         },
+                        //       );
+                        //     }
+
+                        //     if (repeatTaskController
+                        //         .selectedMonths.isNotEmpty) {
+                        //       repeatTaskController.selectedMonths.forEach(
+                        //         (element) {
+                        //           text += "$element, ";
+                        //         },
+                        //       );
+                        //     }
+
+                        //     if (repeatTaskController.selectedYears.isNotEmpty) {
+                        //       repeatTaskController.selectedYears.forEach(
+                        //         (element) {
+                        //           text += "$element, ";
+                        //         },
+                        //       );
+                        //     }
+
+                        //     text +=
+                        //         " on ${repeatTaskController.selectedTab.value} basis";
+                        //   } else {
+                        //     text +=
+                        //         "every ${repeatTaskController.selectNoOfWeek.value} week(s) on ";
+
+                        //     if (repeatTaskController
+                        //         .selectedWeekDays.isNotEmpty) {
+                        //       repeatTaskController.selectedWeekDays.forEach(
+                        //         (element) {
+                        //           text += "$element, ";
+                        //         },
+                        //       );
+                        //     }
+                        //   }
+
+                        //   return Text(text);
+                        // }),
+
+                        Obx(
+                          () {
+                            if (_updateRepeatTaskController
+                                .dataSetForRepeatTask.value) {
+                              Widget textWidget1;
+
+                              String text = "You want to repeat this task ";
+
+                              print(
+                                  "_updateRepeatTaskController.selectedTab.value != weekly ${_updateRepeatTaskController.selectedTab.value != "Weekly"}");
+                              if (_updateRepeatTaskController
+                                      .selectedTab.value !=
+                                  "Weekly") {
+                                if (_updateRepeatTaskController
+                                    .selectedDays.isNotEmpty) {
+                                  _updateRepeatTaskController.selectedDays
+                                      .forEach(
+                                    (element) {
+                                      text += "$element, ";
+                                    },
+                                  );
+                                }
+
+                                if (_updateRepeatTaskController
+                                    .selectedMonths.isNotEmpty) {
+                                  _updateRepeatTaskController.selectedMonths
+                                      .forEach(
+                                    (element) {
+                                      text += "$element, ";
+                                    },
+                                  );
+                                }
+
+                                if (_updateRepeatTaskController
+                                    .selectedYears.isNotEmpty) {
+                                  _updateRepeatTaskController.selectedYears
+                                      .forEach(
+                                    (element) {
+                                      text += "$element, ";
+                                    },
+                                  );
+                                }
+
+                                text +=
+                                    " on ${_updateRepeatTaskController.selectedTab.value} basis";
+                              } else {
+                                text +=
+                                    "every ${_updateRepeatTaskController.selectNoOfWeek.value} week(s) on ";
+
+                                if (_updateRepeatTaskController
+                                    .selectedWeekDays.isNotEmpty) {
+                                  _updateRepeatTaskController.selectedWeekDays
+                                      .forEach(
+                                    (element) {
+                                      text += "$element, ";
+                                    },
+                                  );
+                                }
+                              }
+
+                              textWidget1 = Text(text);
+
+                              Widget textWidget2;
+
+                              if (_updateRepeatTaskController.selectedOption ==
+                                  CommonStrings.selectedOption) {
+                                textWidget2 = Text(
+                                    "You choose to not stop repeating task");
+                              } else {
+                                textWidget2 = Text(
+                                    "This repeating task will stop on ${_updateRepeatTaskController.repeatTaskDateEditingController.value.text}");
+                              }
+
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  textWidget1,
+                                  SizedBox(
+                                    height: 5.0,
+                                  ),
+                                  textWidget2
+                                ],
+                              );
+                            } else {
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Builder(builder: (context) {
+                                    //  String repeatTaskOn = "";
+
+                                    String text =
+                                        "You want to repeat this task ";
+
+                                    if (data["isRepeatTaskWeekBasis"] == true) {
+                                      text +=
+                                          "every ${data["repeatOnNoOfWeeks"]} week(s) on ";
+                                      data["repeatTaskOn"].forEach((element) {
+                                        text += "$element, ";
+                                      });
+                                    } else {
+                                      data["repeatTaskOn"].forEach((element) {
+                                        text += "$element, ";
+                                      });
+                                      text +=
+                                          "on ${data["repeatTaskOnBasisOf"]} basis";
+                                    }
+
+                                    return Text(text);
+                                  }),
+                                  SizedBox(
+                                    height: 5.0,
+                                  ),
+                                  Builder(
+                                    builder: (context) {
+                                      String date = "";
+                                      if (data["dateToStopRepeatingTask"] !=
+                                              null &&
+                                          data["dateToStopRepeatingTask"] !=
+                                              "") {
+                                        print(
+                                            "dateToStopRepeatingTask ${data["dateToStopRepeatingTask"]}");
+                                        DateTime dateToStopRepeatingTask =
+                                            DateTime.parse(
+                                                data["dateToStopRepeatingTask"]
+                                                    .toString());
+
+                                        date =
+                                            "${dateToStopRepeatingTask.day}-${dateToStopRepeatingTask.month}-${dateToStopRepeatingTask.year}";
+                                      }
+
+                                      if (data["willTaskStopRepeating"]) {
+                                        return Text(
+                                            "This repeating task will stop on $date");
+                                      } else {
+                                        return Text(
+                                            "You choose to not stop repeating task");
+                                      }
+                                    },
+                                  ),
+                                ],
+                              );
+                            }
+                          },
+                        )
+
+                        // GetBuilder<RepeatTaskController>(
+                        //   builder: (controller) {
+                        //     if (controller.selectedOption ==
+                        //         CommonStrings.selectedOption) {
+                        //       return Text(
+                        //           "You choose to not stop repeating task");
+                        //     } else {
+                        //       return Text(
+                        //           "This repeating task will stop on ${controller.repeatTaskDateEditingController.value.text}");
+                        //     }
+                        //   },
+                        // ),
+
+                        // SizedBox(
+                        //   height: 5.0,
+                        // ),
+                        // Obx(() => Text(
+                        //     "Remainder is set at ${repeatTaskController.remainderTimeController.text} on due date")),
+                      ],
+                    ),
+                    //   } else {
+                    //     return SizedBox();
+                    //   }
+                    // }),
+                    SizedBox(
+                      height: 20.0,
+                    ),
                     GestureDetector(
                       onTap: () {
                         if (mounted) {
@@ -873,7 +1114,9 @@ class _CreateTaskState extends State<UpdateTask> {
                             //showDragHandle: true,
                             isScrollControlled: true,
                             builder: (context) {
-                              return RepeatTaskForm();
+                              return UpdateRepeatTaskForm(
+                                data: data,
+                              );
                             },
                           );
                         }
@@ -901,94 +1144,6 @@ class _CreateTaskState extends State<UpdateTask> {
                         ],
                       ),
                     ),
-
-                    Obx(() {
-                      if (repeatTaskController.dataSetForRepeatTask.value) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Obx(() {
-                              String text = "You want to repeat this task ";
-
-                              print(
-                                  "repeatTaskController.selectedTab.value != weekly ${repeatTaskController.selectedTab.value != "Weekly"}");
-                              if (repeatTaskController.selectedTab.value !=
-                                  "Weekly") {
-                                if (repeatTaskController
-                                    .selectedDays.isNotEmpty) {
-                                  repeatTaskController.selectedDays.forEach(
-                                    (element) {
-                                      text += "$element, ";
-                                    },
-                                  );
-                                }
-
-                                if (repeatTaskController
-                                    .selectedMonths.isNotEmpty) {
-                                  repeatTaskController.selectedMonths.forEach(
-                                    (element) {
-                                      text += "$element, ";
-                                    },
-                                  );
-                                }
-
-                                if (repeatTaskController
-                                    .selectedYears.isNotEmpty) {
-                                  repeatTaskController.selectedYears.forEach(
-                                    (element) {
-                                      text += "$element, ";
-                                    },
-                                  );
-                                }
-
-                                text +=
-                                    " on ${repeatTaskController.selectedTab.value} basis";
-                              } else {
-                                text +=
-                                    "every ${repeatTaskController.selectNoOfWeek.value} week(s) on ";
-
-                                if (repeatTaskController
-                                    .selectedWeekDays.isNotEmpty) {
-                                  repeatTaskController.selectedWeekDays.forEach(
-                                    (element) {
-                                      text += "$element, ";
-                                    },
-                                  );
-                                }
-                              }
-
-                              return Text(text);
-                            }),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            GetBuilder<RepeatTaskController>(
-                              builder: (controller) {
-                                if (controller.selectedOption ==
-                                    CommonStrings.selectedOption) {
-                                  return Text(
-                                      "You choose to not stop repeating task");
-                                } else {
-                                  return Text(
-                                      "This repeating task will stop on ${controller.repeatTaskDateEditingController.value.text}");
-                                }
-                              },
-                            ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Obx(() => Text(
-                                "Remainder is set at ${repeatTaskController.remainderTimeController.text} on due date")),
-                          ],
-                        );
-                      } else {
-                        return SizedBox();
-                      }
-                    }),
 
                     SizedBox(
                       height: 15.0,
@@ -1173,245 +1328,426 @@ class _CreateTaskState extends State<UpdateTask> {
                       height: 20.0,
                     ),
 
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   children: [
+                    //     GestureDetector(
+                    //       onTap: () {
+                    //         // if (await Permission.storage.isGranted) {
+                    //         //   FilePickerResult? result =
+                    //         //       await FilePicker.platform.pickFiles();
+
+                    //         //   if (result != null) {
+                    //         //     File file = File(result.files.single.path!);
+                    //         //     String fullPath = await supabase.storage
+                    //         //         .from(DatabaseReferences.bucketId)
+                    //         //         .upload(
+                    //         //             "${_userActivitiesController.companyName.value}/${_updateTaskController.assignedTo.value}/documents",
+                    //         //             file,
+                    //         //             fileOptions: FileOptions(
+                    //         //                 cacheControl: '3600', upsert: false),
+                    //         //             retryAttempts: 2);
+                    //         //   } else {
+                    //         //     // User canceled the picker
+                    //         //   }
+                    //         // }
+                    //         _updateTaskController.uploadDocument();
+                    //       },
+                    //       child: Container(
+                    //         //  width: 170.0,
+                    //         decoration: BoxDecoration(
+                    //             // border: border,
+                    //             color: const Color.fromARGB(255, 234, 234, 234),
+                    //             borderRadius: BorderRadius.circular(15.0)),
+                    //         padding: const EdgeInsets.symmetric(
+                    //             vertical: 10.0, horizontal: 10.0),
+                    //         child: Row(
+                    //           mainAxisAlignment: MainAxisAlignment.center,
+                    //           children: [
+                    //             Image.asset(
+                    //               "assets/images/icons8_attachment_100.png",
+                    //               width: 21.0,
+                    //               height: 21.0,
+                    //             ),
+                    //             SizedBox(
+                    //               width: 5.0,
+                    //             ),
+                    //             Text(
+                    //               "Update Attachment",
+                    //               style: TextStyle(
+                    //                 fontSize: 15,
+                    //               ),
+                    //             )
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     ),
+
+                    //     Row(
+                    //       mainAxisAlignment: MainAxisAlignment.end,
+                    //       children: [
+                    //         GestureDetector(
+                    //             onTap: () {
+                    //               Get.back();
+                    //             },
+                    //             child: ButtonWidget(
+                    //                 isLoading: false,
+                    //                 width: 81.0,
+                    //                 color: Colors.white,
+                    //                 textColor: Get.theme.primaryColor,
+                    //                 // borderRadius: BorderRadius.circular(5.0),
+                    //                 border: Border.all(
+                    //                   color: Get.theme.primaryColor,
+                    //                 ),
+                    //                 text: "Cancel")
+                    //             //  Container(
+                    //             //   padding: EdgeInsets.symmetric(
+                    //             //       horizontal: 15.0, vertical: 8.0),
+                    //             //   decoration: BoxDecoration(
+                    //             //     borderRadius: BorderRadius.circular(5.0),
+                    //             //     border: Border.all(color: Colors.blue),
+                    //             //   ),
+                    //             //   child: Text(
+                    //             //     "Cancel",
+                    //             //     style: TextStyle(color: Colors.blue),
+                    //             //   ),
+                    //             // ),
+                    //             ),
+                    //         SizedBox(
+                    //           width: 10.0,
+                    //         ),
+                    //         Obx(
+                    //           () => GestureDetector(
+                    //               onTap: () async {
+                    //                 // if (_updateTaskController
+                    //                 //         .isPioritySelected.value ==
+                    //                 //     false) {
+                    //                 //   _updateTaskController
+                    //                 //       .showPriorityError.value = true;
+                    //                 // }
+
+                    //                 // if (_updateTaskController
+                    //                 //         .statusUpdated.value ==
+                    //                 //     false) {
+                    //                 //   _updateTaskController.showStatusError.value =
+                    //                 //       true;
+                    //                 // }
+
+                    //                 // if (_updateTaskController
+                    //                 //         .isEmployeeAssigned.value ==
+                    //                 //     false) {
+                    //                 //   _updateTaskController
+                    //                 //       .showSelectedEmpError.value = true;
+                    //                 // }
+
+                    //                 //  if (_formKey.currentState!.validate()) {
+
+                    //                 // _updateTaskController.appointments.add(
+                    //                 //     Appointment(
+                    //                 //         isAllDay: false,
+                    //                 //         startTime: DateTime.parse(
+                    //                 //             _updateTaskController
+                    //                 //                 .startDateEditingController
+                    //                 //                 .text),
+                    //                 //         endTime: DateTime.parse(
+                    //                 //             _updateTaskController
+                    //                 //                 .dueDateEditingController
+                    //                 //                 .text),
+                    //                 //         color: getColor(),
+                    //                 //         subject: _updateTaskController
+                    //                 //             .taskNameController.text));
+
+                    //                 //  Get.back();
+
+                    //                 /////////////////////////////////////
+
+                    //                 // if (forAdmin) {
+                    //                 //   switch (_updateTaskController
+                    //                 //       .selectedStatus.value) {
+                    //                 //     case "Assigned":
+                    //                 //       _updateTaskController.taskLabel.value =
+                    //                 //           "Assigned to";
+                    //                 //       break;
+                    //                 //     case "In progress":
+                    //                 //       _updateTaskController.taskLabel.value =
+                    //                 //           "In progress by";
+                    //                 //       break;
+                    //                 //     case "Completed":
+                    //                 //       _updateTaskController.taskLabel.value =
+                    //                 //           "Completed by";
+                    //                 //       break;
+                    //                 //     case "Hold":
+                    //                 //       _updateTaskController.taskLabel.value =
+                    //                 //           "Hold by";
+                    //                 //       break;
+                    //                 //     default:
+                    //                 //       _updateTaskController.taskLabel.value =
+                    //                 //           "Assigned to";
+                    //                 //   }
+                    //                 // }
+
+                    //                 ////////////////////////////////////////////////
+
+                    //                 // if (_updateTaskController
+                    //                 //         .isPioritySelected.value &&
+                    //                 //     _updateTaskController
+                    //                 //         .statusUpdated.value &&
+                    //                 //     _updateTaskController
+                    //                 //         .isEmployeeAssigned.value) {
+
+                    //                 await _updateTaskController.updateTask(
+                    //                     widget.document,
+                    //                     widget.username,
+                    //                     widget.forEmp,
+                    //                     widget.appTitle,
+                    //                     widget.forAdmin,
+                    //                     data["taskName"].toString(),
+                    //                     widget.forTaskOverview,
+                    //                     widget.forUsersProfile);
+
+                    //                 if (widget.forAdmin == false) {
+                    //                   _updateTaskController
+                    //                       .employeesToAssign.value
+                    //                       .clear();
+
+                    //                   _updateTaskController.assignedTo.value =
+                    //                       _updateTaskController
+                    //                               .employeesToAssign.isNotEmpty
+                    //                           ? _updateTaskController
+                    //                               .employeesToAssign[0]
+                    //                           : "Choose employee";
+                    //                 }
+
+                    //                 print(
+                    //                     "_updateTaskController.eassignedTo.value ${_updateTaskController.assignedTo.value}");
+
+                    //                 _updateTaskController.taskNameController
+                    //                     .clear();
+
+                    //                 _updateTaskController.descriptionController
+                    //                     .clear();
+
+                    //                 _updateTaskController
+                    //                     .startDateEditingController
+                    //                     .clear();
+
+                    //                 _updateTaskController
+                    //                     .dueDateEditingController
+                    //                     .clear();
+
+                    //                 _updateTaskController
+                    //                     .remainderTimeController
+                    //                     .clear();
+
+                    //                 _updateTaskController
+                    //                     .setRemainderOptionController
+                    //                     .clear();
+
+                    //                 _updateTaskController.selectedStatus.value =
+                    //                     "Assigned";
+
+                    //                 _updateTaskController
+                    //                     .selectedPriority.value = "High";
+                    //                 _updateTaskController.selectedTag.value =
+                    //                     "No tags added";
+
+                    //                 _updateTaskController.remarkController
+                    //                     .clear();
+                    //                 //  }
+                    //                 //   }
+                    //               },
+                    //               child: ButtonWidget(
+                    //                   isLoading: _updateTaskController
+                    //                       .updatingTask.value,
+                    //                   width: 85.0,
+                    //                   text: "Update",
+                    //                   textColor: Colors.white,
+                    //                   color: Get.theme.primaryColor)),
+                    //         )
+                    //       ],
+                    //     ),
+
+                    //   ],
+                    // ),
+
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         GestureDetector(
-                          onTap: () {
-                            // if (await Permission.storage.isGranted) {
-                            //   FilePickerResult? result =
-                            //       await FilePicker.platform.pickFiles();
-
-                            //   if (result != null) {
-                            //     File file = File(result.files.single.path!);
-                            //     String fullPath = await supabase.storage
-                            //         .from(DatabaseReferences.bucketId)
-                            //         .upload(
-                            //             "${_userActivitiesController.companyName.value}/${_updateTaskController.assignedTo.value}/documents",
-                            //             file,
-                            //             fileOptions: FileOptions(
-                            //                 cacheControl: '3600', upsert: false),
-                            //             retryAttempts: 2);
-                            //   } else {
-                            //     // User canceled the picker
-                            //   }
-                            // }
-                            _updateTaskController.uploadDocument();
-                          },
-                          child: Container(
-                            //  width: 170.0,
-                            decoration: BoxDecoration(
-                                // border: border,
-                                color: const Color.fromARGB(255, 234, 234, 234),
-                                borderRadius: BorderRadius.circular(15.0)),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10.0, horizontal: 10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "assets/images/icons8_attachment_100.png",
-                                  width: 21.0,
-                                  height: 21.0,
+                            onTap: () {
+                              Get.back();
+                            },
+                            child: ButtonWidget(
+                                isLoading: false,
+                                width: 81.0,
+                                color: Colors.white,
+                                textColor: Get.theme.primaryColor,
+                                // borderRadius: BorderRadius.circular(5.0),
+                                border: Border.all(
+                                  color: Get.theme.primaryColor,
                                 ),
-                                SizedBox(
-                                  width: 5.0,
-                                ),
-                                Text(
-                                  "Update Attachment",
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                  ),
-                                )
-                              ],
+                                text: "Cancel")
+                            //  Container(
+                            //   padding: EdgeInsets.symmetric(
+                            //       horizontal: 15.0, vertical: 8.0),
+                            //   decoration: BoxDecoration(
+                            //     borderRadius: BorderRadius.circular(5.0),
+                            //     border: Border.all(color: Colors.blue),
+                            //   ),
+                            //   child: Text(
+                            //     "Cancel",
+                            //     style: TextStyle(color: Colors.blue),
+                            //   ),
+                            // ),
                             ),
-                          ),
+                        SizedBox(
+                          width: 10.0,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            GestureDetector(
-                                onTap: () {
-                                  Get.back();
-                                },
-                                child: ButtonWidget(
-                                    isLoading: false,
-                                    width: 81.0,
-                                    color: Colors.white,
-                                    textColor: Get.theme.primaryColor,
-                                    // borderRadius: BorderRadius.circular(5.0),
-                                    border: Border.all(
-                                      color: Get.theme.primaryColor,
-                                    ),
-                                    text: "Cancel")
-                                //  Container(
-                                //   padding: EdgeInsets.symmetric(
-                                //       horizontal: 15.0, vertical: 8.0),
-                                //   decoration: BoxDecoration(
-                                //     borderRadius: BorderRadius.circular(5.0),
-                                //     border: Border.all(color: Colors.blue),
-                                //   ),
-                                //   child: Text(
-                                //     "Cancel",
-                                //     style: TextStyle(color: Colors.blue),
-                                //   ),
-                                // ),
-                                ),
-                            SizedBox(
-                              width: 10.0,
-                            ),
-                            Obx(
-                              () => GestureDetector(
-                                  onTap: () async {
-                                    // if (_updateTaskController
-                                    //         .isPioritySelected.value ==
-                                    //     false) {
-                                    //   _updateTaskController
-                                    //       .showPriorityError.value = true;
-                                    // }
+                        Obx(
+                          () => GestureDetector(
+                              onTap: () async {
+                                // if (_updateTaskController
+                                //         .isPioritySelected.value ==
+                                //     false) {
+                                //   _updateTaskController
+                                //       .showPriorityError.value = true;
+                                // }
 
-                                    // if (_updateTaskController
-                                    //         .statusUpdated.value ==
-                                    //     false) {
-                                    //   _updateTaskController.showStatusError.value =
-                                    //       true;
-                                    // }
+                                // if (_updateTaskController
+                                //         .statusUpdated.value ==
+                                //     false) {
+                                //   _updateTaskController.showStatusError.value =
+                                //       true;
+                                // }
 
-                                    // if (_updateTaskController
-                                    //         .isEmployeeAssigned.value ==
-                                    //     false) {
-                                    //   _updateTaskController
-                                    //       .showSelectedEmpError.value = true;
-                                    // }
+                                // if (_updateTaskController
+                                //         .isEmployeeAssigned.value ==
+                                //     false) {
+                                //   _updateTaskController
+                                //       .showSelectedEmpError.value = true;
+                                // }
 
-                                    //  if (_formKey.currentState!.validate()) {
+                                //  if (_formKey.currentState!.validate()) {
 
-                                    // _updateTaskController.appointments.add(
-                                    //     Appointment(
-                                    //         isAllDay: false,
-                                    //         startTime: DateTime.parse(
-                                    //             _updateTaskController
-                                    //                 .startDateEditingController
-                                    //                 .text),
-                                    //         endTime: DateTime.parse(
-                                    //             _updateTaskController
-                                    //                 .dueDateEditingController
-                                    //                 .text),
-                                    //         color: getColor(),
-                                    //         subject: _updateTaskController
-                                    //             .taskNameController.text));
+                                // _updateTaskController.appointments.add(
+                                //     Appointment(
+                                //         isAllDay: false,
+                                //         startTime: DateTime.parse(
+                                //             _updateTaskController
+                                //                 .startDateEditingController
+                                //                 .text),
+                                //         endTime: DateTime.parse(
+                                //             _updateTaskController
+                                //                 .dueDateEditingController
+                                //                 .text),
+                                //         color: getColor(),
+                                //         subject: _updateTaskController
+                                //             .taskNameController.text));
 
-                                    //  Get.back();
+                                //  Get.back();
 
-                                    /////////////////////////////////////
+                                /////////////////////////////////////
 
-                                    // if (forAdmin) {
-                                    //   switch (_updateTaskController
-                                    //       .selectedStatus.value) {
-                                    //     case "Assigned":
-                                    //       _updateTaskController.taskLabel.value =
-                                    //           "Assigned to";
-                                    //       break;
-                                    //     case "In progress":
-                                    //       _updateTaskController.taskLabel.value =
-                                    //           "In progress by";
-                                    //       break;
-                                    //     case "Completed":
-                                    //       _updateTaskController.taskLabel.value =
-                                    //           "Completed by";
-                                    //       break;
-                                    //     case "Hold":
-                                    //       _updateTaskController.taskLabel.value =
-                                    //           "Hold by";
-                                    //       break;
-                                    //     default:
-                                    //       _updateTaskController.taskLabel.value =
-                                    //           "Assigned to";
-                                    //   }
-                                    // }
+                                // if (forAdmin) {
+                                //   switch (_updateTaskController
+                                //       .selectedStatus.value) {
+                                //     case "Assigned":
+                                //       _updateTaskController.taskLabel.value =
+                                //           "Assigned to";
+                                //       break;
+                                //     case "In progress":
+                                //       _updateTaskController.taskLabel.value =
+                                //           "In progress by";
+                                //       break;
+                                //     case "Completed":
+                                //       _updateTaskController.taskLabel.value =
+                                //           "Completed by";
+                                //       break;
+                                //     case "Hold":
+                                //       _updateTaskController.taskLabel.value =
+                                //           "Hold by";
+                                //       break;
+                                //     default:
+                                //       _updateTaskController.taskLabel.value =
+                                //           "Assigned to";
+                                //   }
+                                // }
 
-                                    ////////////////////////////////////////////////
+                                ////////////////////////////////////////////////
 
-                                    // if (_updateTaskController
-                                    //         .isPioritySelected.value &&
-                                    //     _updateTaskController
-                                    //         .statusUpdated.value &&
-                                    //     _updateTaskController
-                                    //         .isEmployeeAssigned.value) {
+                                // if (_updateTaskController
+                                //         .isPioritySelected.value &&
+                                //     _updateTaskController
+                                //         .statusUpdated.value &&
+                                //     _updateTaskController
+                                //         .isEmployeeAssigned.value) {
 
-                                    await _updateTaskController.updateTask(
-                                        widget.document,
-                                        widget.username,
-                                        widget.forEmp,
-                                        widget.appTitle,
-                                        widget.forAdmin,
-                                        data["taskName"].toString(),
-                                        widget.forTaskOverview,
-                                        widget.forUsersProfile);
+                                await _updateTaskController.updateTask(
+                                    widget.document,
+                                    widget.username,
+                                    widget.forEmp,
+                                    widget.appTitle,
+                                    widget.forAdmin,
+                                    data["taskName"].toString(),
+                                    widget.forTaskOverview,
+                                    widget.forUsersProfile);
 
-                                    if (widget.forAdmin == false) {
+                                if (widget.forAdmin == false) {
+                                  _updateTaskController.employeesToAssign.value
+                                      .clear();
+
+                                  _updateTaskController.assignedTo.value =
                                       _updateTaskController
-                                          .employeesToAssign.value
-                                          .clear();
+                                              .employeesToAssign.isNotEmpty
+                                          ? _updateTaskController
+                                              .employeesToAssign[0]
+                                          : "Choose employee";
+                                }
 
-                                      _updateTaskController.assignedTo.value =
-                                          _updateTaskController
-                                                  .employeesToAssign.isNotEmpty
-                                              ? _updateTaskController
-                                                  .employeesToAssign[0]
-                                              : "Choose employee";
-                                    }
+                                print(
+                                    "_updateTaskController.eassignedTo.value ${_updateTaskController.assignedTo.value}");
 
-                                    print(
-                                        "_updateTaskController.eassignedTo.value ${_updateTaskController.assignedTo.value}");
+                                _updateTaskController.taskNameController
+                                    .clear();
 
-                                    _updateTaskController.taskNameController
-                                        .clear();
+                                _updateTaskController.descriptionController
+                                    .clear();
 
-                                    _updateTaskController.descriptionController
-                                        .clear();
+                                _updateTaskController.startDateEditingController
+                                    .clear();
 
-                                    _updateTaskController
-                                        .startDateEditingController
-                                        .clear();
+                                _updateTaskController.dueDateEditingController
+                                    .clear();
 
-                                    _updateTaskController
-                                        .dueDateEditingController
-                                        .clear();
+                                _updateTaskController.remainderTimeController
+                                    .clear();
 
-                                    _updateTaskController
-                                        .remainderTimeController
-                                        .clear();
+                                _updateTaskController
+                                    .setRemainderOptionController
+                                    .clear();
 
-                                    _updateTaskController
-                                        .setRemainderOptionController
-                                        .clear();
+                                _updateTaskController.selectedStatus.value =
+                                    "Assigned";
 
-                                    _updateTaskController.selectedStatus.value =
-                                        "Assigned";
+                                _updateTaskController.selectedPriority.value =
+                                    "High";
+                                _updateTaskController.selectedTag.value =
+                                    "No tags added";
 
-                                    _updateTaskController
-                                        .selectedPriority.value = "High";
-                                    _updateTaskController.selectedTag.value =
-                                        "No tags added";
-
-                                    _updateTaskController.remarkController
-                                        .clear();
-                                    //  }
-                                    //   }
-                                  },
-                                  child: ButtonWidget(
-                                      isLoading: _updateTaskController
-                                          .updatingTask.value,
-                                      width: 85.0,
-                                      text: "Update",
-                                      textColor: Colors.white,
-                                      color: Get.theme.primaryColor)),
-                            )
-                          ],
-                        ),
+                                _updateTaskController.remarkController.clear();
+                                //  }
+                                //   }
+                              },
+                              child: ButtonWidget(
+                                  isLoading:
+                                      _updateTaskController.updatingTask.value,
+                                  width: 85.0,
+                                  text: "Update",
+                                  textColor: Colors.white,
+                                  color: Get.theme.primaryColor)),
+                        )
                       ],
-                    )
+                    ),
 
                     //   ],
                     // )

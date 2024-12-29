@@ -47,7 +47,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _loginController.getPermissions();
+    //_loginController.getPermissions();
   }
 
   @override

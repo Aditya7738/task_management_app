@@ -40,8 +40,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             dashboardController.roleName.value == "Admin" ? false : true,
         forAdmin: false,
       ),
-      CalendarTasks(),
+      // CalendarTasks(),
       //  BoardScreen(),
+
       AssignedTasksToOthersList()
       // ProfileScreen()
     ];
@@ -51,60 +52,72 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _loginController.getPermissions();
+    //   _loginController.getPermissions();
     dashboardController.fetchSharedRefData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          onTap: (index) {
-            // WidgetsBinding.instance.addPostFrameCallback((_) {
-            dashboardController.currentIndex.value = index;
-            //  });
-          },
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_task_outlined),
-              activeIcon: Icon(Icons.add_task_sharp),
-              label: 'All task',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Iconsax.calendar_add_outline),
-              activeIcon: Icon(Iconsax.calendar_add_bold),
-              label: 'Calendar',
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset(
-                "assets/images/teamwork_outlined.png",
-                width: 30.0,
-                height: 30.0,
-                color: Colors.grey,
+    return Obx(() {
+      if (dashboardController.roleName.value == "Manager") {
+        return Scaffold(
+          bottomNavigationBar: BottomNavigationBar(
+            onTap: (index) {
+              // WidgetsBinding.instance.addPostFrameCallback((_) {
+              dashboardController.currentIndex.value = index;
+              //  });
+            },
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.add_task_outlined),
+                activeIcon: Icon(Icons.add_task_sharp),
+                label: 'All task',
               ),
-              activeIcon: Image.asset(
-                "assets/images/teamwork_bold.png",
-                width: 30.0,
-                height: 30.0,
-                color: Get.theme.primaryColor,
-              ),
-              label: 'Assign tasks',
-            ),
-          ],
-          selectedItemColor: Get.theme.primaryColor,
-          selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-          currentIndex: dashboardController.currentIndex.value,
-          unselectedItemColor: Colors.grey,
-        ),
-        body: dashboardController.fetchingSharedRefData.value
-            ? Center(
-                child: CircularProgressIndicator(
+              // BottomNavigationBarItem(
+              //   icon: Icon(Iconsax.calendar_add_outline),
+              //   activeIcon: Icon(Iconsax.calendar_add_bold),
+              //   label: 'Calendar',
+              // ),
+              BottomNavigationBarItem(
+                icon: Image.asset(
+                  "assets/images/teamwork_outlined.png",
+                  width: 30.0,
+                  height: 30.0,
+                  color: Colors.grey,
+                ),
+                activeIcon: Image.asset(
+                  "assets/images/teamwork_bold.png",
+                  width: 30.0,
+                  height: 30.0,
                   color: Get.theme.primaryColor,
                 ),
-              )
-            : tabs()[dashboardController.currentIndex.value],
-      ),
-    );
+                label: 'Assign tasks',
+              ),
+            ],
+            selectedItemColor: Get.theme.primaryColor,
+            selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+            currentIndex: dashboardController.currentIndex.value,
+            unselectedItemColor: Colors.grey,
+          ),
+          body: dashboardController.fetchingSharedRefData.value
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: Get.theme.primaryColor,
+                  ),
+                )
+              : tabs()[dashboardController.currentIndex.value],
+        );
+      } else {
+        return TasksScreen(
+          username: dashboardController.username.value,
+          forManager:
+              dashboardController.roleName.value == "Manager" ? true : false,
+          forUsersProfile:
+              dashboardController.roleName.value == "Admin" ? false : true,
+          forAdmin: false,
+        );
+      }
+      //return SizedBox();
+    });
   }
 }

@@ -502,11 +502,12 @@ class _UsersActivitiesState extends State<UsersActivities> {
                                                           .data.value = data;
 
                                                       Get.to(() => CreateTask(
-                                                            forAdmin: true,
-                                                            forManager: true,
-                                                            forUsersProfile:
-                                                                false,
-                                                          ));
+                                                          forAdmin: true,
+                                                          forManager: true,
+                                                          forUsersProfile:
+                                                              false,
+                                                          appTitle:
+                                                              "Create New Task"));
                                                     },
                                                     child: Container(
                                                       alignment:
@@ -724,6 +725,8 @@ class _UsersActivitiesState extends State<UsersActivities> {
                                                             forManager: false,
                                                             forUsersProfile:
                                                                 false,
+                                                            appTitle:
+                                                                "Create New Task",
                                                           ));
                                                     },
                                                     child: Container(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_management_app/constants/strings.dart';
 
-class RepeatTaskController extends GetxController {
+class UpdateRepeatTaskController extends GetxController {
   String _selectedOption = CommonStrings.selectedOption;
 
   String get selectedOption => _selectedOption;

@@ -8,16 +8,18 @@ import 'package:task_management_app/constants/fontsizes.dart';
 import 'package:task_management_app/constants/strings.dart';
 import 'package:task_management_app/controller/create_task_controller.dart';
 import 'package:task_management_app/controller/repeat_task_controller.dart';
+import 'package:task_management_app/controller/update_repeat_task_controller.dart';
 import 'package:task_management_app/controller/validation_helper.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-class RepeatTaskForm extends StatefulWidget {
-  const RepeatTaskForm({super.key});
+class UpdateRepeatTaskForm extends StatefulWidget {
+  final Map<String, dynamic> data;
+  UpdateRepeatTaskForm({super.key, required this.data});
   @override
-  State<RepeatTaskForm> createState() => _RepeatTaskFormState();
+  State<UpdateRepeatTaskForm> createState() => _UpdateRepeatTaskFormState();
 }
 
-class _RepeatTaskFormState extends State<RepeatTaskForm>
+class _UpdateRepeatTaskFormState extends State<UpdateRepeatTaskForm>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -27,12 +29,100 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
     super.initState();
 
     _tabController = TabController(length: 4, vsync: this);
-    repeatTaskController.createYearMap();
+    _updateRepeatTaskController.createYearMap();
 
-    // repeatTaskController.noOfWeeksController.value.text = "1";
+    print(
+        "widget.data[dateToStopRepeatingTask.toString() ${widget.data["dateToStopRepeatingTask"].toString()}");
+
+    if (widget.data["willTaskStopRepeating"]) {
+      _updateRepeatTaskController.repeatTaskDateEditingController.value.text =
+          widget.data["dateToStopRepeatingTask"].toString();
+      _updateRepeatTaskController.updateSelectedOption(
+          "On ${_updateRepeatTaskController.repeatTaskDateEditingController.value.text}");
+    } else {
+      _updateRepeatTaskController
+          .updateSelectedOption(CommonStrings.selectedOption);
+    }
+
+    // List list = [];
+    // list.forEach((element) {
+
+    // },)
+
+    List<String> listOfDays = <String>[];
+
+    if (widget.data["repeatTaskOn"] != null) {
+      if (widget.data["repeatTaskOn"].isNotEmpty) {
+        widget.data["repeatTaskOn"].forEach(
+          (element) {
+            listOfDays.add(element.toString());
+          },
+        );
+      }
+    }
+
+    switch (widget.data["repeatTaskOnBasisOf"].toString().toLowerCase()) {
+      //   ["Daily", "Weekly", "Monthly", "Yearly"]
+      case "daily":
+        _updateRepeatTaskController.daysMap.forEach(
+          (key, value) {
+            if (listOfDays.isNotEmpty) {
+              if (listOfDays.contains(key)) {
+                _updateRepeatTaskController.daysMap[key] = true;
+              }
+            }
+          },
+        );
+        break;
+      case "weekly":
+        _updateRepeatTaskController.daysOfWeekMap.forEach(
+          (key, value) {
+            if (listOfDays.isNotEmpty) {
+              if (listOfDays.contains(key)) {
+                _updateRepeatTaskController.selectedWeekDays.add(key);
+                _updateRepeatTaskController.daysOfWeekMap[key] = true;
+              }
+            }
+          },
+        );
+
+        _updateRepeatTaskController.selectNoOfWeek.value =
+            widget.data["repeatOnNoOfWeeks"].toString();
+
+        break;
+      case "monthly":
+        _updateRepeatTaskController.monthsMap.forEach(
+          (key, value) {
+            if (listOfDays.isNotEmpty) {
+              if (listOfDays.contains(key)) {
+                _updateRepeatTaskController.monthsMap[key] = true;
+              }
+            }
+          },
+        );
+        break;
+      case "yearly":
+        _updateRepeatTaskController.yearsMap.forEach(
+          (key, value) {
+            if (listOfDays.isNotEmpty) {
+              if (listOfDays.contains(key)) {
+                _updateRepeatTaskController.yearsMap[key] = true;
+              }
+            }
+          },
+        );
+        break;
+      default:
+    }
+
+    _updateRepeatTaskController.remainderTimeController.text =
+        widget.data["remainderTimeOfRepeatingTask"].toString();
+
+    // _updateRepeatTaskController.noOfWeeksController.value.text = "1";
   }
 
-  RepeatTaskController repeatTaskController = Get.put(RepeatTaskController());
+  UpdateRepeatTaskController _updateRepeatTaskController =
+      Get.put(UpdateRepeatTaskController());
 
   Future<String> _selectedDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -41,7 +131,7 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
         firstDate: DateTime(2024),
         lastDate: DateTime(2025));
 
-    repeatTaskController.repeatTaskStopDate = picked;
+    _updateRepeatTaskController.repeatTaskStopDate = picked;
 
     if (picked != null) {
       print(" DATE ${picked.toLocal().toString()}");
@@ -69,19 +159,22 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                     child: ListView.builder(
                       shrinkWrap: false,
                       scrollDirection: Axis.horizontal,
-                      itemCount: repeatTaskController.listOfDays.length,
+                      itemCount: _updateRepeatTaskController.listOfDays.length,
                       itemBuilder: (context, index) {
                         return Obx(
                           () => CheckboxMenuButton(
-                            value: repeatTaskController.selectedDays.contains(
-                                repeatTaskController.listOfDays[index]),
+                            value: _updateRepeatTaskController.selectedDays
+                                .contains(_updateRepeatTaskController
+                                    .listOfDays[index]),
                             onChanged: (value) {
-                              repeatTaskController.toggle(
-                                  repeatTaskController.listOfDays[index]);
+                              _updateRepeatTaskController.toggle(
+                                  _updateRepeatTaskController
+                                      .listOfDays[index]);
 
-                              // repeatTaskController.selectedDaysForRepeatingTask.add()
+                              // _updateRepeatTaskController.selectedDaysForRepeatingTask.add()
                             },
-                            child: Text(repeatTaskController.listOfDays[index]),
+                            child: Text(
+                                _updateRepeatTaskController.listOfDays[index]),
                           ),
                         );
                       },
@@ -110,7 +203,7 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                 //       style:
                 //           TextStyle(fontSize: FontSizes.textFormFieldFontSize),
                 //       controller:
-                //           repeatTaskController.noOfWeeksController.value,
+                //           _updateRepeatTaskController.noOfWeeksController.value,
                 //       //keyboardType: TextInputType.name,
                 //       decoration: InputDecoration(
                 //         suffix: DropdownButton(
@@ -121,7 +214,7 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                 //             child:
                 //                 const Icon(Icons.keyboard_arrow_down_rounded),
                 //           ),
-                //           items: repeatTaskController.noOfWeeks
+                //           items: _updateRepeatTaskController.noOfWeeks
                 //               .map<DropdownMenuItem<String>>((noOfWeek) {
                 //             return DropdownMenuItem<String>(
                 //               value: noOfWeek,
@@ -136,11 +229,11 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                 //           onChanged: (value) {
                 //             print("noOfWeeks ${value.toString()}");
 
-                //             repeatTaskController.noOfWeeksController.value
+                //             _updateRepeatTaskController.noOfWeeksController.value
                 //                 .text = value.toString();
 
                 //             print(
-                //                 " repeatTaskController.noOfWeeksController.value.text ${repeatTaskController.noOfWeeksController.value.text}");
+                //                 " _updateRepeatTaskController.noOfWeeksController.value.text ${_updateRepeatTaskController.noOfWeeksController.value.text}");
                 //           },
                 //         ),
                 //         border: const OutlineInputBorder(
@@ -156,11 +249,11 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                 Obx(
                   () => DropdownButtonHideUnderline(
                     child: DropdownButton(
-                      value: repeatTaskController.selectNoOfWeek.value,
+                      value: _updateRepeatTaskController.selectNoOfWeek.value,
                       icon: Container(
                           margin: const EdgeInsets.only(right: 10.0),
                           child: Icon(Icons.arrow_drop_down_rounded)),
-                      items: repeatTaskController.noOfWeeks
+                      items: _updateRepeatTaskController.noOfWeeks
                           .map<DropdownMenuItem<String>>(
                         (noOfWeek) {
                           return DropdownMenuItem(
@@ -172,7 +265,7 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                         },
                       ).toList(),
                       onChanged: (value) {
-                        repeatTaskController.selectNoOfWeek.value =
+                        _updateRepeatTaskController.selectNoOfWeek.value =
                             value.toString();
                       },
                     ),
@@ -193,21 +286,23 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                     child: ListView.builder(
                       shrinkWrap: false,
                       scrollDirection: Axis.horizontal,
-                      itemCount: repeatTaskController.listOfWeekDays.length,
+                      itemCount:
+                          _updateRepeatTaskController.listOfWeekDays.length,
                       itemBuilder: (context, index) {
                         return Obx(
                           () => CheckboxMenuButton(
-                            value: repeatTaskController.selectedWeekDays
-                                .contains(repeatTaskController.listOfWeekDays[
-                                    index]), //repeatTaskController.productsMap[index],
+                            value: _updateRepeatTaskController.selectedWeekDays
+                                .contains(_updateRepeatTaskController
+                                        .listOfWeekDays[
+                                    index]), //_updateRepeatTaskController.productsMap[index],
 
                             onChanged: (value) {
-                              repeatTaskController.toggleWeekDays(
-                                  repeatTaskController.listOfWeekDays[
-                                      index]); //repeatTaskController.toggle(repeatTaskController.listOfWeekDays[index]);
+                              _updateRepeatTaskController.toggleWeekDays(
+                                  _updateRepeatTaskController.listOfWeekDays[
+                                      index]); //_updateRepeatTaskController.toggle(_updateRepeatTaskController.listOfWeekDays[index]);
                             },
-                            child: Text(
-                                repeatTaskController.listOfWeekDays[index]),
+                            child: Text(_updateRepeatTaskController
+                                .listOfWeekDays[index]),
                           ),
                         );
                       },
@@ -235,21 +330,23 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                     child: ListView.builder(
                       shrinkWrap: false,
                       scrollDirection: Axis.horizontal,
-                      itemCount: repeatTaskController.listOfMonths.length,
+                      itemCount:
+                          _updateRepeatTaskController.listOfMonths.length,
                       itemBuilder: (context, index) {
                         return Obx(
                           () => CheckboxMenuButton(
-                            value: repeatTaskController.selectedMonths.contains(
-                                repeatTaskController.listOfMonths[
-                                    index]), //repeatTaskController.productsMap[index],
+                            value: _updateRepeatTaskController.selectedMonths
+                                .contains(_updateRepeatTaskController
+                                        .listOfMonths[
+                                    index]), //_updateRepeatTaskController.productsMap[index],
 
                             onChanged: (value) {
-                              repeatTaskController.toggleMonth(repeatTaskController
-                                      .listOfMonths[
-                                  index]); //repeatTaskController.toggle(repeatTaskController.listOfMonths[index]);
+                              _updateRepeatTaskController.toggleMonth(
+                                  _updateRepeatTaskController.listOfMonths[
+                                      index]); //_updateRepeatTaskController.toggle(_updateRepeatTaskController.listOfMonths[index]);
                             },
-                            child:
-                                Text(repeatTaskController.listOfMonths[index]),
+                            child: Text(_updateRepeatTaskController
+                                .listOfMonths[index]),
                           ),
                         );
                       },
@@ -275,10 +372,10 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
         //     initialDate: DateTime(2024),
         //     firstDate: DateTime(2024),
         //     lastDate: DateTime(2028),
-        //     selectedDate: DateTime(repeatTaskController.selectedYear.value),
+        //     selectedDate: DateTime(_updateRepeatTaskController.selectedYear.value),
         //     onChanged: (newDate) {
         //       // Handle date change
-        //       repeatTaskController.selectedYear.value = newDate.year;
+        //       _updateRepeatTaskController.selectedYear.value = newDate.year;
         //     },
         //   ),
         // )
@@ -288,7 +385,7 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
         //   initialSelectedDate: DateTime.now(),
         //   onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
         //     // Handle date change
-        //     // repeatTaskController.selectedYear.value = args.value;
+        //     // _updateRepeatTaskController.selectedYear.value = args.value;
 
         //     print("args.value ${args.value}");
         //   },
@@ -302,20 +399,21 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
               child: ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                itemCount: repeatTaskController.listOfYears.length,
+                itemCount: _updateRepeatTaskController.listOfYears.length,
                 itemBuilder: (context, index) {
                   return Obx(
                     () => CheckboxMenuButton(
-                      value: repeatTaskController.selectedYears.contains(
-                          repeatTaskController.listOfYears[
-                              index]), //repeatTaskController.productsMap[index],
+                      value: _updateRepeatTaskController.selectedYears.contains(
+                          _updateRepeatTaskController.listOfYears[
+                              index]), //_updateRepeatTaskController.productsMap[index],
 
                       onChanged: (value) {
-                        repeatTaskController.toggleYear(repeatTaskController
-                                .listOfYears[
-                            index]); //repeatTaskController.toggle(repeatTaskController.listOfYears[index]);
+                        _updateRepeatTaskController.toggleYear(
+                            _updateRepeatTaskController.listOfYears[
+                                index]); //_updateRepeatTaskController.toggle(_updateRepeatTaskController.listOfYears[index]);
                       },
-                      child: Text(repeatTaskController.listOfYears[index]),
+                      child:
+                          Text(_updateRepeatTaskController.listOfYears[index]),
                     ),
                   );
                 },
@@ -422,14 +520,14 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
           ),
         ),
         title: Text(
-          "Repeat Task",
+          "Update Repeat Task",
           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
         ),
         actions: [
           GestureDetector(
             onTap: () {
               if (_formKey.currentState!.validate()) {
-                repeatTaskController.dataSetForRepeatTask.value = true;
+                _updateRepeatTaskController.dataSetForRepeatTask.value = true;
                 Get.back();
               }
             },
@@ -438,14 +536,14 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
               height: 30,
               alignment: Alignment.center,
               margin: const EdgeInsets.only(right: 15.0, top: 5.0, bottom: 5.0),
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
               decoration: ShapeDecoration(
                 color: const Color.fromARGB(255, 17, 35, 230),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)),
               ),
               child: Text(
-                'Save',
+                'Update',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.normal,
@@ -488,27 +586,27 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                       child: TabBar(
                         tabs: tabs(),
                         onTap: (value) {
-                          repeatTaskController.selectedTab.value =
+                          _updateRepeatTaskController.selectedTab.value =
                               tabNames[value];
 
-                          repeatTaskController.daysMap.forEach(
-                            (key, _) =>
-                                repeatTaskController.daysMap[key] = false,
+                          _updateRepeatTaskController.daysMap.forEach(
+                            (key, _) => _updateRepeatTaskController
+                                .daysMap[key] = false,
                           );
 
-                          repeatTaskController.daysOfWeekMap.forEach(
-                            (key, _) =>
-                                repeatTaskController.daysOfWeekMap[key] = false,
+                          _updateRepeatTaskController.daysOfWeekMap.forEach(
+                            (key, _) => _updateRepeatTaskController
+                                .daysOfWeekMap[key] = false,
                           );
 
-                          repeatTaskController.monthsMap.forEach(
-                            (key, _) =>
-                                repeatTaskController.monthsMap[key] = false,
+                          _updateRepeatTaskController.monthsMap.forEach(
+                            (key, _) => _updateRepeatTaskController
+                                .monthsMap[key] = false,
                           );
 
-                          repeatTaskController.yearsMap.forEach(
-                            (key, _) =>
-                                repeatTaskController.yearsMap[key] = false,
+                          _updateRepeatTaskController.yearsMap.forEach(
+                            (key, _) => _updateRepeatTaskController
+                                .yearsMap[key] = false,
                           );
                         },
                         controller: _tabController,
@@ -546,7 +644,7 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                     // SizedBox(
                     //   height: 10.0,
                     // ),
-                    GetBuilder<RepeatTaskController>(
+                    GetBuilder<UpdateRepeatTaskController>(
                       builder: (controller) => RadioMenuButton(
                         value: CommonStrings.selectedOption,
                         groupValue: controller.selectedOption,
@@ -558,7 +656,7 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                         child: Text(CommonStrings.selectedOption),
                       ),
                     ),
-                    GetBuilder<RepeatTaskController>(
+                    GetBuilder<UpdateRepeatTaskController>(
                       builder: (controller) => RadioMenuButton(
                         value:
                             "On ${controller.repeatTaskDateEditingController.value.text}",
@@ -584,14 +682,22 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                                       fontSize:
                                           FontSizes.textFormFieldFontSize),
                                   validator: (value) {
-                                    DateTime selected = DateTime.parse(
-                                        controller.repeatTaskStopDate
-                                            .toString());
-                                    DateTime dueDate = DateTime.parse(
-                                        createTaskController.dueDate.value
-                                            .toString());
-                                    if (dueDate.compareTo(selected) != 1) {
-                                      return "Date to stop repeating task should be less than due date";
+                                    if (_updateRepeatTaskController
+                                                .repeatTaskStopDate !=
+                                            null &&
+                                        _updateRepeatTaskController
+                                                .repeatTaskStopDate !=
+                                            "") {
+                                      DateTime selected = DateTime.parse(
+                                          _updateRepeatTaskController
+                                              .repeatTaskStopDate
+                                              .toString());
+                                      DateTime dueDate = DateTime.parse(
+                                          createTaskController.dueDate.value
+                                              .toString());
+                                      if (dueDate.compareTo(selected) != 1) {
+                                        return "Date to stop repeating task should be less than due date";
+                                      }
                                     }
                                   },
                                   controller: controller
@@ -651,149 +757,19 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                     SizedBox(
                       height: 10.0,
                     ),
-                    // Container(
-
-                    //     // color: Colors.red,
-                    //     height: 65.0,
-                    //     child: TextFormField(
-                    //       validator: ValidationHelper.nullOrEmptyString,
-                    //       style: TextStyle(
-                    //           fontSize: FontSizes.textFormFieldFontSize),
-                    //       controller: repeatTaskController
-                    //           .setRemainderOptionController.value,
-                    //       //keyboardType: TextInputType.name,
-                    //       decoration: InputDecoration(
-                    //         hintText: "Select Option",
-                    //         hintStyle: TextStyle(
-                    //           fontWeight: FontWeight.normal,
-                    //           fontSize: 14.0,
-                    //           // color: const Color(0x7F555770),
-                    //         ),
-                    //         suffix: DropdownButton(
-                    //           borderRadius: BorderRadius.circular(10.0),
-                    //           iconSize: 25.0,
-                    //           icon: Container(
-                    //             margin: const EdgeInsets.only(right: 10.0),
-                    //             child: const Icon(
-                    //                 Icons.keyboard_arrow_down_rounded),
-                    //           ),
-                    //           items: repeatTaskController
-                    //               .setRepeatTaskRemainderOptions
-                    //               .map<DropdownMenuItem<String>>(
-                    //                   (setRemainderOption) {
-                    //             return DropdownMenuItem<String>(
-                    //               value: setRemainderOption,
-                    //               child: Padding(
-                    //                 padding: const EdgeInsets.only(
-                    //                   left: 10.0,
-                    //                 ),
-                    //                 child: Text(setRemainderOption),
-                    //               ),
-                    //             );
-                    //           }).toList(),
-                    //           onChanged: (value) async {
-                    //             // print("RELIGION ${value.toString()}");
-
-                    //             if (value.toString() == "Custom") {
-                    //               // createTaskController.setRemainderOptionController
-                    //               //     .text =
-                    //               //     if (await _selectedDate(context) >) {
-
-                    //               //     }
-                    //               //     await _selectedDate(context);
-
-                    //               final DateTime? picked = await showDatePicker(
-                    //                   context: context,
-                    //                   initialDate: selectedDate,
-                    //                   firstDate: DateTime(2024),
-                    //                   lastDate: DateTime(2025));
-
-                    //               print("picked != null ${picked != null}");
-
-                    //               if (picked != null) {
-                    //                 // if (picked.compareTo(createTaskController.dueDate)  &&
-                    //                 //     picked! > createTaskController.startDate) {}
-
-                    //                 print(
-                    //                     "picked.compareTo(createTaskController.dueDate.value) !=  ${picked.compareTo(createTaskController.dueDate.value) != 1}");
-
-                    //                 if (picked.compareTo(createTaskController
-                    //                         .dueDate.value) !=
-                    //                     1) {
-                    //                   Get.snackbar("Error",
-                    //                       "Remainder date should be grater than start date",
-                    //                       backgroundColor: Colors.red,
-                    //                       colorText: Colors.white,
-                    //                       duration: Duration(seconds: 5),
-                    //                       borderRadius: 20.0,
-                    //                       snackPosition: SnackPosition.TOP);
-                    //                 } else if (picked.compareTo(
-                    //                         createTaskController
-                    //                             .startDate.value) !=
-                    //                     -1) {
-                    //                   Get.snackbar("Error",
-                    //                       "Remainder date should be less than due date",
-                    //                       backgroundColor: Colors.red,
-                    //                       colorText: Colors.white,
-                    //                       duration: Duration(seconds: 5),
-                    //                       borderRadius: 20.0,
-                    //                       snackPosition: SnackPosition.TOP);
-                    //                 } else {
-                    //                   createTaskController
-                    //                           .setRemainderOptionController
-                    //                           .text =
-                    //                       picked
-                    //                           .toLocal()
-                    //                           .toString()
-                    //                           .split(" ")[0];
-                    //                 }
-                    //               }
-
-                    //               // if (picked != null) {
-                    //               //   print(" DATE ${picked.toLocal().toString()}");
-                    //               //   // return "${picked.day}-${picked.month}-${picked.year}";
-                    //               //   return picked
-                    //               //       .toLocal()
-                    //               //       .toString()
-                    //               //       .split(" ")[0];
-                    //               // } else {
-                    //               //   return "00-00-0000";
-                    //               // }
-                    //             } else {
-                    //               repeatTaskController
-                    //                   .setRemainderOptionController
-                    //                   .value
-                    //                   .text = value.toString();
-                    //             }
-
-                    //             print(
-                    //                 " repeatTaskController.setRemainderOptionController.value.text ${repeatTaskController.setRemainderOptionController.value.text}");
-                    //           },
-                    //         ),
-                    //         border: const OutlineInputBorder(
-                    //             borderSide: BorderSide(
-                    //               color: Color.fromARGB(255, 221, 221, 221),
-                    //             ),
-                    //             borderRadius:
-                    //                 BorderRadius.all(Radius.circular(10.0))),
-                    //       ),
-                    //       maxLines: 1,
-                    //     )),
-                    // SizedBox(
-                    //   height: 20.0,
-                    // ),
 
                     TextFormField(
                       validator: ValidationHelper.nullOrEmptyString,
                       style:
                           TextStyle(fontSize: FontSizes.textFormFieldFontSize),
-                      controller: repeatTaskController.remainderTimeController,
+                      controller:
+                          _updateRepeatTaskController.remainderTimeController,
                       keyboardType: TextInputType.datetime,
                       onTap: () async {
                         print("CLOCK PRESSED");
 
-                        repeatTaskController.remainderTimeController.text =
-                            await selectedTime(context);
+                        _updateRepeatTaskController.remainderTimeController
+                            .text = await selectedTime(context);
                       },
                       decoration: InputDecoration(
                         // errorStyle:
@@ -805,12 +781,6 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                         labelStyle: TextStyle(
                             fontSize: FontSizes.textFormFieldFontSize),
                         labelText: "Select time",
-                        // border: const OutlineInputBorder(
-                        //     borderSide: BorderSide(
-                        //       color: Colors.blue,
-                        //     ),
-                        //     borderRadius:
-                        //         BorderRadius.all(Radius.circular(10.0))),
                       ),
                       maxLines: 1,
                     ),

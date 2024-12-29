@@ -5,8 +5,10 @@ import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:task_management_app/constants/fontsizes.dart';
+import 'package:task_management_app/controller/assign_tasks_controller.dart';
 import 'package:task_management_app/controller/create_task_controller.dart';
 import 'package:task_management_app/controller/login_controller.dart';
+import 'package:task_management_app/controller/update_task_controller.dart';
 import 'package:task_management_app/controller/user_activities_controller.dart';
 import 'package:task_management_app/controller/user_task_details_controller.dart';
 import 'package:task_management_app/controller/validation_helper.dart';
@@ -271,6 +273,11 @@ class _AssignedTasksToOthersListState extends State<AssignedTasksToOthersList> {
 
   CreateTaskController _createTaskController = Get.put(CreateTaskController());
 
+  AssignTasksController _assignTasksController =
+      Get.put(AssignTasksController());
+
+  UpdateTaskController _updateTaskController = Get.put(UpdateTaskController());
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -284,30 +291,31 @@ class _AssignedTasksToOthersListState extends State<AssignedTasksToOthersList> {
           title: Text('Assign tasks'),
           titleTextStyle: TextStyle(fontSize: 17.0, color: Colors.black),
           actions: [
-            GestureDetector(
-              onTap: () {
-                Get.to(() => CreateTask(
-                      forAdmin: false,
-                      forManager: true,
-                      forUsersProfile: true,
-                    ));
-              },
-              child: Container(
-                alignment: Alignment.center,
-                //  margin: EdgeInsets.only(right: 10),
-                width: 80,
-                height: 30,
-                decoration: BoxDecoration(
-                  color: Get.theme.primaryColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  maxLines: 1,
-                  'Assign',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
+            // GestureDetector(
+            //   onTap: () {
+            //     Get.to(() => CreateTask(
+            //           forAdmin: false,
+            //           forManager: true,
+            //           forUsersProfile: true,
+            //         ));
+            //   },
+            //   child: Container(
+            //     alignment: Alignment.center,
+            //     //  margin: EdgeInsets.only(right: 10),
+            //     width: 80,
+            //     height: 30,
+            //     decoration: BoxDecoration(
+            //       color: Get.theme.primaryColor,
+            //       borderRadius: BorderRadius.circular(10),
+            //     ),
+            //     child: Text(
+            //       maxLines: 1,
+            //       'Assign',
+            //       style: TextStyle(color: Colors.white),
+            //     ),
+            //   ),
+            // ),
+
             IconButton(
                 onPressed: () async {
                   await auth.signOut();
@@ -384,211 +392,211 @@ class _AssignedTasksToOthersListState extends State<AssignedTasksToOthersList> {
                 SizedBox(
                   height: 10,
                 ),
-                Obx(() {
-                  if (_userActivitiesController.fetchingCompanyName.value) {
-                    return SizedBox(
-                      width: Get.width,
-                      height: Get.height * 0.26,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: Get.theme.primaryColor,
+                // Obx(() {
+                //   if (_userActivitiesController.fetchingCompanyName.value) {
+                //     return SizedBox(
+                //       width: Get.width,
+                //       height: Get.height * 0.26,
+                //       child: Center(
+                //         child: CircularProgressIndicator(
+                //           color: Get.theme.primaryColor,
+                //         ),
+                //       ),
+                //     );
+                //   } else {
+                //     return
+                StreamBuilder(
+                  // future: _userActivitiesController
+                  //     .getFutureManagersCollection(),
+                  stream: _assignTasksController.getEmployeeCollection(),
+                  builder: (context, snapshot) {
+                    if (
+                        //true
+                        snapshot.connectionState == ConnectionState.waiting) {
+                      return SizedBox(
+                        width: Get.width,
+                        height: Get.height * 0.26,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: Get.theme.primaryColor,
+                          ),
                         ),
-                      ),
-                    );
-                  } else {
-                    return StreamBuilder(
-                      // future: _userActivitiesController
-                      //     .getFutureManagersCollection(),
-                      stream: _userActivitiesController.getEmployeeCollection(),
-                      builder: (context, snapshot) {
-                        if (
-                            //true
-                            snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                          return SizedBox(
-                            width: Get.width,
-                            height: Get.height * 0.26,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: Get.theme.primaryColor,
-                              ),
-                            ),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text(
-                              'Error: ${snapshot.error}',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          );
-                        } else if (snapshot.hasData) {
-                          if (snapshot.data!.docs.isNotEmpty) {
-                            print(
-                                "snapshot.data!.docs.length ${snapshot.data!.docs.length}");
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Text(
+                          'Error: ${snapshot.error}',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      );
+                    } else if (snapshot.hasData) {
+                      if (snapshot.data!.docs.isNotEmpty) {
+                        print(
+                            "snapshot.data!.docs.length ${snapshot.data!.docs.length}");
 
-                            return
-                                // SizedBox(
-                                //   width: Get.width,
-                                //   height: Get.height * 0.65,
-                                //   child:
-                                ListView(
-                              shrinkWrap: true,
-                              children: snapshot.data!.docs.map(
-                                (DocumentSnapshot document) {
-                                  Map<String, dynamic> data =
-                                      document.data()! as Map<String, dynamic>;
+                        return
+                            // SizedBox(
+                            //   width: Get.width,
+                            //   height: Get.height * 0.65,
+                            //   child:
+                            ListView(
+                          shrinkWrap: true,
+                          children: snapshot.data!.docs.map(
+                            (DocumentSnapshot document) {
+                              Map<String, dynamic> data =
+                                  document.data()! as Map<String, dynamic>;
 
-                                  data.forEach((key, value) {
-                                    print("key: $key, value: $value");
-                                  });
+                              data.forEach((key, value) {
+                                print("key: $key, value: $value");
+                              });
 
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Get.to(() => TasksScreen(
-                                            appTitle:
-                                                "${data['firstName']} ${data['lastName']}'s tasks",
-                                            username:
-                                                data['username'].toString(),
-                                            forManager: false,
-                                            forAdmin: false,
-                                            forUsersProfile: true,
-                                          ));
-                                    },
-                                    child: Container(
-                                      margin: EdgeInsets.only(bottom: 10),
-                                      padding: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Column(
+                              return GestureDetector(
+                                onTap: () {
+                                  _updateTaskController.data.value = data;
+                                  Get.to(() => TasksScreen(
+                                        appTitle:
+                                            "${data['firstName']} ${data['lastName']}'s tasks",
+                                        username: data['username'].toString(),
+                                        forManager: false,
+                                        forAdmin: false,
+                                        forUsersProfile: true,
+                                      ));
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 10),
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                                MainAxisAlignment.start,
                                             children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  CircleAvatar(
-                                                    child: Text(
-                                                        data['firstName'][0]
-                                                            .toString()
-                                                            .toUpperCase()),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 5.0,
-                                                  ),
-                                                  Text(
-                                                    "${data['firstName']} ${data['lastName']}",
-                                                  ),
-                                                ],
+                                              CircleAvatar(
+                                                child: Text(data['firstName'][0]
+                                                    .toString()
+                                                    .toUpperCase()),
                                               ),
-                                              Row(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      Get.to(() => CreateTask(
-                                                            forAdmin: true,
-                                                            // specificDocumentOfUser:
-                                                            //     document,
-                                                            forManager: false,
-                                                            forUsersProfile:
-                                                                true,
-                                                          ));
-                                                    },
-                                                    child: Container(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      //width: 0,
-                                                      //height: 30,
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 10.0,
-                                                              vertical: 5.0),
-                                                      decoration: BoxDecoration(
-                                                        color: Get
-                                                            .theme.primaryColor,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                      ),
-                                                      child: Text(
-                                                        'Add task',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                    ),
+                                              SizedBox(
+                                                width: 5.0,
+                                              ),
+                                              Text(
+                                                "${data['firstName']} ${data['lastName']}",
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  _createTaskController
+                                                      .data.value = data;
+
+                                                  Get.to(() => CreateTask(
+                                                        forAdmin: true,
+                                                        // specificDocumentOfUser:
+                                                        //     document,
+                                                        forManager: false,
+                                                        forUsersProfile: true,
+                                                        appTitle: "Assign task",
+                                                      ));
+                                                },
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  //width: 0,
+                                                  //height: 30,
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10.0,
+                                                      vertical: 5.0),
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        Get.theme.primaryColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
                                                   ),
-                                                  SizedBox(
-                                                    width: 15.0,
+                                                  child: Text(
+                                                    'Add task',
+                                                    style: TextStyle(
+                                                        color: Colors.white),
                                                   ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      print("EDIT MANAGER");
-                                                      showUpdateDialog(
-                                                          context, document);
-                                                    },
-                                                    child: Icon(
-                                                      Iconsax.edit_outline,
-                                                      size: 20.0,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 15.0,
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      print("DELETE MANAGER");
-                                                      // document.reference.delete();
-                                                      // _userActivitiesController
-                                                      //     .deleteManager(
-                                                      //         document);
-                                                      showDeleteConfirmationDialog(
-                                                          context, document);
-                                                    },
-                                                    child: Icon(Icons
-                                                        .delete_outline_outlined),
-                                                  ),
-                                                ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 15.0,
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  print("EDIT MANAGER");
+                                                  showUpdateDialog(
+                                                      context, document);
+                                                },
+                                                child: Icon(
+                                                  Iconsax.edit_outline,
+                                                  size: 20.0,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 15.0,
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  print("DELETE MANAGER");
+                                                  // document.reference.delete();
+                                                  // _userActivitiesController
+                                                  //     .deleteManager(
+                                                  //         document);
+                                                  showDeleteConfirmationDialog(
+                                                      context, document);
+                                                },
+                                                child: Icon(Icons
+                                                    .delete_outline_outlined),
                                               ),
                                             ],
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  );
-                                },
-                              ).toList(),
-                            );
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ).toList(),
+                        );
 
-                            // );
-                          } else {
-                            return Center(
-                              child: Text(
-                                'No data found',
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            );
-                          }
-                        } else {
-                          return Center(
-                            child: Text(
-                              'Null data found',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          );
-                        }
-                      },
-                    );
-                  }
-                }),
+                        // );
+                      } else {
+                        return Center(
+                          child: Text(
+                            'No data found',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        );
+                      }
+                    } else {
+                      return Center(
+                        child: Text(
+                          'Null data found',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      );
+                    }
+                  },
+                )
+
+                //     ;
+                //   }
+                // }),
                 // SizedBox(
                 //   height: 10,
                 // ),

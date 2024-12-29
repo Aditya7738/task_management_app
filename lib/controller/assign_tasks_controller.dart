@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_management_app/constants/database_references.dart';
+import 'package:task_management_app/controller/dashboard_controller.dart';
 import 'package:task_management_app/controller/login_controller.dart';
 
 class AssignTasksController extends GetxController {
@@ -108,10 +109,13 @@ class AssignTasksController extends GetxController {
   //       .get();
   // }
 
+  DashboardController _dashboardController = Get.put(DashboardController());
+
   Stream<QuerySnapshot<Map<String, dynamic>>>? getEmployeeCollection() {
+    print("Company Name: ${_dashboardController.companyName.value}");
     return _fireStore
         .collection(DatabaseReferences.COMPANY_COLLECTION_REFERENCE)
-        .doc(companyName.value)
+        .doc(_dashboardController.companyName.value.toUpperCase())
         .collection(DatabaseReferences.EMPLOYEES_COLLECTION_REFERENCE)
         .snapshots();
   }
