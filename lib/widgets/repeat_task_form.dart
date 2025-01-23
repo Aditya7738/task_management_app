@@ -30,6 +30,10 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
     repeatTaskController.createYearMap();
 
     // repeatTaskController.noOfWeeksController.value.text = "1";
+
+    repeatTaskController.repeatTaskDateEditingController.value.text = "";
+
+    repeatTaskController.remainderTimeController.text = "";
   }
 
   RepeatTaskController repeatTaskController = Get.put(RepeatTaskController());
@@ -38,8 +42,8 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime(2024),
-        lastDate: DateTime(2025));
+        firstDate: DateTime(2025),
+        lastDate: DateTime(2026));
 
     repeatTaskController.repeatTaskStopDate = picked;
 
@@ -264,7 +268,7 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
         // CalendarDatePicker(
         //   initialCalendarMode: DatePickerMode.year,
         //   initialDate: DateTime.now(),
-        //   firstDate: DateTime(2024),
+        //   firstDate: DateTime(2025),
         //   lastDate: DateTime(2028),
         //   onDateChanged: (newDate) {
         //     // Handle date change
@@ -273,7 +277,7 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
         // Obx(
         //   () => YearPicker(
         //     initialDate: DateTime(2024),
-        //     firstDate: DateTime(2024),
+        //     firstDate: DateTime(2025),
         //     lastDate: DateTime(2028),
         //     selectedDate: DateTime(repeatTaskController.selectedYear.value),
         //     onChanged: (newDate) {
@@ -705,8 +709,8 @@ class _RepeatTaskFormState extends State<RepeatTaskForm>
                     //               final DateTime? picked = await showDatePicker(
                     //                   context: context,
                     //                   initialDate: selectedDate,
-                    //                   firstDate: DateTime(2024),
-                    //                   lastDate: DateTime(2025));
+                    //                   firstDate: DateTime(2025),
+                    //                   lastDate: DateTime(2026));
 
                     //               print("picked != null ${picked != null}");
 

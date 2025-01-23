@@ -32,6 +32,10 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        //https://developer.android.com/build/multidex#kts
+
+      //  multiDexEnabled = true
     }
 
     buildTypes {
@@ -43,6 +47,14 @@ android {
     }
 }
 
+//error API: Phenotype.API is not available on this device. Connection failed with: ConnectionResult{statusCode=DEVELOPER_ERROR, resolution=null, message=null}
+//  dependencies {
+//        implementation("androidx.multidex:multidex:2.0.1")
+//        implementation 'com.google.android.gms:play-services-phenotype:VERSION_NUMBER'
+//    }
+
 flutter {
     source = "../.."
 }
+
+

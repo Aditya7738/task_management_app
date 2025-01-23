@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -223,6 +224,30 @@ class CreateTaskController extends GetxController {
     update();
   }
 
+  Future<void> pickupFile() async {
+    AndroidDeviceInfo androidDeviceInfo = await DeviceInfoPlugin().androidInfo;
+
+    if (androidDeviceInfo.version.sdkInt >= 30) {
+      print(
+          "await Permission.manageExternalStorage.isGranted ${await Permission.manageExternalStorage.isGranted}");
+
+      if (await Permission.manageExternalStorage.isGranted) {
+        await uploadDocument();
+      } else {
+        await Permission.manageExternalStorage.request();
+      }
+    } else {
+      print(
+          "await Permission.storage.isGranted ${await Permission.storage.isGranted}");
+
+      if (await Permission.storage.isGranted) {
+        await uploadDocument();
+      } else {
+        await Permission.storage.request();
+      }
+    }
+  }
+
   SupabaseClient supabase = Supabase.instance.client;
 
   // CreateTaskController createTaskController = Get.put(CreateTaskController());
@@ -234,54 +259,66 @@ class CreateTaskController extends GetxController {
 
       //    print("bucketId $bucketId");
 
-      if (await Permission.storage.isGranted) {
-        FilePickerResult? result = await FilePicker.platform.pickFiles();
+      FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-        if (result != null && result.files.single.path != null) {
-          // File file = File(result.files.single.path!);
+      if (result != null && result.files.single.path != null) {
+        // File file = File(result.files.single.path!);
 
-          PlatformFile _platformFile = result.files.first;
+        PlatformFile _platformFile = result.files.first;
 
-          File _file = File(result.files.single.path!);
+        File _file = File(result.files.single.path!);
 
-          print("File path: ${_file.path}");
-          //   //String fullPath =
-          //   await supabase.storage
-          //       .from(DatabaseReferences.bucketId)
-          //       .upload(
-          //           "${_userActivitiesController.companyName.value}/${assignedTo.value}/documents",
-          //           file,
-          //           fileOptions: FileOptions(cacheControl: '3600', upsert: false),
-          //           retryAttempts: 2)
-          //       .then(
-          //     (value) {
-          //       Get.snackbar("Document uploaded successfully", "",
-          //           colorText: Colors.white,
-          //           backgroundColor: Get.theme.primaryColor,
-          //           duration: Duration(seconds: 4),
-          //           borderRadius: 20.0,
-          //           snackPosition: SnackPosition.TOP);
-          //     },
-          //   ).onError(
-          //     (error, stackTrace) {
-          //       print("SUPABASE Error: $error");
+        print("_platformFile.name ${_platformFile.name}");
+        print("_platformFile.extension ${_platformFile.extension}");
 
-          //       //  creatingTask.value = false;
+        print("File path: ${_file.path}");
+        //String fullPath =
 
-          //       String cleanedError =
-          //           error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+        final String bucketId = await supabase.storage
+            .createBucket(DatabaseReferences.bucketId)
+            .then((value) {
+          print("bucketId $value");
+          return value;
+        }).onError((error, stackTrace) {
+          print("Error: $error");
+          return "";
+        });
 
-          //       Get.snackbar("Error", cleanedError,
-          //           colorText: Colors.white,
-          //           backgroundColor: Colors.red,
-          //           duration: Duration(seconds: 5),
-          //           borderRadius: 20.0,
-          //           snackPosition: SnackPosition.TOP);
-          //     },
-          //   );
-        } else {
-          // User canceled the picker
-        }
+        await supabase.storage
+            .from(DatabaseReferences.bucketId)
+            .upload(
+                "${_userActivitiesController.companyName.value}/${assignedTo.value}/documents/${_platformFile.name}",
+                _file,
+                fileOptions: FileOptions(cacheControl: '3600', upsert: false),
+                retryAttempts: 2)
+            .then(
+          (value) {
+            Get.snackbar("Document uploaded successfully", "",
+                colorText: Colors.white,
+                backgroundColor: Get.theme.primaryColor,
+                duration: Duration(seconds: 4),
+                borderRadius: 20.0,
+                snackPosition: SnackPosition.TOP);
+          },
+        ).onError(
+          (error, stackTrace) {
+            print("SUPABASE Error: $error");
+
+            //  creatingTask.value = false;
+
+            String cleanedError =
+                error.toString().replaceAll(RegExp(r'\[.*?\]'), '').trim();
+
+            Get.snackbar("Error", cleanedError,
+                colorText: Colors.white,
+                backgroundColor: Colors.red,
+                duration: Duration(seconds: 5),
+                borderRadius: 20.0,
+                snackPosition: SnackPosition.TOP);
+          },
+        );
+      } else {
+        // User canceled the picker
       }
     } catch (e) {
       print("SUPABASE OR FILEPICKER Error: $e");
@@ -405,7 +442,7 @@ class CreateTaskController extends GetxController {
               await createTaskOnAdminSide(adminTaskReference, forUsersProfile);
 
               creatingTask.value = false;
-//               Get.back();
+              Get.back();
 
 //               Get.snackbar(
 //   'Title',

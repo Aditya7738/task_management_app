@@ -718,6 +718,8 @@ class _UsersActivitiesState extends State<UsersActivities> {
                                                 children: [
                                                   GestureDetector(
                                                     onTap: () {
+                                                      _createTaskController
+                                                          .data.value = data;
                                                       Get.to(() => CreateTask(
                                                             forAdmin: true,
                                                             // specificDocumentOfUser:

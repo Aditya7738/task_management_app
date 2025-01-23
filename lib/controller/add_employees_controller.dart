@@ -44,7 +44,7 @@ class AddEmployeesController extends GetxController {
   Future<void> createEmployeeAccount() async {
     addingEmployee.value = true;
 
-    String email = usernameController.text +
+    String email = usernameController.text.trim() +
         "@" +
         _userActivitiesController.companyName.value.toLowerCase() +
         ".com";
@@ -133,9 +133,9 @@ class AddEmployeesController extends GetxController {
         .collection(collectionName)
         .add({
       //    "workEmail": emailController.text,
-      "username": usernameController.text,
-      "firstName": firstNameController.text,
-      "lastName": lastNameController.text,
+      "username": usernameController.text.trim(),
+      "firstName": firstNameController.text.trim(),
+      "lastName": lastNameController.text.trim(),
       // "role": role.value
     }).then((value) {
       addingEmployee.value = false;

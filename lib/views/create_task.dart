@@ -1,12 +1,9 @@
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'package:task_management_app/constants/database_references.dart';
 import 'package:task_management_app/constants/fontsizes.dart';
 import 'package:task_management_app/constants/strings.dart';
 import 'package:task_management_app/controller/create_task_controller.dart';
@@ -16,9 +13,7 @@ import 'package:task_management_app/controller/validation_helper.dart';
 import 'package:task_management_app/widgets/button_widget.dart';
 import 'package:task_management_app/widgets/leading_back_arrow.dart';
 import 'package:task_management_app/widgets/repeat_task_form.dart';
-import 'package:task_management_app/widgets/select_option.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:file_picker/file_picker.dart';
 
 class CreateTask extends StatefulWidget {
   final bool forAdmin;
@@ -94,8 +89,8 @@ class _CreateTaskState extends State<CreateTask> {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime(2024),
-        lastDate: DateTime(2025));
+        firstDate: DateTime(2025),
+        lastDate: DateTime(2026));
 
     if (picked != null) {
       print(" DATE ${picked.toLocal().toString()}");
@@ -416,7 +411,7 @@ class _CreateTaskState extends State<CreateTask> {
                           TextStyle(fontSize: FontSizes.textFormFieldFontSize),
                       controller:
                           createTaskController.startDateEditingController,
-                      keyboardType: TextInputType.datetime,
+                      // keyboardType: TextInputType.datetime,
                       validator: ValidationHelper.nullOrEmptyString,
                       onTap: () async {
                         print("CALENDAR PRESSED");
@@ -428,8 +423,8 @@ class _CreateTaskState extends State<CreateTask> {
                             await showDatePicker(
                                 context: context,
                                 initialDate: DateTime.now(),
-                                firstDate: DateTime(2024),
-                                lastDate: DateTime(2025));
+                                firstDate: DateTime(2025),
+                                lastDate: DateTime(2026));
 
                         if (createTaskController.startDate.value != null) {
                           print(
@@ -481,7 +476,7 @@ class _CreateTaskState extends State<CreateTask> {
                       style:
                           TextStyle(fontSize: FontSizes.textFormFieldFontSize),
                       controller: createTaskController.dueDateEditingController,
-                      keyboardType: TextInputType.datetime,
+                      //  keyboardType: TextInputType.datetime,
                       validator: ValidationHelper.nullOrEmptyString,
                       onTap: () async {
                         print("CALENDAR PRESSED");
@@ -493,8 +488,8 @@ class _CreateTaskState extends State<CreateTask> {
                             await showDatePicker(
                                 context: context,
                                 initialDate: DateTime.now(),
-                                firstDate: DateTime(2024),
-                                lastDate: DateTime(2025));
+                                firstDate: DateTime(2025),
+                                lastDate: DateTime(2026));
 
                         if (createTaskController.dueDate.value != null) {
                           print(
@@ -586,8 +581,8 @@ class _CreateTaskState extends State<CreateTask> {
                                 final DateTime? picked = await showDatePicker(
                                     context: context,
                                     initialDate: DateTime.now(),
-                                    firstDate: DateTime(2024),
-                                    lastDate: DateTime(2025));
+                                    firstDate: DateTime(2025),
+                                    lastDate: DateTime(2026));
 
                                 print("picked != null ${picked != null}");
 
@@ -710,6 +705,7 @@ class _CreateTaskState extends State<CreateTask> {
                       onTap: () {
                         if (mounted) {
                           showModalBottomSheet(
+                            enableDrag: false,
                             constraints: BoxConstraints.expand(
                                 width: Get.width, height: Get.height - 80),
                             //  isDismissible: false,
@@ -1019,413 +1015,220 @@ class _CreateTaskState extends State<CreateTask> {
                       height: 20.0,
                     ),
 
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //   children: [
-                    //     GestureDetector(
-                    //       onTap: () {
-                    //         // if (await Permission.storage.isGranted) {
-                    //         //   FilePickerResult? result =
-                    //         //       await FilePicker.platform.pickFiles();
-
-                    //         //   if (result != null) {
-                    //         //     File file = File(result.files.single.path!);
-                    //         //     String fullPath = await supabase.storage
-                    //         //         .from(DatabaseReferences.bucketId)
-                    //         //         .upload(
-                    //         //             "${_userActivitiesController.companyName.value}/${createTaskController.assignedTo.value}/documents",
-                    //         //             file,
-                    //         //             fileOptions: FileOptions(
-                    //         //                 cacheControl: '3600', upsert: false),
-                    //         //             retryAttempts: 2);
-                    //         //   } else {
-                    //         //     // User canceled the picker
-                    //         //   }
-                    //         // }
-                    //         createTaskController.uploadDocument();
-                    //       },
-                    //       child: Container(
-                    //         //  width: 170.0,
-                    //         decoration: BoxDecoration(
-                    //             // border: border,
-                    //             color: const Color.fromARGB(255, 234, 234, 234),
-                    //             borderRadius: BorderRadius.circular(15.0)),
-                    //         padding: const EdgeInsets.symmetric(
-                    //             vertical: 10.0, horizontal: 10.0),
-                    //         child: Row(
-                    //           mainAxisAlignment: MainAxisAlignment.center,
-                    //           children: [
-                    //             Image.asset(
-                    //               "assets/images/icons8_attachment_100.png",
-                    //               width: 21.0,
-                    //               height: 21.0,
-                    //             ),
-                    //             SizedBox(
-                    //               width: 5.0,
-                    //             ),
-                    //             Text(
-                    //               "Add Attachment",
-                    //               style: TextStyle(
-                    //                 fontSize: 16,
-                    //               ),
-                    //             )
-                    //           ],
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     Row(
-                    //       mainAxisAlignment: MainAxisAlignment.end,
-                    //       children: [
-                    //         GestureDetector(
-                    //             onTap: () {
-                    //               Get.back();
-                    //             },
-                    //             child: ButtonWidget(
-                    //                 isLoading: false,
-                    //                 width: 81.0,
-                    //                 color: Colors.white,
-                    //                 textColor: Get.theme.primaryColor,
-                    //                 // borderRadius: BorderRadius.circular(5.0),
-                    //                 border: Border.all(
-                    //                   color: Get.theme.primaryColor,
-                    //                 ),
-                    //                 text: "Cancel")
-                    //             //  Container(
-                    //             //   padding: EdgeInsets.symmetric(
-                    //             //       horizontal: 15.0, vertical: 8.0),
-                    //             //   decoration: BoxDecoration(
-                    //             //     borderRadius: BorderRadius.circular(5.0),
-                    //             //     border: Border.all(color: Colors.blue),
-                    //             //   ),
-                    //             //   child: Text(
-                    //             //     "Cancel",
-                    //             //     style: TextStyle(color: Colors.blue),
-                    //             //   ),
-                    //             // ),
-                    //             ),
-                    //         SizedBox(
-                    //           width: 10.0,
-                    //         ),
-                    //         // Obx(
-                    //         //   () =>
-                    //         GestureDetector(
-                    //             onTap: () async {
-                    //               print(
-                    //                   "createTaskController.isPioritySelected.value == false ${createTaskController.isPioritySelected.value == false}");
-                    //               if (createTaskController
-                    //                       .isPioritySelected.value ==
-                    //                   false) {
-                    //                 createTaskController.showPriorityError.value =
-                    //                     true;
-                    //               }
-
-                    //               if (createTaskController.statusUpdated.value ==
-                    //                   false) {
-                    //                 createTaskController.showStatusError.value =
-                    //                     true;
-                    //               }
-
-                    //               if (widget.forAdmin == false) {
-                    //                 if (createTaskController
-                    //                         .isEmployeeAssigned.value ==
-                    //                     false) {
-                    //                   createTaskController
-                    //                       .showSelectedEmpError.value = true;
-                    //                 }
-                    //               }
-
-                    //               if (_formKey.currentState!.validate()) {
-                    //                 // createTaskController.appointments.add(
-                    //                 //     Appointment(
-                    //                 //         isAllDay: false,
-                    //                 //         startTime: DateTime.parse(
-                    //                 //             createTaskController
-                    //                 //                 .startDateEditingController
-                    //                 //                 .text),
-                    //                 //         endTime: DateTime.parse(
-                    //                 //             createTaskController
-                    //                 //                 .dueDateEditingController
-                    //                 //                 .text),
-                    //                 //         color: getColor(),
-                    //                 //         subject: createTaskController
-                    //                 //             .taskNameController.text));
-
-                    //                 //  Get.back();
-
-                    //                 /////////////////////////////////////
-
-                    //                 // if (forAdmin) {
-                    //                 //   switch (createTaskController
-                    //                 //       .selectedStatus.value) {
-                    //                 //     case "Assigned":
-                    //                 //       createTaskController.taskLabel.value =
-                    //                 //           "Assigned to";
-                    //                 //       break;
-                    //                 //     case "In progress":
-                    //                 //       createTaskController.taskLabel.value =
-                    //                 //           "In progress by";
-                    //                 //       break;
-                    //                 //     case "Completed":
-                    //                 //       createTaskController.taskLabel.value =
-                    //                 //           "Completed by";
-                    //                 //       break;
-                    //                 //     case "Hold":
-                    //                 //       createTaskController.taskLabel.value =
-                    //                 //           "Hold by";
-                    //                 //       break;
-                    //                 //     default:
-                    //                 //       createTaskController.taskLabel.value =
-                    //                 //           "Assigned to";
-                    //                 //   }
-                    //                 // }
-
-                    //                 ////////////////////////////////////////////////
-
-                    //                 // if (createTaskController
-                    //                 //         .isPioritySelected.value &&
-                    //                 //     createTaskController
-                    //                 //         .statusUpdated.value &&
-                    //                 //     createTaskController
-                    //                 //         .isEmployeeAssigned.value) {
-
-                    //                 await createTaskController.createTask(
-                    //                     widget.forManager,
-                    //                     widget.forUsersProfile);
-
-                    //                 if (widget.forAdmin == false) {
-                    //                   createTaskController.employeesToAssign.value
-                    //                       .clear();
-                    //                   createTaskController.assignedTo.value =
-                    //                       createTaskController
-                    //                               .employeesToAssign.isNotEmpty
-                    //                           ? createTaskController
-                    //                               .employeesToAssign[0]
-                    //                           : "Choose employee";
-                    //                 }
-
-                    //                 // createTaskController
-                    //                 //     .setAssignedTo("Choose employee");
-
-                    //                 print(
-                    //                     "createTaskController.eassignedTo.value ${createTaskController.assignedTo.value}");
-
-                    //                 createTaskController.taskNameController
-                    //                     .clear();
-
-                    //                 createTaskController.descriptionController
-                    //                     .clear();
-
-                    //                 createTaskController
-                    //                     .startDateEditingController
-                    //                     .clear();
-
-                    //                 createTaskController.dueDateEditingController
-                    //                     .clear();
-
-                    //                 createTaskController.remainderTimeController
-                    //                     .clear();
-
-                    //                 createTaskController
-                    //                     .setRemainderOptionController
-                    //                     .clear();
-
-                    //                 createTaskController.selectedStatus.value =
-                    //                     "Assigned";
-
-                    //                 createTaskController.selectedPriority.value =
-                    //                     "High";
-                    //                 createTaskController.selectedTag.value =
-                    //                     "No tags added";
-
-                    //                 createTaskController.remarkController.clear();
-                    //                 Get.back();
-                    //               }
-                    //             },
-                    //             child: ButtonWidget(
-                    //                 isLoading:
-                    //                     createTaskController.creatingTask.value,
-                    //                 width: 77.0,
-                    //                 text: "Create",
-                    //                 textColor: Colors.white,
-                    //                 color: Get.theme.primaryColor)),
-                    //         //)
-                    //       ],
-                    //     ),
-                    //   ],
-                    // ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         GestureDetector(
-                            onTap: () {
-                              Get.back();
-                            },
-                            child: ButtonWidget(
-                                isLoading: false,
-                                width: 81.0,
-                                color: Colors.white,
-                                textColor: Get.theme.primaryColor,
-                                // borderRadius: BorderRadius.circular(5.0),
-                                border: Border.all(
-                                  color: Get.theme.primaryColor,
+                          onTap: () async {
+                            createTaskController.pickupFile();
+                            //createTaskController.uploadDocument();
+                          },
+                          child: Container(
+                            //  width: 170.0,
+                            decoration: BoxDecoration(
+                                // border: border,
+                                color: const Color.fromARGB(255, 234, 234, 234),
+                                borderRadius: BorderRadius.circular(15.0)),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10.0, horizontal: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/images/icons8_attachment_100.png",
+                                  width: 21.0,
+                                  height: 21.0,
                                 ),
-                                text: "Cancel")
-                            //  Container(
-                            //   padding: EdgeInsets.symmetric(
-                            //       horizontal: 15.0, vertical: 8.0),
-                            //   decoration: BoxDecoration(
-                            //     borderRadius: BorderRadius.circular(5.0),
-                            //     border: Border.all(color: Colors.blue),
-                            //   ),
-                            //   child: Text(
-                            //     "Cancel",
-                            //     style: TextStyle(color: Colors.blue),
-                            //   ),
-                            // ),
+                                SizedBox(
+                                  width: 5.0,
+                                ),
+                                Text(
+                                  "Add Attachment",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                  ),
+                                )
+                              ],
                             ),
-                        SizedBox(
-                          width: 10.0,
+                          ),
                         ),
-                        // Obx(
-                        //   () =>
-                        GestureDetector(
-                            onTap: () async {
-                              print(
-                                  "createTaskController.isPioritySelected.value == false ${createTaskController.isPioritySelected.value == false}");
-                              if (createTaskController
-                                      .isPioritySelected.value ==
-                                  false) {
-                                createTaskController.showPriorityError.value =
-                                    true;
-                              }
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            GestureDetector(
+                                onTap: () {
+                                  Get.back();
+                                },
+                                child: ButtonWidget(
+                                    isLoading: false,
+                                    width: 81.0,
+                                    color: Colors.white,
+                                    textColor: Get.theme.primaryColor,
+                                    // borderRadius: BorderRadius.circular(5.0),
+                                    border: Border.all(
+                                      color: Get.theme.primaryColor,
+                                    ),
+                                    text: "Cancel")
+                                //  Container(
+                                //   padding: EdgeInsets.symmetric(
+                                //       horizontal: 15.0, vertical: 8.0),
+                                //   decoration: BoxDecoration(
+                                //     borderRadius: BorderRadius.circular(5.0),
+                                //     border: Border.all(color: Colors.blue),
+                                //   ),
+                                //   child: Text(
+                                //     "Cancel",
+                                //     style: TextStyle(color: Colors.blue),
+                                //   ),
+                                // ),
+                                ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            // Obx(
+                            //   () =>
+                            GestureDetector(
+                                onTap: () async {
+                                  print(
+                                      "createTaskController.isPioritySelected.value == false ${createTaskController.isPioritySelected.value == false}");
+                                  if (createTaskController
+                                          .isPioritySelected.value ==
+                                      false) {
+                                    createTaskController
+                                        .showPriorityError.value = true;
+                                  }
 
-                              if (widget.forAdmin) {
-                                if (createTaskController.statusUpdated.value ==
-                                    false) {
-                                  createTaskController.showStatusError.value =
-                                      true;
-                                }
-                              }
+                                  if (widget.forAdmin) {
+                                    if (createTaskController
+                                            .statusUpdated.value ==
+                                        false) {
+                                      createTaskController
+                                          .showStatusError.value = true;
+                                    }
+                                  }
 
-                              // if (widget.forAdmin == false) {
-                              //   if (createTaskController
-                              //           .isEmployeeAssigned.value ==
-                              //       false) {
-                              //     createTaskController
-                              //         .showSelectedEmpError.value = true;
-                              //   }
-                              // }
+                                  // if (widget.forAdmin == false) {
+                                  //   if (createTaskController
+                                  //           .isEmployeeAssigned.value ==
+                                  //       false) {
+                                  //     createTaskController
+                                  //         .showSelectedEmpError.value = true;
+                                  //   }
+                                  // }
 
-                              if (_formKey.currentState!.validate()) {
-                                // createTaskController.appointments.add(
-                                //     Appointment(
-                                //         isAllDay: false,
-                                //         startTime: DateTime.parse(
-                                //             createTaskController
-                                //                 .startDateEditingController
-                                //                 .text),
-                                //         endTime: DateTime.parse(
-                                //             createTaskController
-                                //                 .dueDateEditingController
-                                //                 .text),
-                                //         color: getColor(),
-                                //         subject: createTaskController
-                                //             .taskNameController.text));
+                                  if (_formKey.currentState!.validate()) {
+                                    // createTaskController.appointments.add(
+                                    //     Appointment(
+                                    //         isAllDay: false,
+                                    //         startTime: DateTime.parse(
+                                    //             createTaskController
+                                    //                 .startDateEditingController
+                                    //                 .text),
+                                    //         endTime: DateTime.parse(
+                                    //             createTaskController
+                                    //                 .dueDateEditingController
+                                    //                 .text),
+                                    //         color: getColor(),
+                                    //         subject: createTaskController
+                                    //             .taskNameController.text));
 
-                                //  Get.back();
+                                    //  Get.back();
 
-                                /////////////////////////////////////
+                                    /////////////////////////////////////
 
-                                // if (forAdmin) {
-                                //   switch (createTaskController
-                                //       .selectedStatus.value) {
-                                //     case "Assigned":
-                                //       createTaskController.taskLabel.value =
-                                //           "Assigned to";
-                                //       break;
-                                //     case "In progress":
-                                //       createTaskController.taskLabel.value =
-                                //           "In progress by";
-                                //       break;
-                                //     case "Completed":
-                                //       createTaskController.taskLabel.value =
-                                //           "Completed by";
-                                //       break;
-                                //     case "Hold":
-                                //       createTaskController.taskLabel.value =
-                                //           "Hold by";
-                                //       break;
-                                //     default:
-                                //       createTaskController.taskLabel.value =
-                                //           "Assigned to";
-                                //   }
-                                // }
+                                    // if (forAdmin) {
+                                    //   switch (createTaskController
+                                    //       .selectedStatus.value) {
+                                    //     case "Assigned":
+                                    //       createTaskController.taskLabel.value =
+                                    //           "Assigned to";
+                                    //       break;
+                                    //     case "In progress":
+                                    //       createTaskController.taskLabel.value =
+                                    //           "In progress by";
+                                    //       break;
+                                    //     case "Completed":
+                                    //       createTaskController.taskLabel.value =
+                                    //           "Completed by";
+                                    //       break;
+                                    //     case "Hold":
+                                    //       createTaskController.taskLabel.value =
+                                    //           "Hold by";
+                                    //       break;
+                                    //     default:
+                                    //       createTaskController.taskLabel.value =
+                                    //           "Assigned to";
+                                    //   }
+                                    // }
 
-                                ////////////////////////////////////////////////
+                                    ////////////////////////////////////////////////
 
-                                // if (createTaskController
-                                //         .isPioritySelected.value &&
-                                //     createTaskController
-                                //         .statusUpdated.value &&
-                                //     createTaskController
-                                //         .isEmployeeAssigned.value) {
+                                    // if (createTaskController
+                                    //         .isPioritySelected.value &&
+                                    //     createTaskController
+                                    //         .statusUpdated.value &&
+                                    //     createTaskController
+                                    //         .isEmployeeAssigned.value) {
 
-                                await createTaskController.createTask(
-                                    widget.forManager, widget.forUsersProfile);
+                                    await createTaskController.createTask(
+                                        widget.forManager,
+                                        widget.forUsersProfile);
 
-                                // if (widget.forAdmin == false) {
-                                //   createTaskController.employeesToAssign.value
-                                //       .clear();
-                                //   createTaskController
-                                //       .assignedTo.value = createTaskController
-                                //           .employeesToAssign.isNotEmpty
-                                //       ? createTaskController.employeesToAssign[0]
-                                //       : "Choose employee";
-                                // }
+                                    // if (widget.forAdmin == false) {
+                                    //   createTaskController.employeesToAssign.value
+                                    //       .clear();
+                                    //   createTaskController
+                                    //       .assignedTo.value = createTaskController
+                                    //           .employeesToAssign.isNotEmpty
+                                    //       ? createTaskController.employeesToAssign[0]
+                                    //       : "Choose employee";
+                                    // }
 
-                                // createTaskController
-                                //     .setAssignedTo("Choose employee");
+                                    // createTaskController
+                                    //     .setAssignedTo("Choose employee");
 
-                                // createTaskController.taskNameController.clear();
+                                    // createTaskController.taskNameController.clear();
 
-                                // createTaskController.descriptionController
-                                //     .clear();
+                                    // createTaskController.descriptionController
+                                    //     .clear();
 
-                                // createTaskController.startDateEditingController
-                                //     .clear();
+                                    // createTaskController.startDateEditingController
+                                    //     .clear();
 
-                                // createTaskController.dueDateEditingController
-                                //     .clear();
+                                    // createTaskController.dueDateEditingController
+                                    //     .clear();
 
-                                // createTaskController.remainderTimeController
-                                //     .clear();
+                                    // createTaskController.remainderTimeController
+                                    //     .clear();
 
-                                // createTaskController
-                                //     .setRemainderOptionController
-                                //     .clear();
+                                    // createTaskController
+                                    //     .setRemainderOptionController
+                                    //     .clear();
 
-                                // createTaskController.selectedStatus.value =
-                                //     "Assigned";
+                                    // createTaskController.selectedStatus.value =
+                                    //     "Assigned";
 
-                                // createTaskController.selectedPriority.value =
-                                //     "High";
-                                // createTaskController.selectedTag.value =
-                                //     "No tags added";
+                                    // createTaskController.selectedPriority.value =
+                                    //     "High";
+                                    // createTaskController.selectedTag.value =
+                                    //     "No tags added";
 
-                                // createTaskController.remarkController.clear();
-                                clearForm();
+                                    // createTaskController.remarkController.clear();
+                                    clearForm();
 
-                                Get.back();
-                              }
-                            },
-                            child: ButtonWidget(
-                                isLoading:
-                                    createTaskController.creatingTask.value,
-                                width: 77.0,
-                                text: "Create",
-                                textColor: Colors.white,
-                                color: Get.theme.primaryColor)),
-                        //)
+                                    //  Get.back();
+                                  }
+                                },
+                                child: ButtonWidget(
+                                    isLoading:
+                                        createTaskController.creatingTask.value,
+                                    width: 77.0,
+                                    text: "Create",
+                                    textColor: Colors.white,
+                                    color: Get.theme.primaryColor)),
+                            //)
+                          ],
+                        ),
                       ],
                     ),
 

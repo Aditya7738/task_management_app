@@ -1,17 +1,9 @@
-import 'package:buttons_tabbar/buttons_tabbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:icons_plus/icons_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_management_app/controller/dashboard_controller.dart';
 import 'package:task_management_app/controller/login_controller.dart';
 import 'package:task_management_app/views/assigned_tasks_to_others_list.dart';
-import 'package:task_management_app/views/calendar_tasks.dart';
-import 'package:task_management_app/views/create_task.dart';
-import 'package:task_management_app/views/profile_screen.dart';
 import 'package:task_management_app/views/tasks_screen.dart';
-import 'package:task_management_app/views/board_screen.dart';
-import 'package:task_management_app/widgets/task_list.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);

@@ -128,8 +128,8 @@ class _UpdateRepeatTaskFormState extends State<UpdateRepeatTaskForm>
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime(2024),
-        lastDate: DateTime(2025));
+        firstDate: DateTime(2025),
+        lastDate: DateTime(2026));
 
     _updateRepeatTaskController.repeatTaskStopDate = picked;
 
@@ -361,7 +361,7 @@ class _UpdateRepeatTaskFormState extends State<UpdateRepeatTaskForm>
         // CalendarDatePicker(
         //   initialCalendarMode: DatePickerMode.year,
         //   initialDate: DateTime.now(),
-        //   firstDate: DateTime(2024),
+        //   firstDate: DateTime(2025),
         //   lastDate: DateTime(2028),
         //   onDateChanged: (newDate) {
         //     // Handle date change
@@ -370,7 +370,7 @@ class _UpdateRepeatTaskFormState extends State<UpdateRepeatTaskForm>
         // Obx(
         //   () => YearPicker(
         //     initialDate: DateTime(2024),
-        //     firstDate: DateTime(2024),
+        //     firstDate: DateTime(2025),
         //     lastDate: DateTime(2028),
         //     selectedDate: DateTime(_updateRepeatTaskController.selectedYear.value),
         //     onChanged: (newDate) {

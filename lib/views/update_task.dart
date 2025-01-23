@@ -130,8 +130,8 @@ class _CreateTaskState extends State<UpdateTask> {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime(2024),
-        lastDate: DateTime(2025));
+        firstDate: DateTime(2025),
+        lastDate: DateTime(2026));
 
     if (picked != null) {
       print(" DATE ${picked.toLocal().toString()}");
@@ -570,8 +570,8 @@ class _CreateTaskState extends State<UpdateTask> {
                             await showDatePicker(
                                 context: context,
                                 initialDate: DateTime.now(),
-                                firstDate: DateTime(2024),
-                                lastDate: DateTime(2025));
+                                firstDate: DateTime(2025),
+                                lastDate: DateTime(2026));
 
                         if (_updateTaskController.startDate.value != null) {
                           print(
@@ -637,8 +637,8 @@ class _CreateTaskState extends State<UpdateTask> {
                             await showDatePicker(
                                 context: context,
                                 initialDate: DateTime.now(),
-                                firstDate: DateTime(2024),
-                                lastDate: DateTime(2025));
+                                firstDate: DateTime(2025),
+                                lastDate: DateTime(2026));
 
                         if (_updateTaskController.dueDate.value != null) {
                           print(
@@ -730,8 +730,8 @@ class _CreateTaskState extends State<UpdateTask> {
                                 final DateTime? picked = await showDatePicker(
                                     context: context,
                                     initialDate: DateTime.now(),
-                                    firstDate: DateTime(2024),
-                                    lastDate: DateTime(2025));
+                                    firstDate: DateTime(2025),
+                                    lastDate: DateTime(2026));
 
                                 print("picked != null ${picked != null}");
 
@@ -778,8 +778,8 @@ class _CreateTaskState extends State<UpdateTask> {
                                     //                         await showDatePicker(
                                     //                             context: context,
                                     //                             initialDate: DateTime.now(),
-                                    //                             firstDate: DateTime(2024),
-                                    //                             lastDate: DateTime(2025));
+                                    //                             firstDate: DateTime(2025),
+                                    //                             lastDate: DateTime(2026));
 
                                     Get.snackbar("Error",
                                         "Remainder date should be less than due date",
@@ -1107,6 +1107,7 @@ class _CreateTaskState extends State<UpdateTask> {
                       onTap: () {
                         if (mounted) {
                           showModalBottomSheet(
+                            enableDrag: false,
                             constraints: BoxConstraints.expand(
                                 width: Get.width, height: Get.height - 80),
                             //  isDismissible: false,

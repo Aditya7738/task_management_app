@@ -23,6 +23,7 @@ class _NavigateUserState extends State<NavigateUser> {
     super.initState();
 
     _navigateUserController.checkUserRole();
+    _navigateUserController.getStoragePermissions();
   }
 
   FirebaseAuth auth = FirebaseAuth.instance;
